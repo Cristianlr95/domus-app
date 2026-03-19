@@ -1,0 +1,30 @@
+.home-page {
+  --background: linear-gradient(180deg, #f7f2e8 0%, #efe7d9 100%);
+}
+
+.hero {
+  padding: 2rem 1.25rem 3rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: #7a5c36;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  color: #2a241c;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.copy {
+  margin: 0 0 1.5rem;
+  color: #5a4d3f;
+  font-size: 1rem;
+  line-height: 1.6;
+}

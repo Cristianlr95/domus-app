@@ -1,0 +1,7 @@
+{
+  "name": "domus-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
