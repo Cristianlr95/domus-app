@@ -1,0 +1,81 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Auditoria</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="refresh()">Actualizar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="audit-list-page">
+  <section class="filters">
+    <ion-item>
+      <ion-input
+        label="Buscar"
+        labelPlacement="stacked"
+        [(ngModel)]="search"
+        (ionBlur)="onFilterChange()"
+        placeholder="Entidad, resumen o id relacionado">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Entidad"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedEntityType"
+        (ionChange)="onFilterChange()"
+        interface="popover">
+        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option value="AUTH">AUTH</ion-select-option>
+        <ion-select-option value="VISIT">VISIT</ion-select-option>
+        <ion-select-option value="PACKAGE">PACKAGE</ion-select-option>
+        <ion-select-option value="RESIDENT">RESIDENT</ion-select-option>
+        <ion-select-option value="UNIT">UNIT</ion-select-option>
+        <ion-select-option value="MESSAGE">MESSAGE</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Accion"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedAction"
+        (ionChange)="onFilterChange()"
+        interface="popover">
+        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option *ngFor="let action of actions" [value]="action">
+          {{ action }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando historial de auditoria...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && auditLogs.length === 0">
+    <h2>Sin eventos</h2>
+    <p>No encontramos eventos con los filtros seleccionados.</p>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && auditLogs.length > 0">
+    <ion-item button detail="true" *ngFor="let auditLog of auditLogs; trackBy: trackByAuditLog" (click)="openDetail(auditLog.id)">
+      <ion-label>
+        <h2>{{ auditLog.summary }}</h2>
+        <p>{{ auditLog.entityType }} · {{ auditLog.action }}</p>
+        <p *ngIf="auditLog.actor">{{ auditLog.actor.firstName }} {{ auditLog.actor.lastName }} · {{ auditLog.actor.email }}</p>
+        <p>{{ auditLog.occurredAt | date:'short' }}</p>
+      </ion-label>
+
+      <ion-chip color="medium">
+        <ion-label>{{ auditLog.action }}</ion-label>
+      </ion-chip>
+    </ion-item>
+  </ion-list>
+</ion-content>

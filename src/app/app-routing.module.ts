@@ -71,6 +71,12 @@ const routes: Routes = [
     loadChildren: () => import('./features/notifications/notifications.module').then( m => m.NotificationsModule)
   },
   {
+    path: 'audit',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.AUDIT_READ] },
+    loadChildren: () => import('./features/audit/audit.module').then( m => m.AuditModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'

@@ -77,6 +77,12 @@ export class DashboardPage {
       permissions: [PERMISSIONS.MESSAGING_READ],
       route: '/messaging',
     },
+    {
+      title: 'Auditoria',
+      description: 'Revisa trazabilidad operativa y administrativa de acciones relevantes del sistema.',
+      permissions: [PERMISSIONS.AUDIT_READ],
+      route: '/audit',
+    },
   ];
 
   get user(): AuthUser | null {

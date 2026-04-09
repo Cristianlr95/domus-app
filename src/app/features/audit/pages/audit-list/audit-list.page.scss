@@ -1,0 +1,16 @@
+.audit-list-page {
+  .filters {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .state-wrap {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--ion-color-medium);
+  }
+}
