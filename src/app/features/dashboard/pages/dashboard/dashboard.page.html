@@ -2,6 +2,12 @@
   <ion-toolbar>
     <ion-title>Domus</ion-title>
     <ion-buttons slot="end">
+      <ion-button routerLink="/notifications">
+        <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+        <ion-badge color="danger" *ngIf="notificationsApiService.unreadCount() > 0">
+          {{ notificationsApiService.unreadCount() }}
+        </ion-badge>
+      </ion-button>
       <ion-button (click)="logout()">Cerrar sesion</ion-button>
     </ion-buttons>
   </ion-toolbar>

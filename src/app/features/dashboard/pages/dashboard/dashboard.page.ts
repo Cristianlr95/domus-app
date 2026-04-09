@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthUser, UserRole } from '../../../../core/auth/auth.models';
+import { NotificationsApiService } from '../../../notifications/services/notifications-api.service';
 
 interface QuickAction {
   title: string;
@@ -17,6 +18,7 @@ interface QuickAction {
 })
 export class DashboardPage {
   readonly authService = inject(AuthService);
+  readonly notificationsApiService = inject(NotificationsApiService);
 
   readonly quickActions: QuickAction[] = [
     {
@@ -76,6 +78,10 @@ export class DashboardPage {
 
   get user(): AuthUser | null {
     return this.authService.currentUser();
+  }
+
+  ionViewWillEnter(): void {
+    this.notificationsApiService.loadUnreadCount().subscribe();
   }
 
   logout(): void {

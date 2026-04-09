@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
+import { NotificationsApiService } from '../../../notifications/services/notifications-api.service';
 import { ConciergeDashboard, ConciergeRecentActivity } from '../../models/concierge-dashboard.models';
 import { ConciergeApiService } from '../../services/concierge-api.service';
 
@@ -23,6 +24,7 @@ export class ConciergeDashboardPage {
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  readonly notificationsApiService = inject(NotificationsApiService);
 
   readonly quickLinks: ConciergeQuickLink[] = [
     {
@@ -66,6 +68,7 @@ export class ConciergeDashboardPage {
   loading = false;
 
   ionViewWillEnter(): void {
+    this.notificationsApiService.loadUnreadCount().subscribe();
     this.loadDashboard();
   }
 

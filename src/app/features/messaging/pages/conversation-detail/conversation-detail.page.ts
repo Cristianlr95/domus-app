@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin, of } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
+import { NotificationsApiService } from '../../../notifications/services/notifications-api.service';
 import { ConversationDetail, Message } from '../../models/messaging.models';
 import { MessagingApiService } from '../../services/messaging-api.service';
 
@@ -19,6 +20,7 @@ export class ConversationDetailPage {
   private readonly messagingApiService = inject(MessagingApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly notificationsApiService = inject(NotificationsApiService);
 
   readonly form = this.formBuilder.nonNullable.group({
     content: ['', [Validators.required, Validators.maxLength(2000)]],
@@ -64,6 +66,7 @@ export class ConversationDetailPage {
         next: async () => {
           this.form.reset({ content: '' });
           this.loadConversation();
+          this.notificationsApiService.loadUnreadCount().subscribe();
           await this.feedbackService.success('Mensaje enviado.');
         },
         error: async (error) => {
@@ -121,6 +124,7 @@ export class ConversationDetailPage {
             unreadCount: 0,
             messages: this.conversation.messages.map((message) => updates.get(message.id) ?? message),
           };
+          this.notificationsApiService.loadUnreadCount().subscribe();
         },
         error: () => {
           void of(null);

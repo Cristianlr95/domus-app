@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="refresh()">Actualizar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="notifications-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando notificaciones...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && notifications.length === 0">
+    <h2>No hay notificaciones</h2>
+    <p>Cuando ocurran eventos relevantes del edificio apareceran aqui.</p>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && notifications.length > 0">
+    <ion-item button detail="true" *ngFor="let notification of notifications; trackBy: trackByNotification" (click)="openNotification(notification)">
+      <ion-label>
+        <h2>{{ notification.title }}</h2>
+        <p>{{ notification.message }}</p>
+        <p>{{ notification.createdAt | date:'short' }}</p>
+      </ion-label>
+
+      <div class="meta">
+        <ion-chip [color]="typeColor(notification.type)">
+          <ion-label>{{ typeLabel(notification.type) }}</ion-label>
+        </ion-chip>
+        <ion-badge *ngIf="!notification.read" color="danger">Nueva</ion-badge>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

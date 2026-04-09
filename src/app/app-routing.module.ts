@@ -55,6 +55,11 @@ const routes: Routes = [
     loadChildren: () => import('./features/messaging/messaging.module').then( m => m.MessagingModule)
   },
   {
+    path: 'notifications',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/notifications/notifications.module').then( m => m.NotificationsModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'

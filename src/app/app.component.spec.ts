@@ -4,10 +4,16 @@ import { of } from 'rxjs';
 
 import { AppComponent } from './app.component';
 import { AuthService } from './core/auth/auth.service';
+import { NotificationsApiService } from './features/notifications/services/notifications-api.service';
 
 describe('AppComponent', () => {
   const authServiceMock = {
     restoreSession: jasmine.createSpy('restoreSession').and.returnValue(of(null)),
+  };
+
+  const notificationsApiServiceMock = {
+    loadUnreadCount: jasmine.createSpy('loadUnreadCount').and.returnValue(of({ unreadCount: 0 })),
+    clearUnreadCount: jasmine.createSpy('clearUnreadCount'),
   };
 
   beforeEach(async () => {
@@ -18,6 +24,10 @@ describe('AppComponent', () => {
         {
           provide: AuthService,
           useValue: authServiceMock,
+        },
+        {
+          provide: NotificationsApiService,
+          useValue: notificationsApiServiceMock,
         },
       ],
     }).compileComponents();
