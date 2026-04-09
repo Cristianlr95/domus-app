@@ -1,7 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PermissionCode, PERMISSIONS } from '../../../../core/auth/auth.models';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { NotificationsApiService } from '../../../notifications/services/notifications-api.service';
 import { ConciergeDashboard, ConciergeRecentActivity } from '../../models/concierge-dashboard.models';
@@ -11,6 +13,7 @@ interface ConciergeQuickLink {
   title: string;
   description: string;
   route: string;
+  permission: PermissionCode;
 }
 
 @Component({
@@ -23,6 +26,7 @@ export class ConciergeDashboardPage {
   private readonly conciergeApiService = inject(ConciergeApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
   readonly notificationsApiService = inject(NotificationsApiService);
 
@@ -31,38 +35,49 @@ export class ConciergeDashboardPage {
       title: 'Visitas',
       description: 'Registrar ingresos y revisar visitas pendientes o activas.',
       route: '/visits',
+      permission: PERMISSIONS.VISITS_READ,
     },
     {
       title: 'Encomiendas',
       description: 'Registrar recepciones y marcar entregas del dia.',
       route: '/packages',
+      permission: PERMISSIONS.PACKAGES_READ,
     },
     {
       title: 'Residentes',
       description: 'Buscar personas asociadas a las unidades del edificio.',
       route: '/residents',
+      permission: PERMISSIONS.RESIDENTS_READ,
     },
     {
       title: 'Unidades',
       description: 'Consultar departamentos y validar sus residentes asociados.',
       route: '/units',
+      permission: PERMISSIONS.UNITS_READ,
     },
     {
       title: 'Estacionamientos',
       description: 'Visualizar espacios disponibles u ocupados y administrar sus asociaciones.',
       route: '/parking',
+      permission: PERMISSIONS.PARKING_READ,
     },
     {
       title: 'Bodegas',
       description: 'Consultar espacios de almacenamiento por unidad y controlar su disponibilidad.',
       route: '/storages',
+      permission: PERMISSIONS.STORAGES_READ,
     },
     {
       title: 'Mensajeria',
       description: 'Enviar avisos rapidos a residentes y revisar conversaciones activas.',
       route: '/messaging',
+      permission: PERMISSIONS.MESSAGING_READ,
     },
   ];
+
+  get visibleQuickLinks(): ConciergeQuickLink[] {
+    return this.quickLinks.filter((item) => this.authorizationService.hasPermission(item.permission));
+  }
 
   dashboard: ConciergeDashboard | null = null;
   loading = false;

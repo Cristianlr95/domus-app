@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../../core/guards/auth.guard';
+import { PERMISSIONS } from '../../core/auth/auth.models';
+import { PermissionGuard } from '../../core/guards/permission.guard';
 import { ParkingDetailPage } from './pages/parking-detail/parking-detail.page';
 import { ParkingFormPage } from './pages/parking-form/parking-form.page';
 import { ParkingListPage } from './pages/parking-list/parking-list.page';
@@ -8,22 +9,26 @@ import { ParkingListPage } from './pages/parking-list/parking-list.page';
 const routes: Routes = [
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PARKING_READ] },
     component: ParkingListPage,
   },
   {
     path: 'new',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PARKING_MANAGE] },
     component: ParkingFormPage,
   },
   {
     path: ':id/edit',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PARKING_MANAGE] },
     component: ParkingFormPage,
   },
   {
     path: ':id',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PARKING_READ] },
     component: ParkingDetailPage,
   },
 ];

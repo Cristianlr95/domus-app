@@ -1,23 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { map, Observable } from 'rxjs';
-import { AuthorizationService } from '../auth/authorization.service';
 import { AuthService } from '../auth/auth.service';
-import { UserRole } from '../auth/auth.models';
+import { PermissionCode } from '../auth/auth.models';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RoleGuard implements CanActivate {
+export class PermissionGuard implements CanActivate {
   private readonly authService = inject(AuthService);
-  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   canActivate(
     route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
-    const requiredRoles = (route.data['roles'] as UserRole[] | undefined) ?? [];
+    const requiredPermissions = (route.data['permissions'] as PermissionCode[] | undefined) ?? [];
+    const requireAll = (route.data['requireAllPermissions'] as boolean | undefined) ?? false;
 
     return this.authService.ensureAuthenticated().pipe(
       map((result) => {
@@ -25,11 +24,15 @@ export class RoleGuard implements CanActivate {
           return result;
         }
 
-        if (requiredRoles.length === 0 || this.authorizationService.hasAnyRole(requiredRoles)) {
+        if (requiredPermissions.length === 0) {
           return true;
         }
 
-        return this.router.createUrlTree(['/dashboard']);
+        const allowed = requireAll
+          ? this.authService.hasAllPermissions(requiredPermissions)
+          : this.authService.hasAnyPermission(requiredPermissions);
+
+        return allowed ? true : this.router.createUrlTree(['/dashboard']);
       }),
     );
   }

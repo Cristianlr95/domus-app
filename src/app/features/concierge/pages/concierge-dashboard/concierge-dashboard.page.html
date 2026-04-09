@@ -76,7 +76,7 @@
 
       <ion-grid fixed>
         <ion-row>
-          <ion-col size="12" sizeMd="6" *ngFor="let item of quickLinks">
+          <ion-col size="12" sizeMd="6" *ngFor="let item of visibleQuickLinks">
             <ion-card button="true" (click)="openRoute(item.route)">
               <ion-card-header>
                 <ion-card-title>{{ item.title }}</ion-card-title>

@@ -4,7 +4,7 @@ import { Router, UrlTree } from '@angular/router';
 import { catchError, finalize, map, Observable, of, tap } from 'rxjs';
 import { ApiErrorResponse, ApiResponse } from '../api/api.models';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, AuthUser, LoginRequest, UserRole } from './auth.models';
+import { AuthResponse, AuthUser, LoginRequest, PermissionCode, UserRole } from './auth.models';
 import { SessionStorageService } from '../storage/session-storage.service';
 
 @Injectable({
@@ -94,6 +94,21 @@ export class AuthService {
   hasAnyRole(roles: UserRole[]): boolean {
     const user = this.currentUser();
     return !!user && roles.some((role) => user.roles.includes(role));
+  }
+
+  hasPermission(permission: PermissionCode): boolean {
+    const user = this.currentUser();
+    return !!user && user.permissions.includes(permission);
+  }
+
+  hasAnyPermission(permissions: PermissionCode[]): boolean {
+    const user = this.currentUser();
+    return !!user && permissions.some((permission) => user.permissions.includes(permission));
+  }
+
+  hasAllPermissions(permissions: PermissionCode[]): boolean {
+    const user = this.currentUser();
+    return !!user && permissions.every((permission) => user.permissions.includes(permission));
   }
 
   getErrorMessage(error: unknown): string {

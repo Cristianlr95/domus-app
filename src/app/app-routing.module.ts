@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { GuestGuard } from './core/guards/guest.guard';
+import { PermissionGuard } from './core/guards/permission.guard';
+import { PERMISSIONS } from './core/auth/auth.models';
 
 const routes: Routes = [
   {
@@ -16,47 +18,56 @@ const routes: Routes = [
   },
   {
     path: 'visits',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.VISITS_READ, PERMISSIONS.VISITS_CREATE, PERMISSIONS.VISITS_UPDATE] },
     loadChildren: () => import('./features/visits/visits.module').then( m => m.VisitsModule)
   },
   {
     path: 'concierge',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.CONCIERGE_DASHBOARD_READ] },
     loadChildren: () => import('./features/concierge/concierge.module').then( m => m.ConciergeModule)
   },
   {
     path: 'packages',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PACKAGES_READ, PERMISSIONS.PACKAGES_CREATE, PERMISSIONS.PACKAGES_UPDATE] },
     loadChildren: () => import('./features/packages/packages.module').then( m => m.PackagesModule)
   },
   {
     path: 'residents',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.RESIDENTS_READ, PERMISSIONS.RESIDENTS_MANAGE] },
     loadChildren: () => import('./features/residents/residents.module').then( m => m.ResidentsModule)
   },
   {
     path: 'units',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.UNITS_READ, PERMISSIONS.UNITS_MANAGE] },
     loadChildren: () => import('./features/units/units.module').then( m => m.UnitsModule)
   },
   {
     path: 'parking',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PARKING_READ, PERMISSIONS.PARKING_MANAGE] },
     loadChildren: () => import('./features/parking/parking.module').then( m => m.ParkingModule)
   },
   {
     path: 'storages',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.STORAGES_READ, PERMISSIONS.STORAGES_MANAGE] },
     loadChildren: () => import('./features/storages/storages.module').then( m => m.StoragesModule)
   },
   {
     path: 'messaging',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.MESSAGING_READ, PERMISSIONS.MESSAGING_CREATE] },
     loadChildren: () => import('./features/messaging/messaging.module').then( m => m.MessagingModule)
   },
   {
     path: 'notifications',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.NOTIFICATIONS_READ] },
     loadChildren: () => import('./features/notifications/notifications.module').then( m => m.NotificationsModule)
   },
   {

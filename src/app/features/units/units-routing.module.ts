@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../../core/guards/auth.guard';
+import { PERMISSIONS } from '../../core/auth/auth.models';
+import { PermissionGuard } from '../../core/guards/permission.guard';
 import { UnitDetailPage } from './pages/unit-detail/unit-detail.page';
 import { UnitFormPage } from './pages/unit-form/unit-form.page';
 import { UnitsListPage } from './pages/units-list/units-list.page';
@@ -8,22 +9,26 @@ import { UnitsListPage } from './pages/units-list/units-list.page';
 const routes: Routes = [
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.UNITS_READ] },
     component: UnitsListPage,
   },
   {
     path: 'new',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.UNITS_MANAGE] },
     component: UnitFormPage,
   },
   {
     path: ':id/edit',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.UNITS_MANAGE] },
     component: UnitFormPage,
   },
   {
     path: ':id',
-    canActivate: [AuthGuard],
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.UNITS_READ] },
     component: UnitDetailPage,
   },
 ];

@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RoleGuard } from '../../core/guards/role.guard';
+import { PERMISSIONS } from '../../core/auth/auth.models';
+import { PermissionGuard } from '../../core/guards/permission.guard';
 import { ConciergeDashboardPage } from './pages/concierge-dashboard/concierge-dashboard.page';
 
 const routes: Routes = [
   {
     path: '',
     component: ConciergeDashboardPage,
-    canActivate: [RoleGuard],
+    canActivate: [PermissionGuard],
     data: {
-      roles: ['ADMIN', 'CONSERJERIA'],
+      permissions: [PERMISSIONS.CONCIERGE_DASHBOARD_READ],
     },
   },
 ];

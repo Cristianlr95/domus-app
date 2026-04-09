@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { PERMISSIONS } from './core/auth/auth.models';
 import { AuthService } from './core/auth/auth.service';
 import { NotificationsApiService } from './features/notifications/services/notifications-api.service';
 
@@ -16,7 +17,12 @@ export class AppComponent implements OnInit {
     this.authService.restoreSession().subscribe({
       next: (user) => {
         if (user) {
-          this.notificationsApiService.loadUnreadCount().subscribe();
+          if (user.permissions.includes(PERMISSIONS.NOTIFICATIONS_READ)) {
+            this.notificationsApiService.loadUnreadCount().subscribe();
+            return;
+          }
+
+          this.notificationsApiService.clearUnreadCount();
           return;
         }
 
