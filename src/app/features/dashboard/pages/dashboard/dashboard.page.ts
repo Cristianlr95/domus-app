@@ -60,6 +60,12 @@ export class DashboardPage {
       roles: ['ADMIN', 'CONSERJERIA'],
       route: '/parking',
     },
+    {
+      title: 'Bodegas',
+      description: 'Administra espacios de almacenamiento asociados a unidades y controla su disponibilidad.',
+      roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/storages',
+    },
   ];
 
   get user(): AuthUser | null {

@@ -1,0 +1,85 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/storages"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de bodega</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editStorage()" *ngIf="storage">Editar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="storage-detail-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando bodega...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && storage as currentStorage">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-label>
+          <h2>Codigo</h2>
+          <p>{{ currentStorage.storageCode }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Tipo</h2>
+          <p>{{ typeLabel(currentStorage.storageType) }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Disponibilidad</h2>
+          <p>{{ currentStorage.occupancyStatus }}</p>
+        </ion-label>
+        <ion-chip [color]="occupancyColor(currentStorage.occupancyStatus)">
+          <ion-label>{{ currentStorage.occupancyStatus }}</ion-label>
+        </ion-chip>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Estado</h2>
+          <p>{{ currentStorage.active ? 'Activa' : 'Inactiva' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Unidad</h2>
+          <p>{{ currentStorage.unit.blockLabel }} - {{ currentStorage.unit.unitCode }}</p>
+          <p *ngIf="currentStorage.unit.floorNumber !== null">Piso {{ currentStorage.unit.floorNumber }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentStorage.observations">
+        <ion-label>
+          <h2>Observaciones</h2>
+          <p>{{ currentStorage.observations }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" fill="outline" (click)="editStorage()">
+        Editar bodega
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        color="warning"
+        [disabled]="mutating || !currentStorage.active"
+        (click)="toggleOccupancy()">
+        {{ mutating ? 'Actualizando...' : (currentStorage.occupancyStatus === 'DISPONIBLE' ? 'Marcar como ocupada' : 'Marcar como disponible') }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        [color]="currentStorage.active ? 'medium' : 'success'"
+        [disabled]="mutating"
+        (click)="toggleActive()">
+        {{ mutating ? 'Actualizando...' : (currentStorage.active ? 'Desactivar bodega' : 'Reactivar bodega') }}
+      </ion-button>
+    </div>
+  </ng-container>
+</ion-content>

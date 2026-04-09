@@ -50,6 +50,11 @@ export class ConciergeDashboardPage {
       description: 'Visualizar espacios disponibles u ocupados y administrar sus asociaciones.',
       route: '/parking',
     },
+    {
+      title: 'Bodegas',
+      description: 'Consultar espacios de almacenamiento por unidad y controlar su disponibilidad.',
+      route: '/storages',
+    },
   ];
 
   dashboard: ConciergeDashboard | null = null;

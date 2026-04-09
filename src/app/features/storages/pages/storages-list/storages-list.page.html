@@ -1,0 +1,86 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Bodegas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createStorage()">Nueva bodega</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="storages-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="search"
+      placeholder="Buscar por codigo, observacion o unidad"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
+
+    <ion-item>
+      <ion-select
+        label="Estado activo"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedActive"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option [value]="true">Activas</ion-select-option>
+        <ion-select-option [value]="false">Inactivas</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Disponibilidad"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedOccupancyStatus"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todas</ion-select-option>
+        <ion-select-option [value]="'DISPONIBLE'">Disponible</ion-select-option>
+        <ion-select-option [value]="'OCUPADA'">Ocupada</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Unidad"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedUnitId"
+        (ionChange)="onFilterChange()">
+        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option *ngFor="let unit of units" [value]="unit.id">
+          {{ unit.blockLabel }} - {{ unit.unitCode }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando bodegas...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && storages.length === 0">
+    <h2>No hay bodegas registradas</h2>
+    <p>Comienza creando el primer espacio de almacenamiento del edificio.</p>
+    <ion-button (click)="createStorage()">Registrar bodega</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && storages.length > 0">
+    <ion-item button detail="true" *ngFor="let storage of storages; trackBy: trackByStorage" (click)="openDetail(storage.id)">
+      <ion-label>
+        <h2>{{ storage.storageCode }}</h2>
+        <p>{{ typeLabel(storage.storageType) }} - {{ storage.unit.blockLabel }} / {{ storage.unit.unitCode }}</p>
+        <p *ngIf="storage.observations">{{ storage.observations }}</p>
+      </ion-label>
+
+      <div class="chips">
+        <ion-chip [color]="occupancyColor(storage.occupancyStatus)">
+          <ion-label>{{ storage.occupancyStatus }}</ion-label>
+        </ion-chip>
+        <ion-chip [color]="storage.active ? 'success' : 'medium'">
+          <ion-label>{{ storage.active ? 'Activa' : 'Inactiva' }}</ion-label>
+        </ion-chip>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

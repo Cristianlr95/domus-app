@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/storages"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="storage-form-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando bodega...</p>
+  </div>
+
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-input label="Codigo" labelPlacement="stacked" formControlName="storageCode" maxlength="50"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Tamano o tipo" labelPlacement="stacked" formControlName="storageType">
+          <ion-select-option *ngFor="let option of storageTypes" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Disponibilidad" labelPlacement="stacked" formControlName="occupancyStatus">
+          <ion-select-option *ngFor="let option of occupancyStatuses" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Unidad asociada" labelPlacement="stacked" formControlName="unitId">
+          <ion-select-option *ngFor="let unit of units" [value]="unit.id">
+            {{ unit.blockLabel }} - {{ unit.unitCode }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          label="Observaciones"
+          labelPlacement="stacked"
+          formControlName="observations"
+          maxlength="500"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Guardando...' : (isEditMode ? 'Actualizar bodega' : 'Registrar bodega') }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
