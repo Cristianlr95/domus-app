@@ -1,0 +1,17 @@
+.visit-create-page {
+  --background: linear-gradient(180deg, #f7f2e8 0%, #ffffff 72%);
+}
+
+.visit-form {
+  padding: 1rem 0 2rem;
+}
+
+.actions {
+  padding: 0 1rem 1rem;
+}
+
+.error-copy {
+  padding: 0 1rem 1rem;
+  color: var(--ion-color-danger);
+  font-size: 0.95rem;
+}

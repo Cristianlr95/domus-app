@@ -2,17 +2,17 @@
   <ion-toolbar>
     <ion-title>Domus</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">Cerrar sesión</ion-button>
+      <ion-button (click)="logout()">Cerrar sesion</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="dashboard-page">
   <section class="hero" *ngIf="user as currentUser">
-    <p class="eyebrow">Sesión activa</p>
+    <p class="eyebrow">Sesion activa</p>
     <h1>Hola, {{ currentUser.firstName }} {{ currentUser.lastName }}</h1>
     <p class="copy">
-      Esta base ya reconoce el usuario autenticado, sus roles y la protección de rutas para seguir creciendo con módulos como visitas y encomiendas.
+      Esta base ya reconoce el usuario autenticado, sus roles y la proteccion de rutas para seguir creciendo con modulos como visitas y encomiendas.
     </p>
 
     <div class="role-row">
@@ -31,6 +31,14 @@
           </ion-card-header>
           <ion-card-content>
             {{ action.description }}
+            <ion-button
+              *ngIf="action.route"
+              fill="outline"
+              size="small"
+              class="action-link"
+              [routerLink]="action.route">
+              Abrir modulo
+            </ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>

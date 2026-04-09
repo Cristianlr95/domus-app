@@ -6,6 +6,7 @@ interface QuickAction {
   title: string;
   description: string;
   roles: UserRole[];
+  route?: string;
 }
 
 @Component({
@@ -19,14 +20,15 @@ export class DashboardPage {
 
   readonly quickActions: QuickAction[] = [
     {
-      title: 'Administración',
-      description: 'Gestiona usuarios, comunidades y la configuración base del sistema.',
+      title: 'Administracion',
+      description: 'Gestiona usuarios, comunidades y la configuracion base del sistema.',
       roles: ['ADMIN'],
     },
     {
-      title: 'Conserjería',
-      description: 'Accede rápido a visitas, encomiendas y futuras tareas operativas.',
+      title: 'Conserjeria',
+      description: 'Accede rapido a visitas, encomiendas y futuras tareas operativas.',
       roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/visits',
     },
     {
       title: 'Portal residente',

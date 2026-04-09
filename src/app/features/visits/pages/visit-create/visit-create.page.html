@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/visits"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nueva visita</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="visit-create-page">
+  <form class="visit-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <ion-list inset="true">
+      <ion-item>
+        <ion-input label="Nombre del visitante" labelPlacement="stacked" formControlName="visitorName"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Documento o RUT" labelPlacement="stacked" formControlName="visitorDocument"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Teléfono" labelPlacement="stacked" formControlName="visitorPhone"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Patente" labelPlacement="stacked" formControlName="vehiclePlate"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Residente asociado" labelPlacement="stacked" formControlName="residentName"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Unidad / departamento" labelPlacement="stacked" formControlName="unitLabel"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Bloque / torre" labelPlacement="stacked" formControlName="blockLabel"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Tipo de registro" labelPlacement="stacked" formControlName="registrationType">
+          <ion-select-option *ngFor="let type of registrationTypes" [value]="type.value">{{ type.label }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-textarea label="Observaciones" labelPlacement="stacked" formControlName="observations" autoGrow="true"></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <div class="error-copy" *ngIf="form.invalid && form.touched">
+      Completa los datos obligatorios para registrar la visita.
+    </div>
+
+    <div class="actions">
+      <ion-button expand="block" type="submit" [disabled]="submitting">
+        <ion-spinner slot="start" *ngIf="submitting"></ion-spinner>
+        {{ submitting ? 'Guardando...' : 'Registrar visita' }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

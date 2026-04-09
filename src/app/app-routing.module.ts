@@ -15,6 +15,11 @@ const routes: Routes = [
     loadChildren: () => import('./features/dashboard/dashboard.module').then( m => m.DashboardModule)
   },
   {
+    path: 'visits',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/visits/visits.module').then( m => m.VisitsModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'

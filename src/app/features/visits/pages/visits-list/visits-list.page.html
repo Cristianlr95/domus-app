@@ -1,0 +1,60 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Visitas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createVisit()">Nueva visita</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="visits-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="search"
+      placeholder="Buscar por visitante, documento, residente o unidad"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
+
+    <ion-item>
+      <ion-select
+        label="Estado"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedStatus"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option value="PENDIENTE">Pendiente</ion-select-option>
+        <ion-select-option value="INGRESADA">Ingresada</ion-select-option>
+        <ion-select-option value="FINALIZADA">Finalizada</ion-select-option>
+        <ion-select-option value="CANCELADA">Cancelada</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando visitas...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && visits.length === 0">
+    <h2>No hay visitas registradas</h2>
+    <p>Comienza creando la primera visita para conserjería.</p>
+    <ion-button (click)="createVisit()">Registrar visita</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && visits.length > 0">
+    <ion-item button detail="true" *ngFor="let visit of visits; trackBy: trackByVisit" (click)="openDetail(visit.id)">
+      <ion-label>
+        <h2>{{ visit.visitorName }}</h2>
+        <p>{{ visit.visitorDocument }} · {{ visit.residentName }}</p>
+        <p *ngIf="visit.unitLabel || visit.blockLabel">
+          {{ visit.blockLabel || 'Sin bloque' }} {{ visit.unitLabel ? '· ' + visit.unitLabel : '' }}
+        </p>
+      </ion-label>
+
+      <ion-chip [color]="statusColor(visit.status)">
+        <ion-label>{{ statusLabel(visit.status) }}</ion-label>
+      </ion-chip>
+    </ion-item>
+  </ion-list>
+</ion-content>
