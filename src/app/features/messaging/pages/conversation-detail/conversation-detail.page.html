@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/messaging"></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="conversation">{{ conversation.otherParticipant.firstName }} {{ conversation.otherParticipant.lastName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refresh()">Actualizar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="conversation-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando conversacion...</p>
+  </div>
+
+  <div class="messages" *ngIf="!loading && conversation as currentConversation">
+    <div class="empty-wrap" *ngIf="currentConversation.messages.length === 0">
+      <p>No hay mensajes en esta conversacion.</p>
+    </div>
+
+    <article
+      *ngFor="let message of currentConversation.messages"
+      class="message-bubble"
+      [class.own]="isOwnMessage(message)">
+      <p class="message-author">
+        {{ isOwnMessage(message) ? 'Tu' : (message.sender.firstName + ' ' + message.sender.lastName) }}
+      </p>
+      <p class="message-content">{{ message.content }}</p>
+      <div class="message-meta">
+        <span>{{ message.createdAt | date:'short' }}</span>
+        <span *ngIf="isOwnMessage(message)">{{ message.status === 'LEIDO' ? 'Leido' : 'Enviado' }}</span>
+      </div>
+    </article>
+  </div>
+</ion-content>
+
+<ion-footer *ngIf="conversation">
+  <ion-toolbar>
+    <form class="composer" [formGroup]="form" (ngSubmit)="submit()">
+      <ion-textarea
+        formControlName="content"
+        placeholder="Escribe un mensaje..."
+        autoGrow="true"
+        maxlength="2000">
+      </ion-textarea>
+      <ion-button type="submit" [disabled]="sending">
+        {{ sending ? 'Enviando...' : 'Enviar' }}
+      </ion-button>
+    </form>
+  </ion-toolbar>
+</ion-footer>

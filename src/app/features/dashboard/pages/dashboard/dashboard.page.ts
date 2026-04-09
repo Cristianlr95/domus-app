@@ -66,6 +66,12 @@ export class DashboardPage {
       roles: ['ADMIN', 'CONSERJERIA'],
       route: '/storages',
     },
+    {
+      title: 'Mensajeria',
+      description: 'Centraliza conversaciones internas entre residentes, conserjeria y administracion futura.',
+      roles: ['ADMIN', 'CONSERJERIA', 'RESIDENTE'],
+      route: '/messaging',
+    },
   ];
 
   get user(): AuthUser | null {

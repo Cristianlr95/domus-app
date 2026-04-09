@@ -50,6 +50,11 @@ const routes: Routes = [
     loadChildren: () => import('./features/storages/storages.module').then( m => m.StoragesModule)
   },
   {
+    path: 'messaging',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/messaging/messaging.module').then( m => m.MessagingModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'

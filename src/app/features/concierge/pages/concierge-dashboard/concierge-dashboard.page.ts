@@ -55,6 +55,11 @@ export class ConciergeDashboardPage {
       description: 'Consultar espacios de almacenamiento por unidad y controlar su disponibilidad.',
       route: '/storages',
     },
+    {
+      title: 'Mensajeria',
+      description: 'Enviar avisos rapidos a residentes y revisar conversaciones activas.',
+      route: '/messaging',
+    },
   ];
 
   dashboard: ConciergeDashboard | null = null;

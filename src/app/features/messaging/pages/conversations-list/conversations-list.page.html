@@ -1,0 +1,38 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Mensajeria interna</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createConversation()">Nuevo mensaje</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="conversations-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando conversaciones...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && conversations.length === 0">
+    <h2>No tienes conversaciones aun</h2>
+    <p>Inicia un mensaje con conserjeria, residentes u otros usuarios habilitados.</p>
+    <ion-button (click)="createConversation()">Enviar primer mensaje</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && conversations.length > 0">
+    <ion-item button detail="true" *ngFor="let conversation of conversations; trackBy: trackByConversation" (click)="openConversation(conversation.id)">
+      <ion-label>
+        <h2>{{ conversation.otherParticipant.firstName }} {{ conversation.otherParticipant.lastName }}</h2>
+        <p>{{ conversation.lastMessagePreview || 'Sin mensajes recientes' }}</p>
+        <p>{{ conversation.lastMessageAt | date:'short' }}</p>
+      </ion-label>
+
+      <div class="summary">
+        <ion-chip *ngIf="conversation.lastMessageFromCurrentUser" color="medium">
+          <ion-label>Tuyo</ion-label>
+        </ion-chip>
+        <ion-badge *ngIf="conversation.unreadCount > 0" color="danger">{{ conversation.unreadCount }}</ion-badge>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/messaging"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nuevo mensaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="compose-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando contactos...</p>
+  </div>
+
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-select label="Destinatario" labelPlacement="stacked" formControlName="recipientUserId">
+          <ion-select-option *ngFor="let contact of contacts" [value]="contact.id">
+            {{ contact.firstName }} {{ contact.lastName }} - {{ contact.email }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          label="Mensaje"
+          labelPlacement="stacked"
+          formControlName="content"
+          maxlength="2000"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Enviando...' : 'Enviar mensaje' }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
