@@ -1,0 +1,66 @@
+<ion-content [fullscreen]="true" class="login-page">
+  <section class="login-shell">
+    <div class="brand-copy">
+      <p class="eyebrow">Domus</p>
+      <h1>Acceso de operación</h1>
+      <p class="description">
+        Inicia sesión para administrar comunidades, conserjería y futuros módulos operativos desde una base segura.
+      </p>
+    </div>
+
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title>Entrar</ion-card-title>
+        <ion-card-subtitle>Usa una de las cuentas demo del backend.</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <ion-list lines="none">
+            <ion-item>
+              <ion-input
+                label="Email"
+                labelPlacement="stacked"
+                type="email"
+                formControlName="email"
+                autocomplete="username"
+                placeholder="admin@domus.cl">
+              </ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="emailControl.touched && emailControl.invalid">
+              Ingresa un email válido.
+            </ion-note>
+
+            <ion-item>
+              <ion-input
+                label="Contraseña"
+                labelPlacement="stacked"
+                type="password"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="Domus123!">
+              </ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="passwordControl.touched && passwordControl.invalid">
+              La contraseña debe tener al menos 8 caracteres.
+            </ion-note>
+          </ion-list>
+
+          <ion-button expand="block" type="submit" [disabled]="submitting">
+            <ion-spinner slot="start" name="crescent" *ngIf="submitting"></ion-spinner>
+            {{ submitting ? 'Ingresando...' : 'Iniciar sesión' }}
+          </ion-button>
+        </form>
+
+        <div class="demo-accounts">
+          <p>Cuentas demo:</p>
+          <ul>
+            <li>`admin@domus.cl` / `Domus123!`</li>
+            <li>`conserjeria@domus.cl` / `Domus123!`</li>
+            <li>`residente@domus.cl` / `Domus123!`</li>
+          </ul>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </section>
+</ion-content>
