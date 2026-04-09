@@ -44,9 +44,9 @@
     <ion-item button detail="true" *ngFor="let resident of residents; trackBy: trackByResident" (click)="openDetail(resident.id)">
       <ion-label>
         <h2>{{ resident.firstName }} {{ resident.lastName }}</h2>
-        <p>{{ resident.documentNumber }}{{ resident.email ? ' · ' + resident.email : '' }}</p>
-        <p *ngIf="resident.blockLabel || resident.unitLabel">
-          {{ resident.blockLabel || 'Sin bloque' }}{{ resident.unitLabel ? ' · ' + resident.unitLabel : '' }}
+        <p>{{ resident.documentNumber }}{{ resident.email ? ' - ' + resident.email : '' }}</p>
+        <p *ngIf="resident.unit">
+          {{ resident.unit.blockLabel }} - {{ resident.unit.unitCode }}
         </p>
       </ion-label>
 

@@ -30,6 +30,11 @@ const routes: Routes = [
     loadChildren: () => import('./features/residents/residents.module').then( m => m.ResidentsModule)
   },
   {
+    path: 'units',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/units/units.module').then( m => m.UnitsModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'

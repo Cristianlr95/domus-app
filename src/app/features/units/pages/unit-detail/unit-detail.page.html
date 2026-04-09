@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/units"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de unidad</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editUnit()" *ngIf="unit">Editar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="unit-detail-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando unidad...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && unit as currentUnit">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-label>
+          <h2>Unidad</h2>
+          <p>{{ currentUnit.blockLabel }} · {{ currentUnit.unitCode }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentUnit.floorNumber !== null">
+        <ion-label>
+          <h2>Piso</h2>
+          <p>{{ currentUnit.floorNumber }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Estado</h2>
+          <p>{{ currentUnit.active ? 'Activa' : 'Inactiva' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentUnit.observations">
+        <ion-label>
+          <h2>Observaciones</h2>
+          <p>{{ currentUnit.observations }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true">
+      <ion-list-header>
+        <ion-label>Residentes asociados</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngIf="currentUnit.residents.length === 0">
+        <ion-label>
+          <p>No hay residentes asociados a esta unidad.</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item *ngFor="let resident of currentUnit.residents">
+        <ion-label>
+          <h2>{{ resident.firstName }} {{ resident.lastName }}</h2>
+          <p>{{ resident.documentNumber }} · {{ residentTypeLabel(resident.residentType) }}</p>
+        </ion-label>
+        <ion-chip [color]="resident.active ? 'success' : 'medium'">
+          <ion-label>{{ resident.active ? 'Activo' : 'Inactivo' }}</ion-label>
+        </ion-chip>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" fill="outline" (click)="editUnit()">
+        Editar unidad
+      </ion-button>
+      <ion-button
+        expand="block"
+        [color]="currentUnit.active ? 'medium' : 'success'"
+        [disabled]="mutating"
+        (click)="toggleStatus()">
+        {{ mutating ? 'Actualizando...' : (currentUnit.active ? 'Marcar como inactiva' : 'Reactivar unidad') }}
+      </ion-button>
+    </div>
+  </ng-container>
+</ion-content>

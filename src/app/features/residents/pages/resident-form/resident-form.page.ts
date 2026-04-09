@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
+import { Unit } from '../../../units/models/unit.models';
+import { UnitsApiService } from '../../../units/services/units-api.service';
 import {
   CreateResidentRequest,
   Resident,
@@ -22,6 +24,7 @@ import { ResidentsApiService } from '../../services/residents-api.service';
 export class ResidentFormPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly residentsApiService = inject(ResidentsApiService);
+  private readonly unitsApiService = inject(UnitsApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
@@ -40,13 +43,13 @@ export class ResidentFormPage {
     email: ['', [Validators.email, Validators.maxLength(150)]],
     phone: ['', [Validators.maxLength(50)]],
     residentType: ['PROPIETARIO' as ResidentType, [Validators.required]],
-    unitLabel: ['', [Validators.maxLength(80)]],
-    blockLabel: ['', [Validators.maxLength(80)]],
+    unitId: [''],
     linkedUserId: [''],
   });
 
   resident: Resident | null = null;
   linkableUsers: ResidentLinkedUser[] = [];
+  units: Unit[] = [];
   loading = false;
   submitting = false;
 
@@ -59,6 +62,7 @@ export class ResidentFormPage {
   }
 
   ionViewWillEnter(): void {
+    this.loadUnits();
     const residentId = this.route.snapshot.paramMap.get('id');
     if (residentId) {
       this.loadResident(residentId);
@@ -114,8 +118,7 @@ export class ResidentFormPage {
             email: resident.email ?? '',
             phone: resident.phone ?? '',
             residentType: resident.residentType,
-            unitLabel: resident.unitLabel ?? '',
-            blockLabel: resident.blockLabel ?? '',
+            unitId: resident.unit?.id ?? '',
             linkedUserId: resident.linkedUser?.id ?? '',
           });
           this.loadLinkableUsers(resident.linkedUser?.id ?? null);
@@ -138,6 +141,18 @@ export class ResidentFormPage {
       });
   }
 
+  private loadUnits(): void {
+    this.unitsApiService.list('', '')
+      .subscribe({
+        next: (units) => {
+          this.units = units;
+        },
+        error: async (error) => {
+          await this.feedbackService.error(this.authService.getErrorMessage(error));
+        },
+      });
+  }
+
   private normalizePayload(): CreateResidentRequest {
     const raw = this.form.getRawValue();
 
@@ -148,8 +163,7 @@ export class ResidentFormPage {
       email: raw.email.trim() || null,
       phone: raw.phone.trim() || null,
       residentType: raw.residentType,
-      unitLabel: raw.unitLabel.trim() || null,
-      blockLabel: raw.blockLabel.trim() || null,
+      unitId: raw.unitId || null,
       linkedUserId: raw.linkedUserId || null,
     };
   }

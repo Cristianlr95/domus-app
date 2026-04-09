@@ -54,10 +54,11 @@
           <p>{{ currentResident.active ? 'Activo' : 'Inactivo' }}</p>
         </ion-label>
       </ion-item>
-      <ion-item *ngIf="currentResident.blockLabel || currentResident.unitLabel">
+      <ion-item *ngIf="currentResident.unit">
         <ion-label>
-          <h2>Ubicacion</h2>
-          <p>{{ currentResident.blockLabel || 'Sin bloque' }}{{ currentResident.unitLabel ? ' · ' + currentResident.unitLabel : '' }}</p>
+          <h2>Unidad</h2>
+          <p>{{ currentResident.unit.blockLabel }} - {{ currentResident.unit.unitCode }}</p>
+          <p *ngIf="currentResident.unit.floorNumber !== null">Piso {{ currentResident.unit.floorNumber }}</p>
         </ion-label>
       </ion-item>
       <ion-item *ngIf="currentResident.linkedUser">

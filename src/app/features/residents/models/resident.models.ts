@@ -7,6 +7,13 @@ export interface ResidentLinkedUser {
   email: string;
 }
 
+export interface ResidentUnitSummary {
+  id: string;
+  unitCode: string;
+  blockLabel: string;
+  floorNumber: number | null;
+}
+
 export interface Resident {
   id: string;
   firstName: string;
@@ -16,8 +23,7 @@ export interface Resident {
   phone: string | null;
   active: boolean;
   residentType: ResidentType;
-  unitLabel: string | null;
-  blockLabel: string | null;
+  unit: ResidentUnitSummary | null;
   createdAt: string;
   updatedAt: string;
   linkedUser: ResidentLinkedUser | null;
@@ -30,9 +36,8 @@ export interface CreateResidentRequest {
   email: string | null;
   phone: string | null;
   residentType: ResidentType;
-  unitLabel: string | null;
-  blockLabel: string | null;
   linkedUserId: string | null;
+  unitId: string | null;
 }
 
 export interface UpdateResidentRequest extends CreateResidentRequest {}

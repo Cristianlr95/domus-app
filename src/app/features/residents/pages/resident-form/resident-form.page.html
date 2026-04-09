@@ -44,18 +44,19 @@
       </ion-item>
 
       <ion-item>
-        <ion-input label="Unidad o departamento" labelPlacement="stacked" formControlName="unitLabel" maxlength="80"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-input label="Bloque o torre" labelPlacement="stacked" formControlName="blockLabel" maxlength="80"></ion-input>
+        <ion-select label="Unidad o departamento" labelPlacement="stacked" formControlName="unitId">
+          <ion-select-option value="">Sin asociar</ion-select-option>
+          <ion-select-option *ngFor="let unit of units" [value]="unit.id">
+            {{ unit.blockLabel }} - {{ unit.unitCode }}
+          </ion-select-option>
+        </ion-select>
       </ion-item>
 
       <ion-item>
         <ion-select label="Usuario autenticado asociado" labelPlacement="stacked" formControlName="linkedUserId">
           <ion-select-option value="">Sin asociar</ion-select-option>
           <ion-select-option *ngFor="let user of linkableUsers" [value]="user.id">
-            {{ user.firstName }} {{ user.lastName }} · {{ user.email }}
+            {{ user.firstName }} {{ user.lastName }} - {{ user.email }}
           </ion-select-option>
         </ion-select>
       </ion-item>

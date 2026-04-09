@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Unidades</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createUnit()">Nueva unidad</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="units-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="search"
+      placeholder="Buscar por torre, unidad u observacion"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
+
+    <ion-item>
+      <ion-select
+        label="Estado"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedActive"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todas</ion-select-option>
+        <ion-select-option [value]="true">Activas</ion-select-option>
+        <ion-select-option [value]="false">Inactivas</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando unidades...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && units.length === 0">
+    <h2>No hay unidades registradas</h2>
+    <p>Comienza creando la primera unidad o departamento.</p>
+    <ion-button (click)="createUnit()">Registrar unidad</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && units.length > 0">
+    <ion-item button detail="true" *ngFor="let unit of units; trackBy: trackByUnit" (click)="openDetail(unit.id)">
+      <ion-label>
+        <h2>{{ unit.blockLabel }} · {{ unit.unitCode }}</h2>
+        <p *ngIf="unit.floorNumber !== null">Piso {{ unit.floorNumber }}</p>
+        <p>{{ unit.residents.length }} residente(s) asociado(s)</p>
+      </ion-label>
+      <ion-chip [color]="unit.active ? 'success' : 'medium'">
+        <ion-label>{{ unit.active ? 'Activa' : 'Inactiva' }}</ion-label>
+      </ion-chip>
+    </ion-item>
+  </ion-list>
+</ion-content>

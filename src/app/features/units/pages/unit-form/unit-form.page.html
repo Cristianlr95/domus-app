@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/units"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="unit-form-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando unidad...</p>
+  </div>
+
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-input label="Codigo o numero" labelPlacement="stacked" formControlName="unitCode" maxlength="50"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input label="Torre o bloque" labelPlacement="stacked" formControlName="blockLabel" maxlength="80"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input label="Piso" labelPlacement="stacked" formControlName="floorNumber" inputmode="numeric"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          label="Observaciones"
+          labelPlacement="stacked"
+          formControlName="observations"
+          maxlength="500"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Residentes asociados" labelPlacement="stacked" formControlName="residentIds" multiple="true">
+          <ion-select-option *ngFor="let resident of residents" [value]="resident.id">
+            {{ resident.firstName }} {{ resident.lastName }} - {{ resident.documentNumber }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Guardando...' : (isEditMode ? 'Actualizar unidad' : 'Registrar unidad') }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

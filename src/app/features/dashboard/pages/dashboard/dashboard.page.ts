@@ -21,9 +21,9 @@ export class DashboardPage {
   readonly quickActions: QuickAction[] = [
     {
       title: 'Administracion',
-      description: 'Gestiona usuarios, comunidades y la configuracion base del sistema.',
-      roles: ['ADMIN'],
-      route: '/residents',
+      description: 'Gestiona la base estructural del condominio con residentes y unidades.',
+      roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/units',
     },
     {
       title: 'Conserjeria',
@@ -47,6 +47,12 @@ export class DashboardPage {
       description: 'Administra personas asociadas a unidades y su futura vinculacion con usuarios del sistema.',
       roles: ['ADMIN', 'CONSERJERIA'],
       route: '/residents',
+    },
+    {
+      title: 'Unidades',
+      description: 'Consulta departamentos, asigna residentes y prepara la base para estacionamientos y bodegas.',
+      roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/units',
     },
   ];
 
