@@ -1,0 +1,39 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Domus</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Cerrar sesión</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="dashboard-page">
+  <section class="hero" *ngIf="user as currentUser">
+    <p class="eyebrow">Sesión activa</p>
+    <h1>Hola, {{ currentUser.firstName }} {{ currentUser.lastName }}</h1>
+    <p class="copy">
+      Esta base ya reconoce el usuario autenticado, sus roles y la protección de rutas para seguir creciendo con módulos como visitas y encomiendas.
+    </p>
+
+    <div class="role-row">
+      <ion-chip color="primary" *ngFor="let role of currentUser.roles">
+        <ion-label>{{ role }}</ion-label>
+      </ion-chip>
+    </div>
+  </section>
+
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12" sizeMd="6" *ngFor="let action of quickActions">
+        <ion-card *ngIf="authService.hasAnyRole(action.roles)">
+          <ion-card-header>
+            <ion-card-title>{{ action.title }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            {{ action.description }}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
