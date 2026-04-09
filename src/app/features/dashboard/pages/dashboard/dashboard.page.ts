@@ -27,9 +27,9 @@ export class DashboardPage {
     },
     {
       title: 'Conserjeria',
-      description: 'Accede rapido a visitas, encomiendas y futuras tareas operativas.',
+      description: 'Abre el panel operativo con resumen del dia, pendientes y actividad reciente.',
       roles: ['ADMIN', 'CONSERJERIA'],
-      route: '/visits',
+      route: '/concierge',
     },
     {
       title: 'Encomiendas',

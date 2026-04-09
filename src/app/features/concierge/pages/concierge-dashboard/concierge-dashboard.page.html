@@ -1,0 +1,113 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Panel de conserjeria</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="refresh()">Actualizar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="concierge-dashboard-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando panel operativo...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && dashboard as currentDashboard">
+    <section class="hero">
+      <p class="eyebrow">Operacion del dia</p>
+      <h1>Resumen operativo de conserjeria</h1>
+      <p class="copy">
+        Consulta lo pendiente, revisa actividad reciente y salta rapido a los modulos que mas usa la porteria.
+      </p>
+    </section>
+
+    <section class="metrics-grid">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Visitas activas</ion-card-subtitle>
+          <ion-card-title>{{ currentDashboard.metrics.activeVisits }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Visitas pendientes</ion-card-subtitle>
+          <ion-card-title>{{ currentDashboard.metrics.pendingVisits }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Encomiendas pendientes</ion-card-subtitle>
+          <ion-card-title>{{ currentDashboard.metrics.pendingPackages }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Residentes activos</ion-card-subtitle>
+          <ion-card-title>{{ currentDashboard.metrics.activeResidents }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Unidades activas</ion-card-subtitle>
+          <ion-card-title>{{ currentDashboard.metrics.activeUnits }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </section>
+
+    <section class="quick-links">
+      <div class="section-heading">
+        <h2>Accesos rapidos</h2>
+        <p>Entradas directas para resolver tareas frecuentes.</p>
+      </div>
+
+      <ion-grid fixed>
+        <ion-row>
+          <ion-col size="12" sizeMd="6" *ngFor="let item of quickLinks">
+            <ion-card button="true" (click)="openRoute(item.route)">
+              <ion-card-header>
+                <ion-card-title>{{ item.title }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                {{ item.description }}
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </section>
+
+    <section class="activity-section">
+      <div class="section-heading">
+        <h2>Actividad reciente</h2>
+        <p *ngIf="currentDashboard.generatedAt">Actualizado {{ currentDashboard.generatedAt | date:'short' }}</p>
+      </div>
+
+      <div class="state-wrap compact" *ngIf="recentActivity.length === 0">
+        <h3>Sin actividad reciente</h3>
+        <p>Cuando se registren visitas, encomiendas, residentes o unidades, apareceran aqui.</p>
+      </div>
+
+      <ion-list inset="true" *ngIf="recentActivity.length > 0">
+        <ion-item button detail="true" *ngFor="let activity of recentActivity" (click)="openRoute(activity.route)">
+          <ion-label>
+            <h2>{{ activity.title }}</h2>
+            <p *ngIf="activity.subtitle">{{ activity.subtitle }}</p>
+            <p>{{ activity.occurredAt | date:'short' }}</p>
+          </ion-label>
+
+          <ion-chip [color]="activityStatusColor(activity.status)">
+            <ion-label>{{ activity.status }}</ion-label>
+          </ion-chip>
+        </ion-item>
+      </ion-list>
+    </section>
+  </ng-container>
+</ion-content>

@@ -20,6 +20,11 @@ const routes: Routes = [
     loadChildren: () => import('./features/visits/visits.module').then( m => m.VisitsModule)
   },
   {
+    path: 'concierge',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/concierge/concierge.module').then( m => m.ConciergeModule)
+  },
+  {
     path: 'packages',
     canActivate: [AuthGuard],
     loadChildren: () => import('./features/packages/packages.module').then( m => m.PackagesModule)
