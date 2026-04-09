@@ -45,6 +45,11 @@ export class ConciergeDashboardPage {
       description: 'Consultar departamentos y validar sus residentes asociados.',
       route: '/units',
     },
+    {
+      title: 'Estacionamientos',
+      description: 'Visualizar espacios disponibles u ocupados y administrar sus asociaciones.',
+      route: '/parking',
+    },
   ];
 
   dashboard: ConciergeDashboard | null = null;

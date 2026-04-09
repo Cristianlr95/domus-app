@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/parking"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="parking-form-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando estacionamiento...</p>
+  </div>
+
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-input label="Codigo o numero" labelPlacement="stacked" formControlName="spotCode" maxlength="50"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Tipo" labelPlacement="stacked" formControlName="parkingType">
+          <ion-select-option *ngFor="let option of parkingTypes" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Ocupacion" labelPlacement="stacked" formControlName="occupancyStatus">
+          <ion-select-option *ngFor="let option of occupancyStatuses" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Unidad asociada" labelPlacement="stacked" formControlName="unitId">
+          <ion-select-option value="">Sin asociar</ion-select-option>
+          <ion-select-option *ngFor="let unit of units" [value]="unit.id">
+            {{ unit.blockLabel }} - {{ unit.unitCode }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Residente asociado" labelPlacement="stacked" formControlName="residentId">
+          <ion-select-option value="">Sin asociar</ion-select-option>
+          <ion-select-option *ngFor="let resident of residents" [value]="resident.id">
+            {{ resident.firstName }} {{ resident.lastName }} - {{ resident.documentNumber }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-input label="Patente asociada" labelPlacement="stacked" formControlName="vehiclePlate" maxlength="20"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          label="Observaciones"
+          labelPlacement="stacked"
+          formControlName="observations"
+          maxlength="500"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Guardando...' : (isEditMode ? 'Actualizar estacionamiento' : 'Registrar estacionamiento') }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

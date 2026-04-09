@@ -40,6 +40,11 @@ const routes: Routes = [
     loadChildren: () => import('./features/units/units.module').then( m => m.UnitsModule)
   },
   {
+    path: 'parking',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/parking/parking.module').then( m => m.ParkingModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'

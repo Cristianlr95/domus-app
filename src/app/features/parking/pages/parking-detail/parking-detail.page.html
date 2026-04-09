@@ -1,0 +1,98 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/parking"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de estacionamiento</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editParking()" *ngIf="parking">Editar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="parking-detail-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando estacionamiento...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && parking as currentParking">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-label>
+          <h2>Codigo</h2>
+          <p>{{ currentParking.spotCode }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Tipo</h2>
+          <p>{{ typeLabel(currentParking.parkingType) }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Ocupacion</h2>
+          <p>{{ currentParking.occupancyStatus }}</p>
+        </ion-label>
+        <ion-chip [color]="occupancyColor(currentParking.occupancyStatus)">
+          <ion-label>{{ currentParking.occupancyStatus }}</ion-label>
+        </ion-chip>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Estado</h2>
+          <p>{{ currentParking.active ? 'Activo' : 'Inactivo' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentParking.unit">
+        <ion-label>
+          <h2>Unidad</h2>
+          <p>{{ currentParking.unit.blockLabel }} - {{ currentParking.unit.unitCode }}</p>
+          <p *ngIf="currentParking.unit.floorNumber !== null">Piso {{ currentParking.unit.floorNumber }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentParking.resident">
+        <ion-label>
+          <h2>Residente</h2>
+          <p>{{ currentParking.resident.firstName }} {{ currentParking.resident.lastName }}</p>
+          <p>{{ currentParking.resident.documentNumber }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentParking.vehiclePlate">
+        <ion-label>
+          <h2>Patente</h2>
+          <p>{{ currentParking.vehiclePlate }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentParking.observations">
+        <ion-label>
+          <h2>Observaciones</h2>
+          <p>{{ currentParking.observations }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" fill="outline" (click)="editParking()">
+        Editar estacionamiento
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        color="warning"
+        [disabled]="mutating || !currentParking.active"
+        (click)="toggleOccupancy()">
+        {{ mutating ? 'Actualizando...' : (currentParking.occupancyStatus === 'DISPONIBLE' ? 'Marcar como ocupado' : 'Marcar como disponible') }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        [color]="currentParking.active ? 'medium' : 'success'"
+        [disabled]="mutating"
+        (click)="toggleActive()">
+        {{ mutating ? 'Actualizando...' : (currentParking.active ? 'Desactivar estacionamiento' : 'Reactivar estacionamiento') }}
+      </ion-button>
+    </div>
+  </ng-container>
+</ion-content>

@@ -54,6 +54,12 @@ export class DashboardPage {
       roles: ['ADMIN', 'CONSERJERIA'],
       route: '/units',
     },
+    {
+      title: 'Estacionamientos',
+      description: 'Administra espacios, ocupacion y futuras asociaciones con patentes y visitas.',
+      roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/parking',
+    },
   ];
 
   get user(): AuthUser | null {

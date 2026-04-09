@@ -1,0 +1,88 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Estacionamientos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createParking()">Nuevo estacionamiento</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="parking-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="search"
+      placeholder="Buscar por codigo, patente, residente o unidad"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
+
+    <ion-item>
+      <ion-select
+        label="Estado activo"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedActive"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option [value]="true">Activos</ion-select-option>
+        <ion-select-option [value]="false">Inactivos</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Ocupacion"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedOccupancyStatus"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todas</ion-select-option>
+        <ion-select-option *ngFor="let option of occupancyOptions" [value]="option.value">
+          {{ option.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Tipo"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedParkingType"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option *ngFor="let option of typeOptions" [value]="option.value">
+          {{ option.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando estacionamientos...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && parkingSpots.length === 0">
+    <h2>No hay estacionamientos registrados</h2>
+    <p>Comienza creando el primer espacio del edificio.</p>
+    <ion-button (click)="createParking()">Registrar estacionamiento</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && parkingSpots.length > 0">
+    <ion-item button detail="true" *ngFor="let parking of parkingSpots; trackBy: trackByParking" (click)="openDetail(parking.id)">
+      <ion-label>
+        <h2>{{ parking.spotCode }}</h2>
+        <p>{{ typeLabel(parking.parkingType) }}{{ parking.unit ? ' - ' + parking.unit.blockLabel + ' / ' + parking.unit.unitCode : '' }}</p>
+        <p *ngIf="parking.resident">{{ parking.resident.firstName }} {{ parking.resident.lastName }}</p>
+        <p *ngIf="parking.vehiclePlate">Patente: {{ parking.vehiclePlate }}</p>
+      </ion-label>
+
+      <div class="chips">
+        <ion-chip [color]="occupancyColor(parking.occupancyStatus)">
+          <ion-label>{{ parking.occupancyStatus }}</ion-label>
+        </ion-chip>
+        <ion-chip [color]="parking.active ? 'success' : 'medium'">
+          <ion-label>{{ parking.active ? 'Activo' : 'Inactivo' }}</ion-label>
+        </ion-chip>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>
