@@ -31,6 +31,12 @@ export class DashboardPage {
       route: '/visits',
     },
     {
+      title: 'Encomiendas',
+      description: 'Registra recepciones, consulta pendientes y marca entregas desde un flujo rapido.',
+      roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/packages',
+    },
+    {
       title: 'Portal residente',
       description: 'Prepara la base para solicitudes, avisos y aprobaciones futuras.',
       roles: ['ADMIN', 'RESIDENTE'],

@@ -1,0 +1,60 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Encomiendas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createPackage()">Nueva encomienda</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="packages-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="search"
+      placeholder="Buscar por descripcion, remitente, residente o unidad"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
+
+    <ion-item>
+      <ion-select
+        label="Estado"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedStatus"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option value="RECIBIDA">Recibida</ion-select-option>
+        <ion-select-option value="NOTIFICADA">Notificada</ion-select-option>
+        <ion-select-option value="ENTREGADA">Entregada</ion-select-option>
+        <ion-select-option value="CANCELADA">Cancelada</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando encomiendas...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && packages.length === 0">
+    <h2>No hay encomiendas registradas</h2>
+    <p>Comienza registrando la primera recepcion para conserjeria.</p>
+    <ion-button (click)="createPackage()">Registrar encomienda</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && packages.length > 0">
+    <ion-item button detail="true" *ngFor="let packageItem of packages; trackBy: trackByPackage" (click)="openDetail(packageItem.id)">
+      <ion-label>
+        <h2>{{ packageItem.description }}</h2>
+        <p>{{ packageItem.residentName }}{{ packageItem.senderName ? ' · ' + packageItem.senderName : '' }}</p>
+        <p *ngIf="packageItem.unitLabel || packageItem.blockLabel">
+          {{ packageItem.blockLabel || 'Sin bloque' }}{{ packageItem.unitLabel ? ' · ' + packageItem.unitLabel : '' }}
+        </p>
+      </ion-label>
+
+      <ion-chip [color]="statusColor(packageItem.status)">
+        <ion-label>{{ statusLabel(packageItem.status) }}</ion-label>
+      </ion-chip>
+    </ion-item>
+  </ion-list>
+</ion-content>

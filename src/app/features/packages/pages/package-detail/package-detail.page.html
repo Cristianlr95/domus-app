@@ -1,0 +1,113 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/packages"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de encomienda</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="package-detail-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando encomienda...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && packageItem as currentPackage">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-label>
+          <h2>Descripcion</h2>
+          <p>{{ currentPackage.description }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentPackage.senderName">
+        <ion-label>
+          <h2>Remitente</h2>
+          <p>{{ currentPackage.senderName }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Tipo</h2>
+          <p>{{ currentPackage.packageType }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Residente asociado</h2>
+          <p>{{ currentPackage.residentName }}</p>
+          <p *ngIf="currentPackage.residentUser">{{ currentPackage.residentUser.email }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentPackage.unitLabel || currentPackage.blockLabel">
+        <ion-label>
+          <h2>Ubicacion</h2>
+          <p>{{ currentPackage.blockLabel || 'Sin bloque' }}{{ currentPackage.unitLabel ? ' · ' + currentPackage.unitLabel : '' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Estado</h2>
+          <p>{{ statusLabel(currentPackage.status) }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Recepcion</h2>
+          <p>{{ currentPackage.receivedAt }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Entrega</h2>
+          <p>{{ currentPackage.deliveredAt || 'Aun no entregada' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentPackage.receivedByName">
+        <ion-label>
+          <h2>Recibido por</h2>
+          <p>{{ currentPackage.receivedByName }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentPackage.deliveredToName">
+        <ion-label>
+          <h2>Retirado por</h2>
+          <p>{{ currentPackage.deliveredToName }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentPackage.observations">
+        <ion-label>
+          <h2>Observaciones</h2>
+          <p>{{ currentPackage.observations }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Registrada por</h2>
+          <p>{{ currentPackage.recordedByUser.firstName }} {{ currentPackage.recordedByUser.lastName }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions" *ngIf="currentPackage.status !== 'ENTREGADA' && currentPackage.status !== 'CANCELADA'">
+      <ion-button
+        expand="block"
+        color="success"
+        [disabled]="mutating"
+        (click)="deliver()">
+        {{ mutating ? 'Actualizando...' : 'Marcar como entregada' }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        *ngFor="let nextStatus of availableNextStatuses(currentPackage.status)"
+        [color]="nextStatus === 'CANCELADA' ? 'medium' : 'primary'"
+        [disabled]="mutating"
+        (click)="updateStatus(nextStatus)">
+        {{ mutating ? 'Actualizando...' : 'Marcar como ' + statusLabel(nextStatus).toLowerCase() }}
+      </ion-button>
+    </div>
+  </ng-container>
+</ion-content>

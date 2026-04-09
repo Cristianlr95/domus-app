@@ -1,0 +1,102 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/packages"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nueva encomienda</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="package-create-page">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-input
+          label="Descripcion"
+          labelPlacement="stacked"
+          formControlName="description"
+          maxlength="180"
+          placeholder="Ej: Paquete de Mercado Libre">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Remitente"
+          labelPlacement="stacked"
+          formControlName="senderName"
+          maxlength="150"
+          placeholder="Ej: Chilexpress">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          label="Tipo"
+          labelPlacement="stacked"
+          formControlName="packageType">
+          <ion-select-option *ngFor="let type of packageTypes" [value]="type.value">
+            {{ type.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Residente"
+          labelPlacement="stacked"
+          formControlName="residentName"
+          maxlength="150"
+          placeholder="Nombre del residente">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Unidad o departamento"
+          labelPlacement="stacked"
+          formControlName="unitLabel"
+          maxlength="80"
+          placeholder="Ej: Depto 804">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Bloque o torre"
+          labelPlacement="stacked"
+          formControlName="blockLabel"
+          maxlength="80"
+          placeholder="Ej: Torre A">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Recibido por"
+          labelPlacement="stacked"
+          formControlName="receivedByName"
+          maxlength="150"
+          placeholder="Nombre de quien recibe en conserjeria">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          label="Observaciones"
+          labelPlacement="stacked"
+          formControlName="observations"
+          maxlength="500"
+          autoGrow="true"
+          placeholder="Notas internas o detalle del paquete">
+        </ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Guardando...' : 'Registrar encomienda' }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
