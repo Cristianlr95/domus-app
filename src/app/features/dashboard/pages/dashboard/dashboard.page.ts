@@ -23,6 +23,7 @@ export class DashboardPage {
       title: 'Administracion',
       description: 'Gestiona usuarios, comunidades y la configuracion base del sistema.',
       roles: ['ADMIN'],
+      route: '/residents',
     },
     {
       title: 'Conserjeria',
@@ -40,6 +41,12 @@ export class DashboardPage {
       title: 'Portal residente',
       description: 'Prepara la base para solicitudes, avisos y aprobaciones futuras.',
       roles: ['ADMIN', 'RESIDENTE'],
+    },
+    {
+      title: 'Residentes',
+      description: 'Administra personas asociadas a unidades y su futura vinculacion con usuarios del sistema.',
+      roles: ['ADMIN', 'CONSERJERIA'],
+      route: '/residents',
     },
   ];
 

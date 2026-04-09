@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Residentes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createResident()">Nuevo residente</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="residents-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="search"
+      placeholder="Buscar por nombre, documento, email o unidad"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
+
+    <ion-item>
+      <ion-select
+        label="Estado"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedActive"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option [value]="true">Activos</ion-select-option>
+        <ion-select-option [value]="false">Inactivos</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando residentes...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && residents.length === 0">
+    <h2>No hay residentes registrados</h2>
+    <p>Comienza creando el primer residente del edificio.</p>
+    <ion-button (click)="createResident()">Registrar residente</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && residents.length > 0">
+    <ion-item button detail="true" *ngFor="let resident of residents; trackBy: trackByResident" (click)="openDetail(resident.id)">
+      <ion-label>
+        <h2>{{ resident.firstName }} {{ resident.lastName }}</h2>
+        <p>{{ resident.documentNumber }}{{ resident.email ? ' · ' + resident.email : '' }}</p>
+        <p *ngIf="resident.blockLabel || resident.unitLabel">
+          {{ resident.blockLabel || 'Sin bloque' }}{{ resident.unitLabel ? ' · ' + resident.unitLabel : '' }}
+        </p>
+      </ion-label>
+
+      <ion-chip [color]="statusColor(resident.active)">
+        <ion-label>{{ statusLabel(resident.active) }}</ion-label>
+      </ion-chip>
+    </ion-item>
+  </ion-list>
+</ion-content>

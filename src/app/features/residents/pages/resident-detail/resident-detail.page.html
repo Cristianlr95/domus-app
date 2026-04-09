@@ -1,0 +1,86 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/residents"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de residente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editResident()" *ngIf="resident">Editar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="resident-detail-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando residente...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && resident as currentResident">
+    <ion-list inset="true">
+      <ion-item>
+        <ion-label>
+          <h2>Nombre</h2>
+          <p>{{ currentResident.firstName }} {{ currentResident.lastName }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Documento</h2>
+          <p>{{ currentResident.documentNumber }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentResident.email">
+        <ion-label>
+          <h2>Email</h2>
+          <p>{{ currentResident.email }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentResident.phone">
+        <ion-label>
+          <h2>Telefono</h2>
+          <p>{{ currentResident.phone }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Tipo</h2>
+          <p>{{ residentTypeLabel(currentResident.residentType) }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Estado</h2>
+          <p>{{ currentResident.active ? 'Activo' : 'Inactivo' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentResident.blockLabel || currentResident.unitLabel">
+        <ion-label>
+          <h2>Ubicacion</h2>
+          <p>{{ currentResident.blockLabel || 'Sin bloque' }}{{ currentResident.unitLabel ? ' · ' + currentResident.unitLabel : '' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="currentResident.linkedUser">
+        <ion-label>
+          <h2>Usuario vinculado</h2>
+          <p>{{ currentResident.linkedUser.firstName }} {{ currentResident.linkedUser.lastName }}</p>
+          <p>{{ currentResident.linkedUser.email }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="actions">
+      <ion-button expand="block" fill="outline" (click)="editResident()">
+        Editar residente
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        [color]="currentResident.active ? 'medium' : 'success'"
+        [disabled]="mutating"
+        (click)="toggleStatus()">
+        {{ mutating ? 'Actualizando...' : (currentResident.active ? 'Marcar como inactivo' : 'Reactivar residente') }}
+      </ion-button>
+    </div>
+  </ng-container>
+</ion-content>
