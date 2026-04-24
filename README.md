@@ -10,7 +10,8 @@ Base frontend de `Domus` construida con el mismo stack principal de `Atleta`:
 
 ## Scripts
 
-- `npm install`
+- `Copy-Item .env.example .env`
+- `npm ci`
 - `npm start`
 - `npm run build`
 - `npm run test`
@@ -19,5 +20,6 @@ Base frontend de `Domus` construida con el mismo stack principal de `Atleta`:
 
 ## Notas
 
-- La configuración inicial usa `storagePrefix: domus`.
+- La configuracion de despliegue ahora se prepara con `.env` + `scripts/prepare-env.mjs`.
 - El backend esperado por defecto es `http://localhost:8080/api/v1`.
+- La documentacion operativa esta en `docs/deployment.md`.

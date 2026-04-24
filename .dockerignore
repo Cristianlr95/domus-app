@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.angular
+coverage
+dist
+www
+docs
+.env
+.env.production
+.env.local
+.env.development.local
+.env.production.local
