@@ -1,8 +1,13 @@
-# App Structure
+# Estructura de la aplicacion Domus
 
-Estructura inicial sugerida para `Domus`:
+## Proposito
+Esta carpeta contiene la aplicacion Angular/Ionic. La organizacion actual separa infraestructura transversal, modulos funcionales y recursos compartidos.
 
-- `core/`: servicios singleton, guards, interceptors y modelos globales.
-- `shared/`: componentes UI reutilizables, pipes, directivas y utilidades.
-- `features/`: funcionalidades por dominio.
-- `home/`: landing temporal del proyecto.
+## Estructura
+- `core/`: autenticacion, guards, interceptores, servicios singleton, modelos globales y almacenamiento de sesion.
+- `features/`: modulos de dominio cargados por rutas lazy-loaded.
+- `shared/`: espacio reservado para componentes, pipes, directivas y utilidades reutilizables.
+- `home/`: pantalla heredada de la plantilla Ionic; no representa una funcionalidad principal.
+
+## Estado
+La aplicacion tiene modulos operativos activos, pero aun necesita consolidar un shell autenticado y componentes compartidos para reducir duplicacion entre CRUDs.
