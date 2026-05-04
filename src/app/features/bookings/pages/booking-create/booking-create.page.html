@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nueva Reserva</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Detalles de la Reserva</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Espacio común -->
+        <ion-item>
+          <ion-label position="floating">Espacio Común</ion-label>
+          <ion-select formControlName="commonSpaceId" required>
+            <ion-select-option *ngFor="let space of spaces" [value]="space.id">
+              {{ space.name }} ({{ space.capacity }} personas)
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Fecha de reserva -->
+        <ion-item>
+          <ion-label position="floating">Fecha</ion-label>
+          <ion-input
+            type="date"
+            formControlName="bookingDate"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <!-- Hora de inicio -->
+        <ion-item>
+          <ion-label position="floating">Hora Inicio</ion-label>
+          <ion-input
+            type="time"
+            formControlName="startTime"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <!-- Hora de fin -->
+        <ion-item>
+          <ion-label position="floating">Hora Fin</ion-label>
+          <ion-input type="time" formControlName="endTime" required></ion-input>
+        </ion-item>
+
+        <!-- Cantidad de huéspedes -->
+        <ion-item>
+          <ion-label position="floating">Cantidad de Huéspedes</ion-label>
+          <ion-input
+            type="number"
+            formControlName="guestCount"
+            min="1"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Observaciones -->
+        <ion-item>
+          <ion-label position="floating">Observaciones</ion-label>
+          <ion-textarea formControlName="observations" rows="3"></ion-textarea>
+        </ion-item>
+
+        <!-- Botones -->
+        <div class="button-group">
+          <ion-button
+            expand="block"
+            type="submit"
+            color="primary"
+            [disabled]="bookingForm.invalid || isLoading"
+          >
+            <span *ngIf="!isLoading">Crear Reserva</span>
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          </ion-button>
+          <ion-button
+            expand="block"
+            fill="outline"
+            type="button"
+            (click)="goBack()"
+          >
+            Cancelar
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </form>
+</ion-content>

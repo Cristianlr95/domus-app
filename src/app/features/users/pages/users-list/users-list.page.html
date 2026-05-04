@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-refresher slot="fixed" (ionRefresh)="loadUsers(); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Filtros -->
+  <ion-card class="filter-card">
+    <ion-card-content>
+      <!-- Búsqueda -->
+      <ion-item>
+        <ion-label position="floating">Buscar</ion-label>
+        <ion-input placeholder="Nombre o email" (ionInput)="onSearch($event)"></ion-input>
+      </ion-item>
+
+      <!-- Rol -->
+      <ion-item>
+        <ion-label position="floating">Rol</ion-label>
+        <ion-select [(ngModel)]="selectedRole" (ionChange)="onFilterChange()">
+          <ion-select-option value="">Todos</ion-select-option>
+          <ion-select-option *ngFor="let role of userRoles" [value]="role">
+            {{ getRoleLabel(role) }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Estado -->
+      <ion-item>
+        <ion-label position="floating">Estado</ion-label>
+        <ion-select [(ngModel)]="showActive" (ionChange)="onFilterChange()">
+          <ion-select-option [value]="null">Todos</ion-select-option>
+          <ion-select-option [value]="true">Activos</ion-select-option>
+          <ion-select-option [value]="false">Inactivos</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando usuarios...</p>
+  </div>
+
+  <!-- Lista de usuarios -->
+  <ion-list *ngIf="!isLoading && users.length > 0">
+    <ion-item-sliding *ngFor="let user of users" [routerLink]="['/users', user.id]">
+      <ion-item class="user-item">
+        <ion-avatar slot="start">
+          <img *ngIf="user.profileImageUrl" [src]="user.profileImageUrl" alt="Profile" />
+          <div *ngIf="!user.profileImageUrl" class="avatar-placeholder">
+            {{ (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase() }}
+          </div>
+        </ion-avatar>
+        <ion-label>
+          <div class="user-header">
+            <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+            <ion-badge [color]="getRoleColor(user.role)">
+              {{ getRoleLabel(user.role) }}
+            </ion-badge>
+          </div>
+          <p>{{ user.email }}</p>
+          <p class="user-status" [ngClass]="{ inactive: !user.active }">
+            {{ user.active ? '✓ Activo' : '✗ Inactivo' }}
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Sin resultados -->
+  <div *ngIf="!isLoading && users.length === 0" class="empty-state">
+    <ion-icon name="people"></ion-icon>
+    <p>No hay usuarios registrados</p>
+  </div>
+</ion-content>

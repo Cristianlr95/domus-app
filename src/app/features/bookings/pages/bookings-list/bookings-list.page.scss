@@ -1,0 +1,59 @@
+.filter-card {
+  margin: 10px;
+}
+
+.booking-item {
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.booking-time {
+  font-size: 0.85em;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 20px;
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 20px;
+
+  ion-icon {
+    font-size: 64px;
+    color: var(--ion-color-light-shade);
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 1.1em;
+  }
+}
