@@ -23,11 +23,14 @@
           <img [src]="user.profileImageUrl" alt="Profile" />
         </div>
         <div *ngIf="!user.profileImageUrl" class="avatar-placeholder">
-          {{ (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase() }}
+          {{ (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase()
+          }}
         </div>
         <div class="user-info">
           <h2>{{ user.firstName }} {{ user.lastName }}</h2>
-          <ion-badge [color]="getRoleColor(user.role)">{{ getRoleLabel(user.role) }}</ion-badge>
+          <ion-badge [color]="getRoleColor(user.role)"
+            >{{ getRoleLabel(user.role) }}</ion-badge
+          >
           <p class="status" [ngClass]="{ inactive: !user.active }">
             {{ user.active ? '✓ Activo' : '✗ Inactivo' }}
           </p>
@@ -106,7 +109,8 @@
       </ion-card-header>
       <ion-card-content>
         <p class="status-info">
-          Este usuario está <strong>{{ user.active ? 'ACTIVO' : 'INACTIVO' }}</strong>
+          Este usuario está
+          <strong>{{ user.active ? 'ACTIVO' : 'INACTIVO' }}</strong>
         </p>
         <ion-button
           expand="block"
@@ -115,7 +119,10 @@
           (click)="toggleActive()"
           [disabled]="isUpdating"
         >
-          <ion-icon [name]="user.active ? 'close-circle' : 'checkmark-circle'" slot="start"></ion-icon>
+          <ion-icon
+            [name]="user.active ? 'close-circle' : 'checkmark-circle'"
+            slot="start"
+          ></ion-icon>
           {{ user.active ? 'Desactivar' : 'Activar' }} Usuario
         </ion-button>
       </ion-card-content>

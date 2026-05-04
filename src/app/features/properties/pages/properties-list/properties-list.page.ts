@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PropertiesApiService } from '../../services/properties-api.service';
-import { Property, PropertyFilter, PropertyStatus, PropertyType } from '../../models/property.models';
+import {
+  Property,
+  PropertyFilter,
+  PropertyStatus,
+  PropertyType,
+} from '../../models/property.models';
 import { ToastController, AlertController } from '@ionic/angular';
 
 @Component({
@@ -19,13 +24,26 @@ export class PropertiesListPage implements OnInit, OnDestroy {
   searchTerm = '';
   private destroy$ = new Subject<void>();
 
-  propertyTypes: PropertyType[] = ['APARTAMENTO', 'CASA', 'SUITE', 'ESTUDIO', 'PENTHOUSE', 'OTRO'];
-  propertyStatuses: PropertyStatus[] = ['DISPONIBLE', 'OCUPADA', 'MANTENIMIENTO', 'VENTA', 'ALQUILER'];
+  propertyTypes: PropertyType[] = [
+    'APARTAMENTO',
+    'CASA',
+    'SUITE',
+    'ESTUDIO',
+    'PENTHOUSE',
+    'OTRO',
+  ];
+  propertyStatuses: PropertyStatus[] = [
+    'DISPONIBLE',
+    'OCUPADA',
+    'MANTENIMIENTO',
+    'VENTA',
+    'ALQUILER',
+  ];
 
   constructor(
     private propertiesApiService: PropertiesApiService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {}
 
   ngOnInit(): void {

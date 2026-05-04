@@ -7,10 +7,7 @@ import { UsersListPage } from './pages/users-list/users-list.page';
 import { UserDetailPage } from './pages/user-detail/user-detail.page';
 
 @NgModule({
-  declarations: [
-    UsersListPage,
-    UserDetailPage,
-  ],
+  declarations: [UsersListPage, UserDetailPage],
   imports: [
     CommonModule,
     FormsModule,

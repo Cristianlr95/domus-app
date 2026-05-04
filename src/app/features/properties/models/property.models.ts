@@ -1,5 +1,16 @@
-export type PropertyType = 'APARTAMENTO' | 'CASA' | 'SUITE' | 'ESTUDIO' | 'PENTHOUSE' | 'OTRO';
-export type PropertyStatus = 'DISPONIBLE' | 'OCUPADA' | 'MANTENIMIENTO' | 'VENTA' | 'ALQUILER';
+export type PropertyType =
+  | 'APARTAMENTO'
+  | 'CASA'
+  | 'SUITE'
+  | 'ESTUDIO'
+  | 'PENTHOUSE'
+  | 'OTRO';
+export type PropertyStatus =
+  | 'DISPONIBLE'
+  | 'OCUPADA'
+  | 'MANTENIMIENTO'
+  | 'VENTA'
+  | 'ALQUILER';
 
 export interface Property {
   id: string;

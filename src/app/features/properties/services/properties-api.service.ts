@@ -60,7 +60,6 @@ export class PropertiesApiService {
   }
 
   delete(id: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

@@ -19,13 +19,18 @@ export class UsersListPage implements OnInit, OnDestroy {
   searchTerm = '';
   private destroy$ = new Subject<void>();
 
-  userRoles: UserRole[] = ['ADMIN', 'CONSERJERIA', 'RESIDENTE', 'MANTENIMIENTO'];
+  userRoles: UserRole[] = [
+    'ADMIN',
+    'CONSERJERIA',
+    'RESIDENTE',
+    'MANTENIMIENTO',
+  ];
 
   constructor(
     private usersApiService: UsersApiService,
     private router: Router,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
   ) {}
 
   ngOnInit(): void {

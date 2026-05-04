@@ -4,7 +4,11 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UsersApiService } from '../../services/users-api.service';
 import { User, UserRole } from '../../models/user.models';
-import { ToastController, AlertController, LoadingController } from '@ionic/angular';
+import {
+  ToastController,
+  AlertController,
+  LoadingController,
+} from '@ionic/angular';
 
 @Component({
   selector: 'app-user-detail',
@@ -16,7 +20,12 @@ export class UserDetailPage implements OnInit, OnDestroy {
   isLoading = false;
   isUpdating = false;
   selectedRole: UserRole | null = null;
-  userRoles: UserRole[] = ['ADMIN', 'CONSERJERIA', 'RESIDENTE', 'MANTENIMIENTO'];
+  userRoles: UserRole[] = [
+    'ADMIN',
+    'CONSERJERIA',
+    'RESIDENTE',
+    'MANTENIMIENTO',
+  ];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -25,7 +34,7 @@ export class UserDetailPage implements OnInit, OnDestroy {
     private usersApiService: UsersApiService,
     private toastController: ToastController,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
   ) {}
 
   ngOnInit(): void {
@@ -154,15 +163,18 @@ export class UserDetailPage implements OnInit, OnDestroy {
     });
     await loading.present();
 
-    const action = this.user.active ? this.usersApiService.deactivate(this.user.id) : 
-                   this.usersApiService.activate(this.user.id);
+    const action = this.user.active
+      ? this.usersApiService.deactivate(this.user.id)
+      : this.usersApiService.activate(this.user.id);
 
     action.pipe(takeUntil(this.destroy$)).subscribe({
       next: (updated) => {
         loading.dismiss();
         this.isUpdating = false;
         this.user = updated;
-        this.showSuccessToast(`Usuario ${updated.active ? 'activado' : 'desactivado'}`);
+        this.showSuccessToast(
+          `Usuario ${updated.active ? 'activado' : 'desactivado'}`,
+        );
       },
       error: (error) => {
         loading.dismiss();

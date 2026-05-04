@@ -7,10 +7,7 @@ import { PropertiesListPage } from './pages/properties-list/properties-list.page
 import { PropertyDetailPage } from './pages/property-detail/property-detail.page';
 
 @NgModule({
-  declarations: [
-    PropertiesListPage,
-    PropertyDetailPage,
-  ],
+  declarations: [PropertiesListPage, PropertyDetailPage],
   imports: [
     CommonModule,
     FormsModule,

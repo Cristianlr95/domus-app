@@ -4,7 +4,11 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PropertiesApiService } from '../../services/properties-api.service';
 import { Property, PropertyStatus } from '../../models/property.models';
-import { ToastController, AlertController, LoadingController } from '@ionic/angular';
+import {
+  ToastController,
+  AlertController,
+  LoadingController,
+} from '@ionic/angular';
 
 @Component({
   selector: 'app-property-detail',
@@ -16,7 +20,13 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
   isLoading = false;
   isUpdating = false;
   selectedStatus: PropertyStatus | null = null;
-  propertyStatuses: PropertyStatus[] = ['DISPONIBLE', 'OCUPADA', 'MANTENIMIENTO', 'VENTA', 'ALQUILER'];
+  propertyStatuses: PropertyStatus[] = [
+    'DISPONIBLE',
+    'OCUPADA',
+    'MANTENIMIENTO',
+    'VENTA',
+    'ALQUILER',
+  ];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -25,7 +35,7 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
     private propertiesApiService: PropertiesApiService,
     private toastController: ToastController,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
   ) {}
 
   ngOnInit(): void {
