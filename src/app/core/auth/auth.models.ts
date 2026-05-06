@@ -6,6 +6,11 @@ export type PermissionCode =
   | 'packages.read'
   | 'packages.create'
   | 'packages.update'
+  | 'bookings.read'
+  | 'bookings.create'
+  | 'bookings.update'
+  | 'properties.read'
+  | 'properties.manage'
   | 'residents.read'
   | 'residents.manage'
   | 'units.read'
@@ -32,6 +37,11 @@ export const PERMISSIONS = {
   PACKAGES_READ: 'packages.read',
   PACKAGES_CREATE: 'packages.create',
   PACKAGES_UPDATE: 'packages.update',
+  BOOKINGS_READ: 'bookings.read',
+  BOOKINGS_CREATE: 'bookings.create',
+  BOOKINGS_UPDATE: 'bookings.update',
+  PROPERTIES_READ: 'properties.read',
+  PROPERTIES_MANAGE: 'properties.manage',
   RESIDENTS_READ: 'residents.read',
   RESIDENTS_MANAGE: 'residents.manage',
   UNITS_READ: 'units.read',

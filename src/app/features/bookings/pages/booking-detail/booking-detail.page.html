@@ -1,0 +1,160 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de Reserva</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando reserva...</p>
+  </div>
+
+  <!-- Detalle -->
+  <div *ngIf="!isLoading && booking">
+    <!-- Estado actual -->
+    <ion-card color="light">
+      <ion-card-content>
+        <div class="status-section">
+          <h2>Estado Actual</h2>
+          <ion-badge [color]="getStatusColor(booking.status)" mode="ios">
+            {{ getStatusLabel(booking.status) }}
+          </ion-badge>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información del espacio -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ booking.commonSpaceName }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Tipo de espacio</small>
+            <h3>{{ booking.commonSpaceType }}</h3>
+          </ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información del residente -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Residente</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Nombre</small>
+            <h3>{{ booking.residentName }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="booking.unitLabel">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Unidad</small>
+            <h3>{{ booking.blockLabel }} - {{ booking.unitLabel }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="booking.residentUser">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Email</small>
+            <h3>{{ booking.residentUser.email }}</h3>
+          </ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Detalles de la reserva -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Detalles</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Fecha</small>
+            <h3>{{ booking.bookingDate }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Horario</small>
+            <h3>{{ booking.startTime }} - {{ booking.endTime }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="booking.guestCount">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Huéspedes</small>
+            <h3>{{ booking.guestCount }} persona(s)</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="booking.observations">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          <ion-label>
+            <small>Observaciones</small>
+            <h3>{{ booking.observations }}</h3>
+          </ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Cambiar estado -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Cambiar Estado</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Nuevo Estado</ion-label>
+          <ion-select [(ngModel)]="selectedStatus">
+            <ion-select-option
+              *ngFor="let status of bookingStatuses"
+              [value]="status"
+            >
+              {{ getStatusLabel(status) }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-button
+          expand="block"
+          color="primary"
+          (click)="updateStatus()"
+          [disabled]="isUpdating || selectedStatus === booking.status"
+          class="margin-top"
+        >
+          <span *ngIf="!isUpdating">Actualizar Estado</span>
+          <ion-spinner *ngIf="isUpdating" name="crescent"></ion-spinner>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Acciones -->
+    <ion-card>
+      <ion-card-content>
+        <ion-button
+          expand="block"
+          color="danger"
+          fill="outline"
+          (click)="cancelBooking()"
+          [disabled]="isUpdating || booking.status === 'CANCELADA'"
+        >
+          <ion-icon name="trash" slot="start"></ion-icon>
+          Cancelar Reserva
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

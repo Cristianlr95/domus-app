@@ -1,0 +1,107 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Propiedades</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-refresher
+    slot="fixed"
+    (ionRefresh)="loadProperties(); $event.target.complete()"
+  >
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Filtros -->
+  <ion-card class="filter-card">
+    <ion-card-content>
+      <!-- Búsqueda -->
+      <ion-item>
+        <ion-label position="floating">Buscar</ion-label>
+        <ion-input
+          placeholder="Unidad o propietario"
+          (ionInput)="onSearch($event)"
+        ></ion-input>
+      </ion-item>
+
+      <!-- Tipo -->
+      <ion-item>
+        <ion-label position="floating">Tipo</ion-label>
+        <ion-select [(ngModel)]="selectedType" (ionChange)="onFilterChange()">
+          <ion-select-option value="">Todos</ion-select-option>
+          <ion-select-option *ngFor="let type of propertyTypes" [value]="type">
+            {{ getTypeLabel(type) }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Estado -->
+      <ion-item>
+        <ion-label position="floating">Estado</ion-label>
+        <ion-select [(ngModel)]="selectedStatus" (ionChange)="onFilterChange()">
+          <ion-select-option value="">Todos</ion-select-option>
+          <ion-select-option
+            *ngFor="let status of propertyStatuses"
+            [value]="status"
+          >
+            {{ getStatusLabel(status) }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando propiedades...</p>
+  </div>
+
+  <!-- Lista de propiedades -->
+  <ion-grid *ngIf="!isLoading && properties.length > 0" class="properties-grid">
+    <ion-row>
+      <ion-col
+        sizeLg="6"
+        sizeMd="6"
+        sizeSm="12"
+        *ngFor="let property of properties"
+      >
+        <ion-card class="property-card" (click)="viewDetails(property.id)">
+          <ion-card-header *ngIf="property.imageUrl">
+            <img [src]="property.imageUrl" alt="Property" />
+          </ion-card-header>
+          <ion-card-content>
+            <div class="property-header">
+              <h3>{{ property.label }}</h3>
+              <ion-badge [color]="getStatusColor(property.status)">
+                {{ getStatusLabel(property.status) }}
+              </ion-badge>
+            </div>
+            <p class="property-type">{{ getTypeLabel(property.type) }}</p>
+            <p class="property-owner">{{ property.ownerName }}</p>
+            <div class="property-info">
+              <span *ngIf="property.bedrooms"
+                >🛏️ {{ property.bedrooms }} hab.</span
+              >
+              <span *ngIf="property.bathrooms"
+                >🚿 {{ property.bathrooms }} baños</span
+              >
+            </div>
+            <div class="property-info" *ngIf="property.squareMeters">
+              <span>📐 {{ property.squareMeters }} m²</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Sin resultados -->
+  <div *ngIf="!isLoading && properties.length === 0" class="empty-state">
+    <ion-icon name="home"></ion-icon>
+    <p>No hay propiedades registradas</p>
+  </div>
+</ion-content>

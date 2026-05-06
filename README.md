@@ -3,6 +3,9 @@
 ## Descripcion
 Frontend web/mobile-first para Domus, una aplicacion de administracion residencial construida con Ionic y Angular. Permite operar modulos de conserjeria, visitas, encomiendas, residentes, unidades, estacionamientos, bodegas, mensajeria, notificaciones y auditoria desde una interfaz protegida por autenticacion.
 
+## Repositorios relacionados
+- Backend/API: [Cristianlr95/domus-server](https://github.com/Cristianlr95/domus-server)
+
 ## Problema que resuelve
 Los equipos de administracion y conserjeria necesitan registrar eventos, consultar informacion y responder rapido sin depender de herramientas dispersas. Domus App entrega una interfaz centralizada para ejecutar tareas operativas y consumir una API backend con permisos y trazabilidad.
 
@@ -102,7 +105,7 @@ npm run e2e
 ```
 
 ## Estado del proyecto
-Proyecto en desarrollo funcional. Los modulos operativos principales tienen rutas, servicios API y pantallas implementadas. Existen scaffolds pendientes (`bookings`, `properties`, `users`) y oportunidades claras de refactor para reutilizacion de UI, paginacion y layout autenticado comun.
+Proyecto en estado funcional. Los modulos operativos principales cuentan con rutas, servicios API y pantallas implementadas. El repositorio deja visibles tanto la capa de producto como decisiones de arquitectura para autenticacion, permisos, modularizacion y despliegue SPA.
 
 ## Funcionalidades implementadas
 - Login y restauracion de sesion.
@@ -130,8 +133,8 @@ Proyecto en desarrollo funcional. Los modulos operativos principales tienen ruta
 ## Valor profesional del proyecto
 Este frontend demuestra construccion de aplicaciones Angular/Ionic de dominio empresarial: modularizacion por features, guards e interceptores, consumo tipado de APIs REST, formularios reactivos, manejo de sesion, preparacion para despliegue SPA y criterio para documentar brechas reales sin sobredimensionar el alcance.
 
-## Mejoras visuales sugeridas
-- Capturas de login, dashboard, panel de conserjeria y vistas CRUD.
-- GIF del flujo login -> crear visita -> consultar detalle.
-- Diagrama simple de navegacion por roles.
-- Captura responsive en desktop y mobile.
+## Que conviene revisar primero
+- Autenticacion y rutas protegidas por rol/permiso.
+- Dashboard y panel de conserjeria.
+- CRUD operativos de visitas, encomiendas, residentes, unidades y estacionamientos.
+- Integracion con la API propia de Domus y configuracion de despliegue.
