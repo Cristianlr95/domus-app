@@ -83,6 +83,18 @@ const routes: Routes = [
     loadChildren: () => import('./features/users/users.module').then( m => m.UsersModule)
   },
   {
+    path: 'bookings',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.BOOKINGS_READ] },
+    loadChildren: () => import('./features/bookings/bookings.module').then( m => m.BookingsModule)
+  },
+  {
+    path: 'properties',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.PROPERTIES_READ] },
+    loadChildren: () => import('./features/properties/properties.module').then( m => m.PropertiesModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'
