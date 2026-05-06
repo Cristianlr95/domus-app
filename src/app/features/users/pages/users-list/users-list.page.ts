@@ -1,53 +1,144 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { UsersApiService } from '../../services/users-api.service';
+import { finalize } from 'rxjs';
+import { AlertController, ToastController } from '@ionic/angular';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { FeedbackService } from '../../../../core/services/feedback.service';
 import { User, UserFilter, UserRole } from '../../models/user.models';
-import { ToastController, AlertController } from '@ionic/angular';
+import { UsersApiService } from '../../services/users-api.service';
 
 @Component({
-  selector: 'app-users-list',
+  selector: 'app-users-list-page',
   templateUrl: './users-list.page.html',
   styleUrls: ['./users-list.page.scss'],
+  standalone: false,
 })
-export class UsersListPage implements OnInit, OnDestroy {
+export class UsersListPage {
+  private readonly usersApiService = inject(UsersApiService);
+  private readonly feedbackService = inject(FeedbackService);
+  private readonly alertController = inject(AlertController);
+  readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly userRoles: UserRole[] = ['ADMIN', 'CONSERJERIA', 'RESIDENTE', 'MANTENIMIENTO'];
+
   users: User[] = [];
-  isLoading = false;
+  loading = false;
   selectedRole: UserRole | '' = '';
-  showActive: boolean | null = null;
   searchTerm = '';
-  private destroy$ = new Subject<void>();
+  showInactive = false;
 
-  userRoles: UserRole[] = [
-    'ADMIN',
-    'CONSERJERIA',
-    'RESIDENTE',
-    'MANTENIMIENTO',
-  ];
-
-  constructor(
-    private usersApiService: UsersApiService,
-    private router: Router,
-    private toastController: ToastController,
-    private alertController: AlertController,
-  ) {}
-
-  ngOnInit(): void {
+  ionViewWillEnter(): void {
     this.loadUsers();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  loadUsers(): void {
+    this.loading = true;
+    const filter: UserFilter = {
+      role: this.selectedRole || undefined,
+      active: !this.showInactive || undefined,
+      search: this.searchTerm,
+    };
+
+    this.usersApiService.list(filter)
+      .pipe(finalize(() => {
+        this.loading = false;
+      }))
+      .subscribe({
+        next: (users) => {
+          this.users = users;
+        },
+        error: async (error) => {
+          await this.feedbackService.error(this.authService.getErrorMessage(error));
+        },
+      });
   }
 
-  loadUsers(): void {
-    this.isLoading = true;
-    const filter: UserFilter = {
-      role: this.selectedRole,
-      active: this.showActive || undefined,
-      search: this.searchTerm,
+  onFilterChange(): void {
+    this.loadUsers();
+  }
+
+  openDetail(userId: string): void {
+    void this.router.navigate(['/users', userId]);
+  }
+
+  createUser(): void {
+    void this.router.navigate(['/users/new']);
+  }
+
+  async deleteUser(user: User): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Eliminar usuario',
+      message: `¿Estás seguro de que deseas eliminar a ${user.firstName} ${user.lastName}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.usersApiService.delete(user.id).subscribe({
+              next: () => {
+                this.feedbackService.success('Usuario eliminado correctamente');
+                this.loadUsers();
+              },
+              error: async (error) => {
+                await this.feedbackService.error(this.authService.getErrorMessage(error));
+              },
+            });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async toggleUserStatus(user: User): Promise<void> {
+    const action = user.active ? 'desactivar' : 'activar';
+    const alert = await this.alertController.create({
+      header: `${action.charAt(0).toUpperCase() + action.slice(1)} usuario`,
+      message: `¿Estás seguro de que deseas ${action} a ${user.firstName} ${user.lastName}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: action.charAt(0).toUpperCase() + action.slice(1),
+          handler: () => {
+            const method = user.active ? 'deactivate' : 'activate';
+            this.usersApiService[method](user.id).subscribe({
+              next: () => {
+                this.feedbackService.success(`Usuario ${action}do correctamente`);
+                this.loadUsers();
+              },
+              error: async (error) => {
+                await this.feedbackService.error(this.authService.getErrorMessage(error));
+              },
+            });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  trackByUser(_index: number, user: User): string {
+    return user.id;
+  }
+
+  roleLabel(role: UserRole): string {
+    const labels: Record<UserRole, string> = {
+      'ADMIN': 'Administrador',
+      'CONSERJERIA': 'Conserjería',
+      'RESIDENTE': 'Residente',
+      'MANTENIMIENTO': 'Mantenimiento',
+    };
+    return labels[role] || role;
+  }
+}
     };
 
     this.usersApiService

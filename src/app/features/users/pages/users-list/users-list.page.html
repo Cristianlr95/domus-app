@@ -1,53 +1,77 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
-    </ion-buttons>
+<ion-header [translucent]="true">
+  <ion-toolbar>
     <ion-title>Usuarios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createUser()">Nuevo usuario</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
-  <ion-refresher
-    slot="fixed"
-    (ionRefresh)="loadUsers(); $event.target.complete()"
-  >
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
+<ion-content [fullscreen]="true" class="users-page">
+  <section class="filters">
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      placeholder="Buscar por nombre o email"
+      (ionClear)="onFilterChange()"
+      (ionBlur)="onFilterChange()">
+    </ion-searchbar>
 
-  <!-- Filtros -->
-  <ion-card class="filter-card">
-    <ion-card-content>
-      <!-- Búsqueda -->
-      <ion-item>
-        <ion-label position="floating">Buscar</ion-label>
-        <ion-input
-          placeholder="Nombre o email"
-          (ionInput)="onSearch($event)"
-        ></ion-input>
-      </ion-item>
+    <ion-item>
+      <ion-select
+        label="Rol"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedRole"
+        (ionChange)="onFilterChange()">
+        <ion-select-option [value]="''">Todos</ion-select-option>
+        <ion-select-option value="ADMIN">Administrador</ion-select-option>
+        <ion-select-option value="CONSERJERIA">Conserjería</ion-select-option>
+        <ion-select-option value="RESIDENTE">Residente</ion-select-option>
+        <ion-select-option value="MANTENIMIENTO">Mantenimiento</ion-select-option>
+      </ion-select>
+    </ion-item>
 
-      <!-- Rol -->
-      <ion-item>
-        <ion-label position="floating">Rol</ion-label>
-        <ion-select [(ngModel)]="selectedRole" (ionChange)="onFilterChange()">
-          <ion-select-option value="">Todos</ion-select-option>
-          <ion-select-option *ngFor="let role of userRoles" [value]="role">
-            {{ getRoleLabel(role) }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+    <ion-toggle
+      [(ngModel)]="showInactive"
+      (ionChange)="onFilterChange()">
+      Mostrar inactivos
+    </ion-toggle>
+  </section>
 
-      <!-- Estado -->
-      <ion-item>
-        <ion-label position="floating">Estado</ion-label>
-        <ion-select [(ngModel)]="showActive" (ionChange)="onFilterChange()">
-          <ion-select-option [value]="null">Todos</ion-select-option>
-          <ion-select-option [value]="true">Activos</ion-select-option>
-          <ion-select-option [value]="false">Inactivos</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-card-content>
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando usuarios...</p>
+  </div>
+
+  <div class="state-wrap" *ngIf="!loading && users.length === 0">
+    <h2>No hay usuarios registrados</h2>
+    <p>Comienza creando el primer usuario del sistema.</p>
+    <ion-button (click)="createUser()">Crear usuario</ion-button>
+  </div>
+
+  <ion-list inset="true" *ngIf="!loading && users.length > 0">
+    <ion-item button detail="true" *ngFor="let user of users; trackBy: trackByUser" (click)="openDetail(user.id)">
+      <ion-label>
+        <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+        <p>{{ user.email }}</p>
+        <p>
+          <ion-badge [color]="user.active ? 'success' : 'medium'">
+            {{ user.active ? 'Activo' : 'Inactivo' }}
+          </ion-badge>
+          <ion-chip size="small">{{ roleLabel(user.role) }}</ion-chip>
+        </p>
+      </ion-label>
+
+      <ion-buttons slot="end">
+        <ion-button (click)="toggleUserStatus(user); $event.stopPropagation()" fill="clear">
+          <ion-icon name="{{ user.active ? 'close-circle' : 'checkmark-circle' }}"></ion-icon>
+        </ion-button>
+        <ion-button (click)="deleteUser(user); $event.stopPropagation()" fill="clear" color="danger">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+</ion-content>
   </ion-card>
 
   <!-- Loading -->

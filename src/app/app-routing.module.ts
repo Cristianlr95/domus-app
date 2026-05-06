@@ -77,6 +77,12 @@ const routes: Routes = [
     loadChildren: () => import('./features/audit/audit.module').then( m => m.AuditModule)
   },
   {
+    path: 'users',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.USERS_READ] },
+    loadChildren: () => import('./features/users/users.module').then( m => m.UsersModule)
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full'
