@@ -1,33 +1,107 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header [translucent]="true">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="goBack()"></ion-back-button>
+      <ion-back-button defaultHref="/users"></ion-back-button>
     </ion-buttons>
-    <ion-title>Detalle de Usuario</ion-title>
+    <ion-title>{{ user ? 'Editar usuario' : 'Crear usuario' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
+<ion-content [fullscreen]="true" class="user-detail-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
     <p>Cargando usuario...</p>
   </div>
 
-  <!-- Detalle -->
-  <div *ngIf="!isLoading && user">
-    <!-- Avatar y estado -->
-    <ion-card color="light">
-      <ion-card-content class="avatar-section">
-        <div *ngIf="user.profileImageUrl" class="profile-image">
-          <img [src]="user.profileImageUrl" alt="Profile" />
-        </div>
-        <div *ngIf="!user.profileImageUrl" class="avatar-placeholder">
-          {{ (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase()
-          }}
-        </div>
-        <div class="user-info">
-          <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+  <form [formGroup]="form" *ngIf="!loading && form" (ngSubmit)="saveUser()">
+    <ion-list inset="true">
+      <!-- Nombre -->
+      <ion-item>
+        <ion-label position="floating">Nombre *</ion-label>
+        <ion-input
+          formControlName="firstName"
+          placeholder="Nombre del usuario"
+          type="text">
+        </ion-input>
+      </ion-item>
+      <ion-note *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched" color="danger">
+        El nombre es requerido (mínimo 2 caracteres)
+      </ion-note>
+
+      <!-- Apellido -->
+      <ion-item>
+        <ion-label position="floating">Apellido *</ion-label>
+        <ion-input
+          formControlName="lastName"
+          placeholder="Apellido del usuario"
+          type="text">
+        </ion-input>
+      </ion-item>
+      <ion-note *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched" color="danger">
+        El apellido es requerido (mínimo 2 caracteres)
+      </ion-note>
+
+      <!-- Email (solo si es nuevo) -->
+      <ion-item *ngIf="!user">
+        <ion-label position="floating">Email *</ion-label>
+        <ion-input
+          formControlName="email"
+          placeholder="usuario@ejemplo.com"
+          type="email">
+        </ion-input>
+      </ion-item>
+      <ion-note *ngIf="!user && form.get('email')?.invalid && form.get('email')?.touched" color="danger">
+        Email válido requerido
+      </ion-note>
+
+      <!-- Teléfono -->
+      <ion-item>
+        <ion-label position="floating">Teléfono</ion-label>
+        <ion-input
+          formControlName="phoneNumber"
+          placeholder="+56912345678"
+          type="tel">
+        </ion-input>
+      </ion-item>
+
+      <!-- Contraseña (solo si es nuevo) -->
+      <ion-item *ngIf="!user">
+        <ion-label position="floating">Contraseña *</ion-label>
+        <ion-input
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          type="password">
+        </ion-input>
+      </ion-item>
+      <ion-note *ngIf="!user && form.get('password')?.invalid && form.get('password')?.touched" color="danger">
+        Contraseña requerida (mínimo 6 caracteres)
+      </ion-note>
+
+      <!-- Rol -->
+      <ion-item>
+        <ion-label>Rol *</ion-label>
+        <ion-select formControlName="role" interface="popover">
+          <ion-select-option *ngFor="let role of userRoles" [value]="role">
+            {{ roleLabel(role) }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-note *ngIf="form.get('role')?.invalid && form.get('role')?.touched" color="danger">
+        Rol requerido
+      </ion-note>
+    </ion-list>
+
+    <!-- Botones de acción -->
+    <div class="button-group">
+      <ion-button
+        expand="block"
+        [disabled]="form.invalid || mutating">
+        <ion-spinner name="crescent" *ngIf="mutating"></ion-spinner>
+        <span *ngIf="!mutating">{{ user ? 'Actualizar' : 'Crear' }}</span>
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
           <ion-badge [color]="getRoleColor(user.role)"
             >{{ getRoleLabel(user.role) }}</ion-badge
           >
