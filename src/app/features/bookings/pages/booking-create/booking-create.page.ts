@@ -11,6 +11,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
   selector: 'app-booking-create',
   templateUrl: './booking-create.page.html',
   styleUrls: ['./booking-create.page.scss'],
+  standalone: false,
 })
 export class BookingCreatePage implements OnInit, OnDestroy {
   bookingForm!: FormGroup;

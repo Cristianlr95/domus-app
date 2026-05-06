@@ -14,6 +14,7 @@ import {
   selector: 'app-booking-detail',
   templateUrl: './booking-detail.page.html',
   styleUrls: ['./booking-detail.page.scss'],
+  standalone: false,
 })
 export class BookingDetailPage implements OnInit, OnDestroy {
   booking: Booking | null = null;

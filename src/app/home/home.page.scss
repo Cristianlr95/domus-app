@@ -3,6 +3,8 @@
 }
 
 .hero {
+  margin-inline: auto;
+  max-width: 72rem;
   padding: 2rem 1.25rem 3rem;
 }
 
@@ -18,7 +20,7 @@
 h1 {
   margin: 0 0 1rem;
   color: #2a241c;
-  font-size: 2rem;
+  font-size: 2.2rem;
   line-height: 1.1;
 }
 
@@ -27,4 +29,29 @@ h1 {
   color: #5a4d3f;
   font-size: 1rem;
   line-height: 1.6;
+}
+
+@media (min-width: 760px) {
+  .hero {
+    padding: 4.5rem 2rem 5rem;
+  }
+
+  h1 {
+    font-size: 3.8rem;
+    max-width: 46rem;
+  }
+
+  .copy {
+    max-width: 42rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero {
+    padding: 1.5rem 1rem 2.25rem;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
 }

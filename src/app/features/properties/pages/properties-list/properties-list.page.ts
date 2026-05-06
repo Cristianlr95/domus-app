@@ -15,6 +15,7 @@ import { ToastController, AlertController } from '@ionic/angular';
   selector: 'app-properties-list',
   templateUrl: './properties-list.page.html',
   styleUrls: ['./properties-list.page.scss'],
+  standalone: false,
 })
 export class PropertiesListPage implements OnInit, OnDestroy {
   properties: Property[] = [];

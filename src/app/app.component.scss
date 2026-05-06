@@ -1,0 +1,119 @@
+.domus-menu {
+  --width: 18rem;
+  --background: var(--domus-surface);
+  border-right: 1px solid var(--domus-border);
+}
+
+.brand {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.25rem 1rem 0.75rem;
+}
+
+.brand span {
+  color: var(--domus-accent);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.brand strong {
+  color: var(--domus-text);
+  font-size: 0.98rem;
+}
+
+.brand small {
+  color: var(--domus-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.nav-list {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.5rem;
+}
+
+.nav-list ion-item {
+  --background: transparent;
+  --border-radius: 10px;
+  --color: var(--domus-muted);
+  --inner-padding-end: 0.75rem;
+  font-weight: 700;
+}
+
+.nav-list ion-item.active {
+  --background: rgba(122, 92, 54, 0.12);
+  --color: var(--domus-text);
+}
+
+.nav-list ion-icon {
+  color: var(--domus-accent);
+}
+
+.shell-main {
+  position: relative;
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
+
+.mobile-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(4.35rem, 1fr);
+  gap: 0.15rem;
+  overflow-x: auto;
+  padding: 0.35rem 0.45rem max(0.35rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--domus-border);
+  background: rgba(255, 250, 242, 0.98);
+  box-shadow: 0 -10px 28px rgba(42, 36, 28, 0.09);
+}
+
+.mobile-nav a {
+  position: relative;
+  display: grid;
+  min-height: 3.25rem;
+  place-items: center;
+  gap: 0.12rem;
+  padding: 0.35rem 0.25rem;
+  border-radius: 10px;
+  color: var(--domus-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mobile-nav a.active {
+  background: rgba(122, 92, 54, 0.12);
+  color: var(--domus-text);
+}
+
+.mobile-nav ion-icon {
+  color: var(--domus-accent);
+  font-size: 1.15rem;
+}
+
+.mobile-nav ion-badge {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.45rem;
+}
+
+@media (max-width: 991px) {
+  .shell-main {
+    padding-bottom: 4.25rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .mobile-nav {
+    display: none;
+  }
+}

@@ -15,69 +15,43 @@
 
   <form [formGroup]="form" *ngIf="!loading && form" (ngSubmit)="saveUser()">
     <ion-list inset="true">
-      <!-- Nombre -->
       <ion-item>
         <ion-label position="floating">Nombre *</ion-label>
-        <ion-input
-          formControlName="firstName"
-          placeholder="Nombre del usuario"
-          type="text">
-        </ion-input>
+        <ion-input formControlName="firstName" placeholder="Nombre del usuario" type="text"></ion-input>
       </ion-item>
       <ion-note *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched" color="danger">
-        El nombre es requerido (mínimo 2 caracteres)
+        El nombre es requerido, minimo 2 caracteres.
       </ion-note>
 
-      <!-- Apellido -->
       <ion-item>
         <ion-label position="floating">Apellido *</ion-label>
-        <ion-input
-          formControlName="lastName"
-          placeholder="Apellido del usuario"
-          type="text">
-        </ion-input>
+        <ion-input formControlName="lastName" placeholder="Apellido del usuario" type="text"></ion-input>
       </ion-item>
       <ion-note *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched" color="danger">
-        El apellido es requerido (mínimo 2 caracteres)
+        El apellido es requerido, minimo 2 caracteres.
       </ion-note>
 
-      <!-- Email (solo si es nuevo) -->
       <ion-item *ngIf="!user">
         <ion-label position="floating">Email *</ion-label>
-        <ion-input
-          formControlName="email"
-          placeholder="usuario@ejemplo.com"
-          type="email">
-        </ion-input>
+        <ion-input formControlName="email" placeholder="usuario@ejemplo.com" type="email"></ion-input>
       </ion-item>
       <ion-note *ngIf="!user && form.get('email')?.invalid && form.get('email')?.touched" color="danger">
-        Email válido requerido
+        Ingresa un email valido.
       </ion-note>
 
-      <!-- Teléfono -->
       <ion-item>
-        <ion-label position="floating">Teléfono</ion-label>
-        <ion-input
-          formControlName="phoneNumber"
-          placeholder="+56912345678"
-          type="tel">
-        </ion-input>
+        <ion-label position="floating">Telefono</ion-label>
+        <ion-input formControlName="phoneNumber" placeholder="+56912345678" type="tel"></ion-input>
       </ion-item>
 
-      <!-- Contraseña (solo si es nuevo) -->
       <ion-item *ngIf="!user">
-        <ion-label position="floating">Contraseña *</ion-label>
-        <ion-input
-          formControlName="password"
-          placeholder="Mínimo 6 caracteres"
-          type="password">
-        </ion-input>
+        <ion-label position="floating">Contrasena *</ion-label>
+        <ion-input formControlName="password" placeholder="Minimo 6 caracteres" type="password"></ion-input>
       </ion-item>
       <ion-note *ngIf="!user && form.get('password')?.invalid && form.get('password')?.touched" color="danger">
-        Contraseña requerida (mínimo 6 caracteres)
+        La contrasena requiere minimo 6 caracteres.
       </ion-note>
 
-      <!-- Rol -->
       <ion-item>
         <ion-label>Rol *</ion-label>
         <ion-select formControlName="role" interface="popover">
@@ -87,119 +61,15 @@
         </ion-select>
       </ion-item>
       <ion-note *ngIf="form.get('role')?.invalid && form.get('role')?.touched" color="danger">
-        Rol requerido
+        Selecciona un rol.
       </ion-note>
     </ion-list>
 
-    <!-- Botones de acción -->
     <div class="button-group">
-      <ion-button
-        expand="block"
-        [disabled]="form.invalid || mutating">
+      <ion-button type="submit" expand="block" [disabled]="form.invalid || mutating">
         <ion-spinner name="crescent" *ngIf="mutating"></ion-spinner>
         <span *ngIf="!mutating">{{ user ? 'Actualizar' : 'Crear' }}</span>
       </ion-button>
     </div>
   </form>
-</ion-content>
-          <ion-badge [color]="getRoleColor(user.role)"
-            >{{ getRoleLabel(user.role) }}</ion-badge
-          >
-          <p class="status" [ngClass]="{ inactive: !user.active }">
-            {{ user.active ? '✓ Activo' : '✗ Inactivo' }}
-          </p>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Información personal -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Información Personal</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item>
-          <ion-icon name="mail-outline" slot="start"></ion-icon>
-          <ion-label>
-            <small>Email</small>
-            <h3>{{ user.email }}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="user.phoneNumber">
-          <ion-icon name="call-outline" slot="start"></ion-icon>
-          <ion-label>
-            <small>Teléfono</small>
-            <h3>{{ user.phoneNumber }}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-icon name="calendar-outline" slot="start"></ion-icon>
-          <ion-label>
-            <small>Creado</small>
-            <h3>{{ user.createdAt | date: 'dd/MM/yyyy HH:mm' }}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="user.lastLogin">
-          <ion-icon name="time-outline" slot="start"></ion-icon>
-          <ion-label>
-            <small>Último acceso</small>
-            <h3>{{ user.lastLogin | date: 'dd/MM/yyyy HH:mm' }}</h3>
-          </ion-label>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Cambiar rol -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Cambiar Rol</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item>
-          <ion-label position="floating">Rol</ion-label>
-          <ion-select [(ngModel)]="selectedRole">
-            <ion-select-option *ngFor="let role of userRoles" [value]="role">
-              {{ getRoleLabel(role) }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-button
-          expand="block"
-          color="primary"
-          (click)="updateRole()"
-          [disabled]="isUpdating || selectedRole === user.role"
-          class="margin-top"
-        >
-          <span *ngIf="!isUpdating">Actualizar Rol</span>
-          <ion-spinner *ngIf="isUpdating" name="crescent"></ion-spinner>
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Estado del usuario -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Estado del Usuario</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p class="status-info">
-          Este usuario está
-          <strong>{{ user.active ? 'ACTIVO' : 'INACTIVO' }}</strong>
-        </p>
-        <ion-button
-          expand="block"
-          [color]="user.active ? 'warning' : 'success'"
-          fill="outline"
-          (click)="toggleActive()"
-          [disabled]="isUpdating"
-        >
-          <ion-icon
-            [name]="user.active ? 'close-circle' : 'checkmark-circle'"
-            slot="start"
-          ></ion-icon>
-          {{ user.active ? 'Desactivar' : 'Activar' }} Usuario
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
-  </div>
 </ion-content>

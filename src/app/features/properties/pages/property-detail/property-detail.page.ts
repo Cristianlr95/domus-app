@@ -14,6 +14,7 @@ import {
   selector: 'app-property-detail',
   templateUrl: './property-detail.page.html',
   styleUrls: ['./property-detail.page.scss'],
+  standalone: false,
 })
 export class PropertyDetailPage implements OnInit, OnDestroy {
   property: Property | null = null;

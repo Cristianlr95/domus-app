@@ -56,9 +56,9 @@ domus-app/
       messaging/
       notifications/
       audit/
-      bookings/      # scaffold pendiente
-      properties/    # scaffold pendiente
-      users/         # scaffold pendiente
+      bookings/      # reservas de espacios comunes
+      properties/    # propiedades/comunidades
+      users/         # administracion de usuarios
     shared/
     home/            # legado de plantilla Ionic
   docs/
@@ -107,23 +107,25 @@ npm run e2e
 ## Estado del proyecto
 Proyecto en estado funcional. Los modulos operativos principales cuentan con rutas, servicios API y pantallas implementadas. El repositorio deja visibles tanto la capa de producto como decisiones de arquitectura para autenticacion, permisos, modularizacion y despliegue SPA.
 
+Avance funcional estimado: `82%`.
+
 ## Funcionalidades implementadas
 - Login y restauracion de sesion.
 - Guards de acceso por autenticacion, rol y permiso.
 - Dashboard y panel de conserjeria.
 - Gestion de visitas, encomiendas, residentes, unidades, estacionamientos y bodegas.
 - Mensajeria, notificaciones y auditoria.
+- Reservas, propiedades y usuarios conectados al routing principal.
+- Shell autenticado con navegacion persistente desktop/mobile y accesos filtrados por permisos.
 - Configuracion por `.env` para builds reproducibles.
 
 ## Funcionalidades en desarrollo o parciales
-- Modulos `bookings`, `properties` y `users`: carpetas existentes, sin producto navegable.
 - Portal dedicado para residentes.
 - Componentes compartidos reales para listados, formularios y empty states.
 - E2E completo: Playwright esta configurado, pero la cobertura debe ampliarse.
 - Integracion de mapas o push notifications: dependencias instaladas, sin uso visible en runtime.
 
 ## Proximas mejoras
-- Crear shell autenticado con navegacion persistente.
 - Extraer componentes reutilizables para CRUD, filtros, loaders y estados vacios.
 - Agregar paginacion y persistencia de filtros.
 - Normalizar textos y codificacion UTF-8 en toda la interfaz.

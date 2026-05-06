@@ -48,6 +48,12 @@ export class DashboardPage {
       route: '/notifications',
     },
     {
+      title: 'Reservas',
+      description: 'Gestiona espacios comunes, estados de reserva y solicitudes asociadas a unidades.',
+      permissions: [PERMISSIONS.BOOKINGS_READ],
+      route: '/bookings',
+    },
+    {
       title: 'Residentes',
       description: 'Administra personas asociadas a unidades y su futura vinculacion con usuarios del sistema.',
       permissions: [PERMISSIONS.RESIDENTS_READ],
@@ -58,6 +64,18 @@ export class DashboardPage {
       description: 'Consulta departamentos, asigna residentes y prepara la base para estacionamientos y bodegas.',
       permissions: [PERMISSIONS.UNITS_READ],
       route: '/units',
+    },
+    {
+      title: 'Propiedades',
+      description: 'Consulta comunidades, edificios y configuracion base para la administracion multi-propiedad.',
+      permissions: [PERMISSIONS.PROPERTIES_READ],
+      route: '/properties',
+    },
+    {
+      title: 'Usuarios',
+      description: 'Administra cuentas, roles y estado de acceso para equipos operativos y residentes.',
+      permissions: [PERMISSIONS.USERS_READ],
+      route: '/users',
     },
     {
       title: 'Estacionamientos',

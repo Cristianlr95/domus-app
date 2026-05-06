@@ -35,3 +35,86 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 /* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--domus-background);
+  color: var(--domus-text);
+}
+
+ion-content {
+  --color: var(--domus-text);
+}
+
+ion-toolbar {
+  --background: rgba(255, 250, 242, 0.96);
+  --border-color: var(--domus-border);
+  --color: var(--domus-text);
+}
+
+ion-card,
+ion-item {
+  border-radius: var(--domus-radius);
+}
+
+ion-card {
+  border: 1px solid var(--domus-border);
+  box-shadow: var(--domus-shadow);
+}
+
+ion-button {
+  --border-radius: var(--domus-radius);
+  min-height: 44px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p,
+ion-card-title,
+ion-card-subtitle,
+ion-label,
+ion-note {
+  overflow-wrap: anywhere;
+}
+
+ion-card-content,
+ion-list {
+  min-width: 0;
+}
+
+@media (min-width: 760px) {
+  ion-card {
+    margin-inline: auto;
+    max-width: 72rem;
+  }
+}
+
+@media (max-width: 480px) {
+  ion-content {
+    font-size: 1rem;
+  }
+
+  ion-card {
+    margin-inline: 0.75rem;
+  }
+
+  ion-card-header,
+  ion-card-content {
+    padding-inline: 1rem;
+  }
+}

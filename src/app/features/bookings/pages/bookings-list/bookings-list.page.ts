@@ -14,6 +14,7 @@ import { ToastController, AlertController } from '@ionic/angular';
   selector: 'app-bookings-list',
   templateUrl: './bookings-list.page.html',
   styleUrls: ['./bookings-list.page.scss'],
+  standalone: false,
 })
 export class BookingsListPage implements OnInit, OnDestroy {
   bookings: Booking[] = [];
