@@ -16,11 +16,11 @@
 - `messaging`
 - `notifications`
 - `audit`
+- `users`
 
 ## Features pendientes
 - `bookings`
 - `properties`
-- `users`
 
 ## Convencion recomendada
 ```text

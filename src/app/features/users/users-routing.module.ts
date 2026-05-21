@@ -15,7 +15,7 @@ const routes: Routes = [
   {
     path: ':id',
     canActivate: [PermissionGuard],
-    data: { permissions: [PERMISSIONS.USERS_READ] },
+    data: { permissions: [PERMISSIONS.USERS_READ, PERMISSIONS.USERS_MANAGE] },
     component: UserDetailPage,
   },
 ];

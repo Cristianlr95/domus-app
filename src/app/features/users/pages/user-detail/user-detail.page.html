@@ -39,17 +39,12 @@
         Ingresa un email valido.
       </ion-note>
 
-      <ion-item>
-        <ion-label position="floating">Telefono</ion-label>
-        <ion-input formControlName="phoneNumber" placeholder="+56912345678" type="tel"></ion-input>
-      </ion-item>
-
       <ion-item *ngIf="!user">
         <ion-label position="floating">Contrasena *</ion-label>
-        <ion-input formControlName="password" placeholder="Minimo 6 caracteres" type="password"></ion-input>
+        <ion-input formControlName="password" placeholder="Minimo 8 caracteres" type="password"></ion-input>
       </ion-item>
       <ion-note *ngIf="!user && form.get('password')?.invalid && form.get('password')?.touched" color="danger">
-        La contrasena requiere minimo 6 caracteres.
+        La contrasena requiere minimo 8 caracteres.
       </ion-note>
 
       <ion-item>
@@ -66,7 +61,7 @@
     </ion-list>
 
     <div class="button-group">
-      <ion-button type="submit" expand="block" [disabled]="form.invalid || mutating">
+      <ion-button *ngIf="canManageUsers" type="submit" expand="block" [disabled]="form.invalid || mutating">
         <ion-spinner name="crescent" *ngIf="mutating"></ion-spinner>
         <span *ngIf="!mutating">{{ user ? 'Actualizar' : 'Crear' }}</span>
       </ion-button>

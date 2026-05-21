@@ -66,8 +66,4 @@ export class UsersApiService {
       .patch<ApiResponse<User>>(`${this.baseUrl}/${id}/activate`, {})
       .pipe(map((response) => response.data));
   }
-
-  delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
-  }
 }

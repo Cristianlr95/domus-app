@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { CreateUserRequest, User, UserRole, UpdateUserRequest } from '../../models/user.models';
@@ -19,14 +21,19 @@ export class UserDetailPage {
   private readonly usersApiService = inject(UsersApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly fb = inject(FormBuilder);
 
-  readonly userRoles: UserRole[] = ['ADMIN', 'CONSERJERIA', 'RESIDENTE', 'MANTENIMIENTO'];
+  readonly userRoles: UserRole[] = ['ADMIN', 'CONSERJERIA', 'RESIDENTE'];
 
   user: User | null = null;
   form: FormGroup | null = null;
   loading = false;
   mutating = false;
+
+  get canManageUsers(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.USERS_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadUser();
@@ -35,6 +42,11 @@ export class UserDetailPage {
   loadUser(): void {
     const userId = this.route.snapshot.paramMap.get('id');
     if (!userId || userId === 'new') {
+      if (!this.canManageUsers) {
+        void this.router.navigate(['/users']);
+        return;
+      }
+
       this.user = null;
       this.form = this.createForm();
       return;
@@ -48,8 +60,11 @@ export class UserDetailPage {
       }))
       .subscribe({
         next: (user) => {
-          this.user = user;
-          this.form = this.createForm(user);
+        this.user = user;
+        this.form = this.createForm(user);
+        if (!this.canManageUsers) {
+          this.form.disable();
+        }
         },
         error: async (error) => {
           await this.feedbackService.error(this.authService.getErrorMessage(error));
@@ -63,8 +78,7 @@ export class UserDetailPage {
       return this.fb.group({
         firstName: [user.firstName, [Validators.required, Validators.minLength(2)]],
         lastName: [user.lastName, [Validators.required, Validators.minLength(2)]],
-        phoneNumber: [user.phoneNumber || ''],
-        role: [user.role, Validators.required],
+        role: [this.primaryRole(user), Validators.required],
       });
     }
 
@@ -72,14 +86,13 @@ export class UserDetailPage {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: [''],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       role: ['', Validators.required],
     });
   }
 
   saveUser(): void {
-    if (!this.form || this.form.invalid || this.mutating) {
+    if (!this.canManageUsers || !this.form || this.form.invalid || this.mutating) {
       this.form?.markAllAsTouched();
       return;
     }
@@ -101,7 +114,6 @@ export class UserDetailPage {
     const request: UpdateUserRequest = {
       firstName: this.form.get('firstName')?.value,
       lastName: this.form.get('lastName')?.value,
-      phoneNumber: this.form.get('phoneNumber')?.value,
       role: this.form.get('role')?.value,
     };
 
@@ -149,8 +161,11 @@ export class UserDetailPage {
       ADMIN: 'Administrador',
       CONSERJERIA: 'Conserjeria',
       RESIDENTE: 'Residente',
-      MANTENIMIENTO: 'Mantenimiento',
     };
     return labels[role] || role;
+  }
+
+  primaryRole(user: User): UserRole {
+    return user.roles[0] ?? 'RESIDENTE';
   }
 }

@@ -2,18 +2,27 @@
   <ion-toolbar>
     <ion-title>Usuarios</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="createUser()">Nuevo usuario</ion-button>
+      <ion-button *ngIf="canManageUsers" (click)="createUser()">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Nuevo
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="users-page">
+  <section class="page-heading">
+    <p class="eyebrow">Administracion de acceso</p>
+    <h1>Usuarios</h1>
+    <p>Consulta cuentas, filtra por rol y controla el estado de acceso del equipo operativo y residentes.</p>
+  </section>
+
   <section class="filters">
     <ion-searchbar
       [(ngModel)]="searchTerm"
       placeholder="Buscar por nombre o email"
       (ionClear)="onFilterChange()"
-      (ionBlur)="onFilterChange()">
+      (ionInput)="onSearchInput()">
     </ion-searchbar>
 
     <ion-item>
@@ -43,33 +52,37 @@
 
   <div class="state-wrap" *ngIf="!loading && users.length === 0">
     <h2>No hay usuarios registrados</h2>
-    <p>Comienza creando el primer usuario del sistema.</p>
-    <ion-button (click)="createUser()">Crear usuario</ion-button>
+    <p>No encontramos usuarios con los filtros seleccionados.</p>
+    <ion-button *ngIf="canManageUsers" (click)="createUser()">Crear usuario</ion-button>
   </div>
 
-  <ion-list inset="true" *ngIf="!loading && users.length > 0">
+  <ion-list inset="true" class="users-list" *ngIf="!loading && users.length > 0">
     <ion-item
       button
       detail="true"
       *ngFor="let user of users; trackBy: trackByUser"
       (click)="openDetail(user.id)">
+      <ion-avatar slot="start">
+        <span>{{ initials(user) }}</span>
+      </ion-avatar>
+
       <ion-label>
         <h2>{{ user.firstName }} {{ user.lastName }}</h2>
         <p>{{ user.email }}</p>
-        <p>
+        <div class="meta-row">
           <ion-badge [color]="user.active ? 'success' : 'medium'">
             {{ user.active ? 'Activo' : 'Inactivo' }}
           </ion-badge>
-          <ion-chip size="small">{{ roleLabel(user.role) }}</ion-chip>
-        </p>
+          <ion-chip size="small">{{ roleLabel(primaryRole(user)) }}</ion-chip>
+        </div>
       </ion-label>
 
-      <ion-buttons slot="end">
-        <ion-button (click)="toggleUserStatus(user); $event.stopPropagation()" fill="clear">
+      <ion-buttons slot="end" *ngIf="canManageUsers">
+        <ion-button
+          (click)="toggleUserStatus(user); $event.stopPropagation()"
+          fill="clear"
+          [attr.aria-label]="user.active ? 'Desactivar usuario' : 'Activar usuario'">
           <ion-icon [name]="user.active ? 'close-circle' : 'checkmark-circle'"></ion-icon>
-        </ion-button>
-        <ion-button (click)="deleteUser(user); $event.stopPropagation()" fill="clear" color="danger">
-          <ion-icon name="trash"></ion-icon>
         </ion-button>
       </ion-buttons>
     </ion-item>

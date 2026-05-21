@@ -1,34 +1,29 @@
-export type UserRole = 'ADMIN' | 'CONSERJERIA' | 'RESIDENTE' | 'MANTENIMIENTO';
+export type UserRole = 'ADMIN' | 'CONSERJERIA' | 'RESIDENTE';
 
 export interface User {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string | null;
-  role: UserRole;
   active: boolean;
-  profileImageUrl: string | null;
+  roles: UserRole[];
+  permissions: string[];
   createdAt: string;
   updatedAt: string;
-  lastLogin?: string;
 }
 
 export interface CreateUserRequest {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber?: string;
   role: UserRole;
-  password?: string;
+  password: string;
 }
 
 export interface UpdateUserRequest {
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  role?: UserRole;
-  active?: boolean;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
 }
 
 export interface UserFilter {
