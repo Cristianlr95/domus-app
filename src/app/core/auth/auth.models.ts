@@ -82,6 +82,16 @@ export interface LoginRequest {
 export interface AuthResponse {
   tokenType: string;
   accessToken: string;
+  refreshToken: string;
   expiresIn: number;
+  refreshExpiresIn: number;
   user: AuthUser;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface LogoutRequest {
+  refreshToken: string;
 }

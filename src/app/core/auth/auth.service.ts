@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, UrlTree } from '@angular/router';
-import { catchError, finalize, map, Observable, of, tap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, tap, throwError } from 'rxjs';
 import { ApiErrorResponse, ApiResponse } from '../api/api.models';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, AuthUser, LoginRequest, PermissionCode, UserRole } from './auth.models';
@@ -25,11 +25,23 @@ export class AuthService {
       .post<ApiResponse<AuthResponse>>(`${environment.apiBaseUrl}/auth/login`, payload)
       .pipe(
         map((response) => response.data),
-        tap((response) => {
-          this.sessionStorage.setAccessToken(response.accessToken);
-          this.currentUser.set(response.user);
-        }),
+        tap((response) => this.applyAuthResponse(response)),
         finalize(() => this.loading.set(false)),
+      );
+  }
+
+  refreshSession(): Observable<AuthResponse> {
+    const refreshToken = this.sessionStorage.getRefreshToken();
+
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available.'));
+    }
+
+    return this.http
+      .post<ApiResponse<AuthResponse>>(`${environment.apiBaseUrl}/auth/refresh`, { refreshToken })
+      .pipe(
+        map((response) => response.data),
+        tap((response) => this.applyAuthResponse(response)),
       );
   }
 
@@ -88,6 +100,15 @@ export class AuthService {
   }
 
   logout(): void {
+    const refreshToken = this.sessionStorage.getRefreshToken();
+
+    if (refreshToken) {
+      this.http
+        .post<ApiResponse<void>>(`${environment.apiBaseUrl}/auth/logout`, { refreshToken })
+        .pipe(catchError(() => of(null)))
+        .subscribe();
+    }
+
     this.clearSession(true);
   }
 
@@ -113,7 +134,13 @@ export class AuthService {
 
   getErrorMessage(error: unknown): string {
     const apiError = (error as { error?: ApiErrorResponse })?.error;
-    return apiError?.message ?? 'No pudimos completar la operación. Inténtalo nuevamente.';
+    return apiError?.message ?? 'No pudimos completar la operacion. Intentalo nuevamente.';
+  }
+
+  private applyAuthResponse(response: AuthResponse): void {
+    this.sessionStorage.setAccessToken(response.accessToken);
+    this.sessionStorage.setRefreshToken(response.refreshToken);
+    this.currentUser.set(response.user);
   }
 
   private clearSession(redirect: boolean): void {

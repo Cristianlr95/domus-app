@@ -14,8 +14,9 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.sessionStorage.getAccessToken();
+    const skipsAccessToken = req.url.includes('/auth/refresh') || req.url.includes('/auth/logout');
 
-    if (!token) {
+    if (!token || skipsAccessToken) {
       return next.handle(req);
     }
 
