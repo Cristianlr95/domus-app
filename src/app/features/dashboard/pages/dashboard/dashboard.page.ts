@@ -24,6 +24,12 @@ export class DashboardPage {
 
   readonly quickActions: QuickAction[] = [
     {
+      title: 'Panel administrativo',
+      description: 'Revisa metricas globales, cuentas activas, pendientes y actividad auditada del sistema.',
+      permissions: [PERMISSIONS.ADMIN_DASHBOARD_READ],
+      route: '/admin',
+    },
+    {
       title: 'Administracion',
       description: 'Gestiona la base estructural del condominio con residentes y unidades.',
       permissions: [PERMISSIONS.UNITS_MANAGE],

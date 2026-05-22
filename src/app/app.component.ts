@@ -40,6 +40,13 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      label: 'Admin',
+      route: '/admin',
+      icon: 'analytics-outline',
+      permissions: [PERMISSIONS.ADMIN_DASHBOARD_READ],
+      mobile: true,
+    },
+    {
       label: 'Visitas',
       route: '/visits',
       icon: 'walk-outline',

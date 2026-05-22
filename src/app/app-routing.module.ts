@@ -43,6 +43,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'admin',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.ADMIN_DASHBOARD_READ] },
+    loadChildren: () =>
+      import('./features/admin/admin.module').then((m) => m.AdminModule),
+  },
+  {
     path: 'packages',
     canActivate: [PermissionGuard],
     data: {

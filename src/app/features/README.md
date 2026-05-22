@@ -4,6 +4,7 @@
 `features` contiene los dominios navegables de Domus. Cada feature debe encapsular rutas, paginas, modelos y servicios API propios.
 
 ## Features implementadas
+- `admin`
 - `auth`
 - `dashboard`
 - `concierge`

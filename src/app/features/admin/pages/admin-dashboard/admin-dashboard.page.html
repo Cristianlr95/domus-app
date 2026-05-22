@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Panel administrativo</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="refresh()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Actualizar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="admin-dashboard-page">
+  <div class="state-wrap" *ngIf="loading">
+    <ion-spinner></ion-spinner>
+    <p>Cargando panel administrativo...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && dashboard as currentDashboard">
+    <section class="hero">
+      <p class="eyebrow">Administracion</p>
+      <h1>Estado general de Domus</h1>
+      <p>
+        Monitorea volumen operativo, cuentas activas y actividad auditada desde un punto central.
+      </p>
+    </section>
+
+    <section class="metrics-grid">
+      <ion-card
+        *ngFor="let metric of metrics"
+        [button]="!!metric.route"
+        (click)="openRoute(metric.route)">
+        <ion-card-header>
+          <ion-icon [name]="metric.icon"></ion-icon>
+          <ion-card-subtitle>{{ metric.label }}</ion-card-subtitle>
+          <ion-card-title>{{ metric.value }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </section>
+
+    <section class="activity-section">
+      <div class="section-heading">
+        <div>
+          <h2>Actividad auditada</h2>
+          <p *ngIf="currentDashboard.generatedAt">Actualizado {{ currentDashboard.generatedAt | date:'short' }}</p>
+        </div>
+        <ion-button fill="outline" size="small" routerLink="/audit">Ver auditoria</ion-button>
+      </div>
+
+      <div class="state-wrap compact" *ngIf="recentActivity.length === 0">
+        <h3>Sin actividad reciente</h3>
+        <p>Las acciones auditadas apareceran aqui cuando el sistema registre movimiento.</p>
+      </div>
+
+      <ion-list inset="true" *ngIf="recentActivity.length > 0">
+        <ion-item *ngFor="let activity of recentActivity">
+          <ion-label>
+            <h2>{{ activity.summary }}</h2>
+            <p>{{ activity.entityType }} <span *ngIf="activity.actorName">por {{ activity.actorName }}</span></p>
+            <p>{{ activity.occurredAt | date:'short' }}</p>
+          </ion-label>
+
+          <ion-chip [color]="actionColor(activity.action)">
+            <ion-label>{{ activity.action }}</ion-label>
+          </ion-chip>
+        </ion-item>
+      </ion-list>
+    </section>
+  </ng-container>
+</ion-content>
