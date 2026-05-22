@@ -7,6 +7,7 @@ import { NotificationsApiService } from './features/notifications/services/notif
 
 interface ShellNavItem {
   label: string;
+  mobileLabel?: string;
   route: string;
   icon: string;
   permissions?: PermissionCode[];
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
     },
     {
       label: 'Conserjeria',
+      mobileLabel: 'Conserj.',
       route: '/concierge',
       icon: 'shield-checkmark-outline',
       permissions: [PERMISSIONS.CONCIERGE_DASHBOARD_READ],
@@ -55,6 +57,7 @@ export class AppComponent implements OnInit {
     },
     {
       label: 'Encomiendas',
+      mobileLabel: 'Encom.',
       route: '/packages',
       icon: 'cube-outline',
       permissions: [PERMISSIONS.PACKAGES_READ],
@@ -98,6 +101,7 @@ export class AppComponent implements OnInit {
     },
     {
       label: 'Notificaciones',
+      mobileLabel: 'Avisos',
       route: '/notifications',
       icon: 'notifications-outline',
       permissions: [PERMISSIONS.NOTIFICATIONS_READ],

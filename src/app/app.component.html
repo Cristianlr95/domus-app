@@ -1,6 +1,6 @@
 <ion-app>
   <ng-container *ngIf="authService.currentUser() as currentUser; else publicOutlet">
-    <ion-split-pane contentId="domus-main" when="lg">
+    <ion-split-pane contentId="domus-main" when="lg" class="domus-shell">
       <ion-menu contentId="domus-main" type="overlay" class="domus-menu">
         <ion-content>
           <section class="brand">
@@ -29,14 +29,6 @@
           </ion-list>
         </ion-content>
 
-        <ion-footer>
-          <ion-toolbar>
-            <ion-button expand="block" fill="clear" color="medium" (click)="logout()">
-              <ion-icon name="log-out-outline" slot="start"></ion-icon>
-              Cerrar sesion
-            </ion-button>
-          </ion-toolbar>
-        </ion-footer>
       </ion-menu>
 
       <main id="domus-main" class="shell-main">
@@ -48,7 +40,7 @@
             [routerLink]="item.route"
             [class.active]="isActive(item.route)">
             <ion-icon [name]="item.icon"></ion-icon>
-            <span>{{ item.label }}</span>
+            <span>{{ item.mobileLabel ?? item.label }}</span>
             <ion-badge
               *ngIf="item.route === '/notifications' && notificationsApiService.unreadCount() > 0"
               color="danger">

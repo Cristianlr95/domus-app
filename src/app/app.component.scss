@@ -1,24 +1,30 @@
+.domus-shell {
+  --side-width: 15.5rem;
+  --side-min-width: 15.5rem;
+  --side-max-width: 15.5rem;
+}
+
 .domus-menu {
-  --width: 18rem;
+  --width: 15.5rem;
   --background: var(--domus-surface);
   border-right: 1px solid var(--domus-border);
 }
 
 .brand {
   display: grid;
-  gap: 0.35rem;
-  padding: 1.25rem 1rem 0.75rem;
+  gap: 0.2rem;
+  padding: 0.95rem 0.8rem 0.45rem;
 }
 
 .brand span {
   color: var(--domus-accent);
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
 }
 
 .brand strong {
   color: var(--domus-text);
-  font-size: 0.98rem;
+  font-size: 0.9rem;
 }
 
 .brand small {
@@ -29,15 +35,18 @@
 
 .nav-list {
   display: grid;
-  gap: 0.25rem;
-  padding: 0.5rem;
+  gap: 0.05rem;
+  padding: 0.35rem;
 }
 
 .nav-list ion-item {
   --background: transparent;
-  --border-radius: 10px;
+  --border-radius: 8px;
   --color: var(--domus-muted);
-  --inner-padding-end: 0.75rem;
+  --inner-padding-end: 0.55rem;
+  --min-height: 2.75rem;
+  --padding-start: 0.65rem;
+  font-size: 0.88rem;
   font-weight: 700;
 }
 
@@ -48,6 +57,8 @@
 
 .nav-list ion-icon {
   color: var(--domus-accent);
+  font-size: 1.08rem;
+  margin-right: 0.35rem;
 }
 
 .shell-main {
@@ -63,12 +74,10 @@
   bottom: 0;
   left: 0;
   z-index: 20;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(4.35rem, 1fr);
-  gap: 0.15rem;
-  overflow-x: auto;
-  padding: 0.35rem 0.45rem max(0.35rem, env(safe-area-inset-bottom));
+  display: flex;
+  gap: 0.1rem;
+  overflow: hidden;
+  padding: 0.28rem 0.32rem max(0.28rem, env(safe-area-inset-bottom));
   border-top: 1px solid var(--domus-border);
   background: rgba(255, 250, 242, 0.98);
   box-shadow: 0 -10px 28px rgba(42, 36, 28, 0.09);
@@ -76,18 +85,27 @@
 
 .mobile-nav a {
   position: relative;
+  flex: 1 1 0;
   display: grid;
-  min-height: 3.25rem;
+  min-width: 0;
+  min-height: 3.05rem;
   place-items: center;
-  gap: 0.12rem;
-  padding: 0.35rem 0.25rem;
-  border-radius: 10px;
+  gap: 0.08rem;
+  padding: 0.28rem 0.08rem;
+  border-radius: 8px;
   color: var(--domus-muted);
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   font-weight: 800;
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.mobile-nav span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mobile-nav a.active {
@@ -97,7 +115,7 @@
 
 .mobile-nav ion-icon {
   color: var(--domus-accent);
-  font-size: 1.15rem;
+  font-size: 1rem;
 }
 
 .mobile-nav ion-badge {
