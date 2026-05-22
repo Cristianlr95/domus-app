@@ -19,9 +19,9 @@
 - `audit`
 - `users`
 - `properties`
+- `bookings`
 
 ## Features pendientes
-- `bookings`
 
 ## Convencion recomendada
 ```text
