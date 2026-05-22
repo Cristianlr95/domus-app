@@ -18,10 +18,10 @@
 - `notifications`
 - `audit`
 - `users`
+- `properties`
 
 ## Features pendientes
 - `bookings`
-- `properties`
 
 ## Convencion recomendada
 ```text

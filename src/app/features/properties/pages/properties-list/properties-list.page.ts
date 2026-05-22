@@ -9,7 +9,7 @@ import {
   PropertyStatus,
   PropertyType,
 } from '../../models/property.models';
-import { ToastController, AlertController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-properties-list',

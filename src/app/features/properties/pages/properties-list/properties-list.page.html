@@ -7,68 +7,67 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
-  <ion-refresher
-    slot="fixed"
-    (ionRefresh)="loadProperties(); $event.target.complete()"
-  >
+<ion-content fullscreen class="properties-page">
+  <ion-refresher slot="fixed" (ionRefresh)="loadProperties(); $event.target.complete()">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Filtros -->
-  <ion-card class="filter-card">
-    <ion-card-content>
-      <!-- Búsqueda -->
-      <ion-item>
-        <ion-label position="floating">Buscar</ion-label>
-        <ion-input
-          placeholder="Unidad o propietario"
-          (ionInput)="onSearch($event)"
-        ></ion-input>
-      </ion-item>
+  <section class="page-heading">
+    <p class="eyebrow">Inventario inmobiliario</p>
+    <h1>Propiedades</h1>
+    <p>Consulta disponibilidad, propietarios y atributos principales de cada propiedad.</p>
+  </section>
 
-      <!-- Tipo -->
-      <ion-item>
-        <ion-label position="floating">Tipo</ion-label>
-        <ion-select [(ngModel)]="selectedType" (ionChange)="onFilterChange()">
-          <ion-select-option value="">Todos</ion-select-option>
-          <ion-select-option *ngFor="let type of propertyTypes" [value]="type">
-            {{ getTypeLabel(type) }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+  <section class="filters">
+    <ion-item>
+      <ion-icon name="search-outline" slot="start"></ion-icon>
+      <ion-input
+        label="Buscar"
+        labelPlacement="stacked"
+        placeholder="Unidad o propietario"
+        (ionInput)="onSearch($event)"
+      ></ion-input>
+    </ion-item>
 
-      <!-- Estado -->
-      <ion-item>
-        <ion-label position="floating">Estado</ion-label>
-        <ion-select [(ngModel)]="selectedStatus" (ionChange)="onFilterChange()">
-          <ion-select-option value="">Todos</ion-select-option>
-          <ion-select-option
-            *ngFor="let status of propertyStatuses"
-            [value]="status"
-          >
-            {{ getStatusLabel(status) }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
+    <ion-item>
+      <ion-icon name="business-outline" slot="start"></ion-icon>
+      <ion-select
+        label="Tipo"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedType"
+        (ionChange)="onFilterChange()"
+      >
+        <ion-select-option value="">Todos</ion-select-option>
+        <ion-select-option *ngFor="let type of propertyTypes" [value]="type">
+          {{ getTypeLabel(type) }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
 
-  <!-- Loading -->
+    <ion-item>
+      <ion-icon name="flag-outline" slot="start"></ion-icon>
+      <ion-select
+        label="Estado"
+        labelPlacement="stacked"
+        [(ngModel)]="selectedStatus"
+        (ionChange)="onFilterChange()"
+      >
+        <ion-select-option value="">Todos</ion-select-option>
+        <ion-select-option *ngFor="let status of propertyStatuses" [value]="status">
+          {{ getStatusLabel(status) }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </section>
+
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando propiedades...</p>
   </div>
 
-  <!-- Lista de propiedades -->
   <ion-grid *ngIf="!isLoading && properties.length > 0" class="properties-grid">
     <ion-row>
-      <ion-col
-        sizeLg="6"
-        sizeMd="6"
-        sizeSm="12"
-        *ngFor="let property of properties"
-      >
+      <ion-col sizeLg="6" sizeMd="6" sizeSm="12" *ngFor="let property of properties">
         <ion-card class="property-card" (click)="viewDetails(property.id)">
           <ion-card-header *ngIf="property.imageUrl">
             <img [src]="property.imageUrl" alt="Property" />
@@ -81,17 +80,25 @@
               </ion-badge>
             </div>
             <p class="property-type">{{ getTypeLabel(property.type) }}</p>
-            <p class="property-owner">{{ property.ownerName }}</p>
+            <p class="property-owner">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ property.ownerName }}
+            </p>
             <div class="property-info">
-              <span *ngIf="property.bedrooms"
-                >🛏️ {{ property.bedrooms }} hab.</span
-              >
-              <span *ngIf="property.bathrooms"
-                >🚿 {{ property.bathrooms }} baños</span
-              >
+              <span *ngIf="property.bedrooms">
+                <ion-icon name="bed-outline"></ion-icon>
+                {{ property.bedrooms }} hab.
+              </span>
+              <span *ngIf="property.bathrooms">
+                <ion-icon name="water-outline"></ion-icon>
+                {{ property.bathrooms }} banos
+              </span>
             </div>
             <div class="property-info" *ngIf="property.squareMeters">
-              <span>📐 {{ property.squareMeters }} m²</span>
+              <span>
+                <ion-icon name="resize-outline"></ion-icon>
+                {{ property.squareMeters }} m2
+              </span>
             </div>
           </ion-card-content>
         </ion-card>
@@ -99,9 +106,8 @@
     </ion-row>
   </ion-grid>
 
-  <!-- Sin resultados -->
   <div *ngIf="!isLoading && properties.length === 0" class="empty-state">
-    <ion-icon name="home"></ion-icon>
+    <ion-icon name="home-outline"></ion-icon>
     <p>No hay propiedades registradas</p>
   </div>
 </ion-content>
