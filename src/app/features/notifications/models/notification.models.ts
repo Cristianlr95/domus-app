@@ -17,3 +17,12 @@ export interface NotificationItem {
 export interface NotificationUnreadCount {
   unreadCount: number;
 }
+
+export interface NotificationPreference {
+  type: NotificationType;
+  enabled: boolean;
+}
+
+export interface UpdateNotificationPreferencesRequest {
+  preferences: NotificationPreference[];
+}

@@ -1,10 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
-import { finalize } from 'rxjs';
+import { finalize, firstValueFrom, forkJoin } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
-import { NotificationItem, NotificationType } from '../../models/notification.models';
+import {
+  NotificationItem,
+  NotificationPreference,
+  NotificationType,
+} from '../../models/notification.models';
 import { NotificationsApiService } from '../../services/notifications-api.service';
 
 @Component({
@@ -20,7 +23,9 @@ export class NotificationsListPage {
   private readonly router = inject(Router);
 
   notifications: NotificationItem[] = [];
+  preferences: NotificationPreference[] = [];
   loading = false;
+  savingPreferences = false;
 
   ionViewWillEnter(): void {
     this.loadNotifications();
@@ -28,6 +33,47 @@ export class NotificationsListPage {
 
   refresh(): void {
     this.loadNotifications();
+  }
+
+  preferenceLabel(type: NotificationType): string {
+    switch (type) {
+      case 'PACKAGE_RECEIVED':
+        return 'Encomiendas recibidas';
+      case 'VISIT_REGISTERED':
+        return 'Visitas registradas';
+      case 'MESSAGE_RECEIVED':
+        return 'Mensajes internos';
+      case 'SYSTEM_EVENT':
+        return 'Eventos del sistema';
+    }
+  }
+
+  setPreference(type: NotificationType, enabled: boolean): void {
+    this.preferences = this.preferences.map((preference) =>
+      preference.type === type ? { ...preference, enabled } : preference,
+    );
+  }
+
+  savePreferences(): void {
+    if (this.savingPreferences) {
+      return;
+    }
+
+    this.savingPreferences = true;
+    this.notificationsApiService
+      .updatePreferences({ preferences: this.preferences })
+      .pipe(finalize(() => {
+        this.savingPreferences = false;
+      }))
+      .subscribe({
+        next: async (preferences) => {
+          this.preferences = preferences;
+          await this.feedbackService.success('Preferencias actualizadas.');
+        },
+        error: async (error) => {
+          await this.feedbackService.error(this.authService.getErrorMessage(error));
+        },
+      });
   }
 
   async openNotification(notification: NotificationItem): Promise<void> {
@@ -80,13 +126,17 @@ export class NotificationsListPage {
 
   private loadNotifications(): void {
     this.loading = true;
-    this.notificationsApiService.list()
+    forkJoin({
+      notifications: this.notificationsApiService.list(),
+      preferences: this.notificationsApiService.getPreferences(),
+    })
       .pipe(finalize(() => {
         this.loading = false;
       }))
       .subscribe({
-        next: (notifications) => {
+        next: ({ notifications, preferences }) => {
           this.notifications = notifications;
+          this.preferences = preferences;
           this.refreshUnreadCount();
         },
         error: async (error) => {

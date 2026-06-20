@@ -11,6 +11,31 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="notifications-page">
+  <section class="preferences" *ngIf="!loading && preferences.length">
+    <div>
+      <h2>Preferencias</h2>
+      <p>Elige qué eventos quieres recibir en tu bandeja.</p>
+    </div>
+    <ion-list lines="none">
+      <ion-item *ngFor="let preference of preferences">
+        <ion-toggle
+          justify="space-between"
+          [checked]="preference.enabled"
+          (ionChange)="setPreference(preference.type, $event.detail.checked)">
+          {{ preferenceLabel(preference.type) }}
+        </ion-toggle>
+      </ion-item>
+    </ion-list>
+    <ion-button
+      fill="outline"
+      size="small"
+      [disabled]="savingPreferences"
+      (click)="savePreferences()">
+      <ion-spinner slot="start" name="crescent" *ngIf="savingPreferences"></ion-spinner>
+      Guardar preferencias
+    </ion-button>
+  </section>
+
   <div class="state-wrap" *ngIf="loading">
     <ion-spinner></ion-spinner>
     <p>Cargando notificaciones...</p>

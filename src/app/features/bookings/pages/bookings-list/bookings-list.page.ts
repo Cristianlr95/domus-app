@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -17,6 +17,11 @@ import { ToastController, AlertController } from '@ionic/angular';
   standalone: false,
 })
 export class BookingsListPage implements OnInit, OnDestroy {
+  private readonly bookingsApiService = inject(BookingsApiService);
+  private readonly router = inject(Router);
+  private readonly toastController = inject(ToastController);
+  private readonly alertController = inject(AlertController);
+
   bookings: Booking[] = [];
   filteredBookings: Booking[] = [];
   isLoading = false;
@@ -31,13 +36,6 @@ export class BookingsListPage implements OnInit, OnDestroy {
     'CANCELADA',
     'COMPLETADA',
   ];
-
-  constructor(
-    private bookingsApiService: BookingsApiService,
-    private router: Router,
-    private toastController: ToastController,
-    private alertController: AlertController,
-  ) {}
 
   ngOnInit(): void {
     this.loadBookings();

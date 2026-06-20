@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -17,6 +17,13 @@ import {
   standalone: false,
 })
 export class BookingDetailPage implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly bookingsApiService = inject(BookingsApiService);
+  private readonly toastController = inject(ToastController);
+  private readonly alertController = inject(AlertController);
+  private readonly loadingController = inject(LoadingController);
+
   booking: Booking | null = null;
   isLoading = false;
   isUpdating = false;
@@ -29,15 +36,6 @@ export class BookingDetailPage implements OnInit, OnDestroy {
     'COMPLETADA',
   ];
   private destroy$ = new Subject<void>();
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private bookingsApiService: BookingsApiService,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private loadingController: LoadingController,
-  ) {}
 
   ngOnInit(): void {
     this.loadBooking();

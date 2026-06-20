@@ -3,6 +3,24 @@
   --padding-end: 0;
 }
 
+.preferences {
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--domus-border);
+  border-radius: 8px;
+  background: var(--domus-surface);
+}
+
+.preferences h2,
+.preferences p {
+  margin-top: 0;
+}
+
+.preferences ion-list {
+  margin: 0.75rem 0;
+  background: transparent;
+}
+
 .state-wrap {
   display: grid;
   gap: 0.75rem;

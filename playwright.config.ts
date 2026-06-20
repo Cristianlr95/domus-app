@@ -7,10 +7,10 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:8100',
     trace: 'on-first-retry',
   },
-  webServer: {
-    command: 'npm start -- --host=127.0.0.1 --port=8100',
+  webServer: process.env['PW_NO_SERVER'] ? undefined : {
+    command: 'node scripts/e2e-server.mjs',
     url: 'http://127.0.0.1:8100',
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

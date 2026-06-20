@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { GuestGuard } from './core/guards/guest.guard';
 import { PermissionGuard } from './core/guards/permission.guard';
+import { RoleGuard } from './core/guards/role.guard';
 import { PERMISSIONS } from './core/auth/auth.models';
 
 const routes: Routes = [
@@ -18,6 +19,15 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/dashboard/dashboard.module').then(
         (m) => m.DashboardModule,
+      ),
+  },
+  {
+    path: 'resident',
+    canActivate: [RoleGuard],
+    data: { roles: ['RESIDENTE'] },
+    loadChildren: () =>
+      import('./features/resident/resident.module').then(
+        (m) => m.ResidentModule,
       ),
   },
   {
@@ -163,6 +173,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'dashboard',
   },
 ];
 
