@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Visitas</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canCreateVisits">
       <ion-button (click)="createVisit()">Nueva visita</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -39,7 +39,7 @@
   <div class="state-wrap" *ngIf="!loading && visits.length === 0">
     <h2>No hay visitas registradas</h2>
     <p>Comienza creando la primera visita para conserjería.</p>
-    <ion-button (click)="createVisit()">Registrar visita</ion-button>
+    <ion-button *ngIf="canCreateVisits" (click)="createVisit()">Registrar visita</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && visits.length > 0">

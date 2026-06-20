@@ -90,7 +90,9 @@
       </ion-item>
     </ion-list>
 
-    <div class="actions" *ngIf="currentPackage.status !== 'ENTREGADA' && currentPackage.status !== 'CANCELADA'">
+    <div
+      class="actions"
+      *ngIf="canUpdatePackages && currentPackage.status !== 'ENTREGADA' && currentPackage.status !== 'CANCELADA'">
       <ion-button
         expand="block"
         color="success"

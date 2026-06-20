@@ -31,6 +31,7 @@
           <ion-input
             type="date"
             formControlName="bookingDate"
+            [min]="minBookingDate"
             required
           ></ion-input>
         </ion-item>
@@ -58,6 +59,7 @@
             type="number"
             formControlName="guestCount"
             min="1"
+            max="500"
           ></ion-input>
         </ion-item>
 

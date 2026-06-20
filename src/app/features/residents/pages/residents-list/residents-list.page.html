@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Residentes</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canManageResidents">
       <ion-button (click)="createResident()">Nuevo residente</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -37,7 +37,7 @@
   <div class="state-wrap" *ngIf="!loading && residents.length === 0">
     <h2>No hay residentes registrados</h2>
     <p>Comienza creando el primer residente del edificio.</p>
-    <ion-button (click)="createResident()">Registrar residente</ion-button>
+    <ion-button *ngIf="canManageResidents" (click)="createResident()">Registrar residente</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && residents.length > 0">

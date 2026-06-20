@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Unidades</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canManageUnits">
       <ion-button (click)="createUnit()">Nueva unidad</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -37,7 +37,7 @@
   <div class="state-wrap" *ngIf="!loading && units.length === 0">
     <h2>No hay unidades registradas</h2>
     <p>Comienza creando la primera unidad o departamento.</p>
-    <ion-button (click)="createUnit()">Registrar unidad</ion-button>
+    <ion-button *ngIf="canManageUnits" (click)="createUnit()">Registrar unidad</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && units.length > 0">

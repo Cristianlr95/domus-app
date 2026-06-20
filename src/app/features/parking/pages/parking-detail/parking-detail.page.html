@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Detalle de estacionamiento</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="editParking()" *ngIf="parking">Editar</ion-button>
+      <ion-button (click)="editParking()" *ngIf="parking && canManageParking">Editar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -73,7 +73,7 @@
       </ion-item>
     </ion-list>
 
-    <div class="actions">
+    <div class="actions" *ngIf="canManageParking">
       <ion-button expand="block" fill="outline" (click)="editParking()">
         Editar estacionamiento
       </ion-button>

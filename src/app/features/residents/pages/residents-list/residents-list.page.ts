@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { Resident } from '../../models/resident.models';
 import { ResidentsApiService } from '../../services/residents-api.service';
@@ -16,12 +18,17 @@ export class ResidentsListPage {
   private readonly residentsApiService = inject(ResidentsApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   residents: Resident[] = [];
   loading = false;
   selectedActive: boolean | '' = '';
   search = '';
+
+  get canManageResidents(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.RESIDENTS_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadResidents();
@@ -48,6 +55,10 @@ export class ResidentsListPage {
   }
 
   createResident(): void {
+    if (!this.canManageResidents) {
+      return;
+    }
+
     void this.router.navigate(['/residents/new']);
   }
 

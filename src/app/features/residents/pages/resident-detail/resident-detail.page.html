@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Detalle de residente</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="editResident()" *ngIf="resident">Editar</ion-button>
+      <ion-button (click)="editResident()" *ngIf="resident && canManageResidents">Editar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -70,7 +70,7 @@
       </ion-item>
     </ion-list>
 
-    <div class="actions">
+    <div class="actions" *ngIf="canManageResidents">
       <ion-button expand="block" fill="outline" (click)="editResident()">
         Editar residente
       </ion-button>

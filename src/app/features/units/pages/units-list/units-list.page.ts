@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { Unit } from '../../models/unit.models';
 import { UnitsApiService } from '../../services/units-api.service';
@@ -16,12 +18,17 @@ export class UnitsListPage {
   private readonly unitsApiService = inject(UnitsApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   units: Unit[] = [];
   loading = false;
   selectedActive: boolean | '' = '';
   search = '';
+
+  get canManageUnits(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.UNITS_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadUnits();
@@ -48,6 +55,10 @@ export class UnitsListPage {
   }
 
   createUnit(): void {
+    if (!this.canManageUnits) {
+      return;
+    }
+
     void this.router.navigate(['/units/new']);
   }
 

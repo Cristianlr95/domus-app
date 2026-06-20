@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Encomiendas</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canCreatePackages">
       <ion-button (click)="createPackage()">Nueva encomienda</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -39,7 +39,7 @@
   <div class="state-wrap" *ngIf="!loading && packages.length === 0">
     <h2>No hay encomiendas registradas</h2>
     <p>Comienza registrando la primera recepcion para conserjeria.</p>
-    <ion-button (click)="createPackage()">Registrar encomienda</ion-button>
+    <ion-button *ngIf="canCreatePackages" (click)="createPackage()">Registrar encomienda</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && packages.length > 0">

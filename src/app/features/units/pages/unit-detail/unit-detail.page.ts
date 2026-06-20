@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { ResidentType } from '../../../residents/models/resident.models';
 import { Unit } from '../../models/unit.models';
@@ -19,17 +21,22 @@ export class UnitDetailPage {
   private readonly unitsApiService = inject(UnitsApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
 
   unit: Unit | null = null;
   loading = false;
   mutating = false;
+
+  get canManageUnits(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.UNITS_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadUnit();
   }
 
   editUnit(): void {
-    if (!this.unit) {
+    if (!this.canManageUnits || !this.unit) {
       return;
     }
 
@@ -37,7 +44,7 @@ export class UnitDetailPage {
   }
 
   toggleStatus(): void {
-    if (!this.unit || this.mutating) {
+    if (!this.canManageUnits || !this.unit || this.mutating) {
       return;
     }
 

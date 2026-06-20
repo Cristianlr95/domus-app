@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin, of } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { NotificationsApiService } from '../../../notifications/services/notifications-api.service';
 import { ConversationDetail, Message } from '../../models/messaging.models';
@@ -20,6 +22,7 @@ export class ConversationDetailPage {
   private readonly messagingApiService = inject(MessagingApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly notificationsApiService = inject(NotificationsApiService);
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -29,6 +32,10 @@ export class ConversationDetailPage {
   conversation: ConversationDetail | null = null;
   loading = false;
   sending = false;
+
+  get canCreateMessages(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.MESSAGING_CREATE);
+  }
 
   ionViewWillEnter(): void {
     this.loadConversation();
@@ -43,7 +50,7 @@ export class ConversationDetailPage {
   }
 
   submit(): void {
-    if (!this.conversation || this.form.invalid || this.sending) {
+    if (!this.canCreateMessages || !this.conversation || this.form.invalid || this.sending) {
       this.form.markAllAsTouched();
       return;
     }

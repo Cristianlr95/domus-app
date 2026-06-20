@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Mensajeria interna</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canCreateMessages">
       <ion-button (click)="createConversation()">Nuevo mensaje</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -16,7 +16,7 @@
   <div class="state-wrap" *ngIf="!loading && conversations.length === 0">
     <h2>No tienes conversaciones aun</h2>
     <p>Inicia un mensaje con conserjeria, residentes u otros usuarios habilitados.</p>
-    <ion-button (click)="createConversation()">Enviar primer mensaje</ion-button>
+    <ion-button *ngIf="canCreateMessages" (click)="createConversation()">Enviar primer mensaje</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && conversations.length > 0">

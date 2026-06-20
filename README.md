@@ -108,6 +108,7 @@ npm run e2e
 Proyecto funcional para el alcance MVP definido. Los modulos administrativos, operativos y de residente cuentan con rutas, servicios API, pantallas protegidas y validacion automatizada.
 
 Avance funcional del alcance MVP: `100%`.
+Preparacion productiva estimada: `86%`.
 
 ## Funcionalidades implementadas
 - Login y restauracion de sesion.
@@ -122,12 +123,16 @@ Avance funcional del alcance MVP: `100%`.
 - Navegacion movil compacta con menu de opciones adicionales.
 - Configuracion por `.env` para builds reproducibles.
 - Flujos E2E de autenticacion, portal residente y preferencias de notificacion.
+- Acciones y comandos visibles filtrados por permisos reales.
+- Renovacion de sesion serializada para evitar rotaciones concurrentes.
+- Suite Karma headless reproducible y mocks E2E estrictos por metodo/ruta.
 
 ## Proximas mejoras
 - Extraer componentes reutilizables adicionales para reducir duplicacion.
 - Ampliar cobertura E2E hacia operaciones CRUD secundarias.
 - Integrar mapas y notificaciones push nativas en una fase posterior.
-- Evaluar almacenamiento de token fuera de `localStorage` si el backend lo permite.
+- Migrar refresh tokens a cookies `HttpOnly` en una evolucion coordinada con backend.
+- Eliminar dependencias nativas no utilizadas cuando se cierre el alcance movil.
 
 ## Valor profesional del proyecto
 Este frontend demuestra construccion de aplicaciones Angular/Ionic de dominio empresarial: modularizacion por features, guards e interceptores, consumo tipado de APIs REST, formularios reactivos, manejo de sesion, preparacion para despliegue SPA y criterio para documentar brechas reales sin sobredimensionar el alcance.

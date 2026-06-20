@@ -37,7 +37,7 @@
   </div>
 </ion-content>
 
-<ion-footer *ngIf="conversation">
+<ion-footer *ngIf="conversation && canCreateMessages">
   <ion-toolbar>
     <form class="composer" [formGroup]="form" (ngSubmit)="submit()">
       <ion-textarea

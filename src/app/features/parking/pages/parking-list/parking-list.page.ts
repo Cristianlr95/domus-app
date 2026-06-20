@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { ParkingOccupancyStatus, ParkingSpot, ParkingType } from '../../models/parking.models';
 import { ParkingApiService } from '../../services/parking-api.service';
@@ -16,6 +18,7 @@ export class ParkingListPage {
   private readonly parkingApiService = inject(ParkingApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   parkingSpots: ParkingSpot[] = [];
@@ -35,6 +38,10 @@ export class ParkingListPage {
     { value: 'VISITA', label: 'Visita' },
     { value: 'COMUN', label: 'Comun' },
   ];
+
+  get canManageParking(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.PARKING_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadParkingSpots();
@@ -61,6 +68,10 @@ export class ParkingListPage {
   }
 
   createParking(): void {
+    if (!this.canManageParking) {
+      return;
+    }
+
     void this.router.navigate(['/parking/new']);
   }
 

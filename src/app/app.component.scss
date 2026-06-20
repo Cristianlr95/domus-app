@@ -55,6 +55,11 @@
   --color: var(--domus-text);
 }
 
+.nav-list .logout-item {
+  margin-top: 0.35rem;
+  border-top: 1px solid var(--domus-border);
+}
+
 .nav-list ion-icon {
   color: var(--domus-accent);
   font-size: 1.08rem;
@@ -132,8 +137,8 @@
 }
 
 @media (max-width: 991px) {
-  .shell-main {
-    padding-bottom: 4.25rem;
+  .shell-main ion-content {
+    --padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
   }
 }
 

@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { ParkingOccupancyStatus, ParkingSpot, ParkingType } from '../../models/parking.models';
 import { ParkingApiService } from '../../services/parking-api.service';
@@ -18,17 +20,22 @@ export class ParkingDetailPage {
   private readonly parkingApiService = inject(ParkingApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
 
   parking: ParkingSpot | null = null;
   loading = false;
   mutating = false;
+
+  get canManageParking(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.PARKING_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadParking();
   }
 
   editParking(): void {
-    if (!this.parking) {
+    if (!this.canManageParking || !this.parking) {
       return;
     }
 
@@ -36,7 +43,7 @@ export class ParkingDetailPage {
   }
 
   toggleActive(): void {
-    if (!this.parking || this.mutating) {
+    if (!this.canManageParking || !this.parking || this.mutating) {
       return;
     }
 
@@ -44,7 +51,7 @@ export class ParkingDetailPage {
   }
 
   toggleOccupancy(): void {
-    if (!this.parking || this.mutating) {
+    if (!this.canManageParking || !this.parking || this.mutating) {
       return;
     }
 
@@ -89,7 +96,7 @@ export class ParkingDetailPage {
   }
 
   private updateStatus(active: boolean, occupancyStatus: ParkingOccupancyStatus): void {
-    if (!this.parking) {
+    if (!this.canManageParking || !this.parking) {
       return;
     }
 

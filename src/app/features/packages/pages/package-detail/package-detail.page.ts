@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { PackageItem, PackageStatus } from '../../models/package.models';
 import { PackagesApiService } from '../../services/packages-api.service';
@@ -18,11 +20,16 @@ export class PackageDetailPage {
   private readonly packagesApiService = inject(PackagesApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly alertController = inject(AlertController);
 
   packageItem: PackageItem | null = null;
   loading = false;
   mutating = false;
+
+  get canUpdatePackages(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.PACKAGES_UPDATE);
+  }
 
   ionViewWillEnter(): void {
     this.loadPackage();
@@ -50,7 +57,7 @@ export class PackageDetailPage {
   }
 
   updateStatus(status: PackageStatus): void {
-    if (!this.packageItem || this.mutating) {
+    if (!this.canUpdatePackages || !this.packageItem || this.mutating) {
       return;
     }
 
@@ -71,7 +78,7 @@ export class PackageDetailPage {
   }
 
   async deliver(): Promise<void> {
-    if (!this.packageItem || this.mutating) {
+    if (!this.canUpdatePackages || !this.packageItem || this.mutating) {
       return;
     }
 
@@ -133,7 +140,7 @@ export class PackageDetailPage {
   }
 
   private submitDelivery(deliveredToName: string): void {
-    if (!this.packageItem) {
+    if (!this.canUpdatePackages || !this.packageItem) {
       return;
     }
 

@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { Visit, VisitStatus } from '../../models/visit.models';
 import { VisitsApiService } from '../../services/visits-api.service';
@@ -16,6 +18,7 @@ export class VisitsListPage {
   private readonly visitsApiService = inject(VisitsApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   readonly statuses: Array<VisitStatus | ''> = ['', 'PENDIENTE', 'INGRESADA', 'FINALIZADA', 'CANCELADA'];
@@ -24,6 +27,10 @@ export class VisitsListPage {
   loading = false;
   selectedStatus: VisitStatus | '' = '';
   search = '';
+
+  get canCreateVisits(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.VISITS_CREATE);
+  }
 
   ionViewWillEnter(): void {
     this.loadVisits();
@@ -54,6 +61,10 @@ export class VisitsListPage {
   }
 
   createVisit(): void {
+    if (!this.canCreateVisits) {
+      return;
+    }
+
     void this.router.navigate(['/visits/new']);
   }
 

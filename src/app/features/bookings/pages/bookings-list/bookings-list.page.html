@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Reserva de espacios</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="createBooking()">
+      <ion-button *ngIf="canCreate" (click)="createBooking()" aria-label="Nueva reserva">
         <ion-icon name="add"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -58,7 +58,11 @@
         </ion-label>
       </ion-item>
       <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="cancelBooking(booking)" *ngIf="booking.status !== 'CANCELADA'">
+        <ion-item-option
+          color="danger"
+          (click)="cancelBooking(booking); $event.stopPropagation()"
+          *ngIf="canCancel(booking)"
+          aria-label="Cancelar reserva">
           <ion-icon name="trash"></ion-icon>
         </ion-item-option>
       </ion-item-options>

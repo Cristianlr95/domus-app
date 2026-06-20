@@ -37,12 +37,19 @@ const residentUser = {
 };
 
 async function mockApi(page: Page, currentUser = adminUser): Promise<void> {
+  let preferences = [
+    { type: 'PACKAGE_RECEIVED', enabled: true },
+    { type: 'VISIT_REGISTERED', enabled: true },
+    { type: 'MESSAGE_RECEIVED', enabled: true },
+    { type: 'SYSTEM_EVENT', enabled: false },
+  ];
+
   await page.route('**/api/v1/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
     const path = url.pathname;
 
-    if (path.endsWith('/auth/login')) {
+    if (path.endsWith('/auth/login') && request.method() === 'POST') {
       await route.fulfill({
         json: {
           data: {
@@ -58,28 +65,37 @@ async function mockApi(page: Page, currentUser = adminUser): Promise<void> {
       return;
     }
 
-    if (path.endsWith('/users/me')) {
+    if (path.endsWith('/auth/logout') && request.method() === 'POST') {
+      await route.fulfill({ json: { data: null } });
+      return;
+    }
+
+    if (path.endsWith('/users/me') && request.method() === 'GET') {
       await route.fulfill({ json: { data: currentUser } });
       return;
     }
 
-    if (path.endsWith('/notifications/unread-count')) {
+    if (path.endsWith('/notifications/unread-count') && request.method() === 'GET') {
       await route.fulfill({ json: { data: { unreadCount: 1 } } });
       return;
     }
 
     if (path.endsWith('/notifications/preferences')) {
-      const preferences = [
-        { type: 'PACKAGE_RECEIVED', enabled: true },
-        { type: 'VISIT_REGISTERED', enabled: true },
-        { type: 'MESSAGE_RECEIVED', enabled: true },
-        { type: 'SYSTEM_EVENT', enabled: false },
-      ];
+      if (request.method() === 'PUT') {
+        const payload = request.postDataJSON() as { preferences: typeof preferences };
+        preferences = preferences.map((saved) =>
+          payload.preferences.find((item) => item.type === saved.type) ?? saved,
+        );
+      } else if (request.method() !== 'GET') {
+        await route.fulfill({ status: 405, json: { code: 'METHOD_NOT_ALLOWED' } });
+        return;
+      }
+
       await route.fulfill({ json: { data: preferences } });
       return;
     }
 
-    if (path.endsWith('/notifications')) {
+    if (path.endsWith('/notifications') && request.method() === 'GET') {
       await route.fulfill({
         json: {
           data: [{
@@ -100,27 +116,30 @@ async function mockApi(page: Page, currentUser = adminUser): Promise<void> {
       return;
     }
 
-    if (path.endsWith('/bookings')) {
+    if (path.endsWith('/bookings') && request.method() === 'GET') {
       await route.fulfill({ json: { data: [] } });
       return;
     }
 
-    if (path.endsWith('/conversations')) {
+    if (path.endsWith('/conversations') && request.method() === 'GET') {
       await route.fulfill({ json: { data: [] } });
       return;
     }
 
-    if (path.endsWith('/visits')) {
+    if (path.endsWith('/visits') && request.method() === 'GET') {
       await route.fulfill({ json: { data: [] } });
       return;
     }
 
-    if (path.endsWith('/packages')) {
+    if (path.endsWith('/packages') && request.method() === 'GET') {
       await route.fulfill({ json: { data: [] } });
       return;
     }
 
-    await route.fulfill({ json: { data: null } });
+    await route.fulfill({
+      status: 404,
+      json: { code: 'UNMOCKED_ENDPOINT', message: `${request.method()} ${path}` },
+    });
   });
 }
 
@@ -158,6 +177,9 @@ test('resident session opens a private operational portal', async ({ page }) => 
   await expect(page.locator('.mobile-nav')).toBeVisible();
   expect(await page.locator('.mobile-nav a, .mobile-nav button').count()).toBeLessThanOrEqual(5);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await page.getByRole('button', { name: 'Abrir menu' }).click();
+  await expect(page.getByText('Cerrar sesion')).toBeVisible();
 });
 
 test('notification preferences are loaded and can be saved', async ({ page }) => {
@@ -167,6 +189,18 @@ test('notification preferences are loaded and can be saved', async ({ page }) =>
 
   await expect(page.getByRole('heading', { name: 'Preferencias' })).toBeVisible();
   await expect(page.getByText('Encomiendas recibidas')).toBeVisible();
+  const saveRequest = page.waitForRequest((request) =>
+    request.url().endsWith('/notifications/preferences') && request.method() === 'PUT',
+  );
   await page.getByRole('button', { name: 'Guardar preferencias' }).click();
+  const request = await saveRequest;
+  expect(request.postDataJSON()).toEqual({
+    preferences: [
+      { type: 'PACKAGE_RECEIVED', enabled: true },
+      { type: 'VISIT_REGISTERED', enabled: true },
+      { type: 'MESSAGE_RECEIVED', enabled: true },
+      { type: 'SYSTEM_EVENT', enabled: false },
+    ],
+  });
   await expect(page.getByText('Preferencias actualizadas.')).toBeVisible();
 });

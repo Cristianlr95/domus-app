@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Bodegas</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canManageStorages">
       <ion-button (click)="createStorage()">Nueva bodega</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -62,7 +62,7 @@
   <div class="state-wrap" *ngIf="!loading && storages.length === 0">
     <h2>No hay bodegas registradas</h2>
     <p>Comienza creando el primer espacio de almacenamiento del edificio.</p>
-    <ion-button (click)="createStorage()">Registrar bodega</ion-button>
+    <ion-button *ngIf="canManageStorages" (click)="createStorage()">Registrar bodega</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && storages.length > 0">
