@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { PackageItem, PackageStatus } from '../../models/package.models';
 import { PackagesApiService } from '../../services/packages-api.service';
@@ -16,12 +18,17 @@ export class PackagesListPage {
   private readonly packagesApiService = inject(PackagesApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   packages: PackageItem[] = [];
   loading = false;
   selectedStatus: PackageStatus | '' = '';
   search = '';
+
+  get canCreatePackages(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.PACKAGES_CREATE);
+  }
 
   ionViewWillEnter(): void {
     this.loadPackages();
@@ -48,6 +55,10 @@ export class PackagesListPage {
   }
 
   createPackage(): void {
+    if (!this.canCreatePackages) {
+      return;
+    }
+
     void this.router.navigate(['/packages/new']);
   }
 

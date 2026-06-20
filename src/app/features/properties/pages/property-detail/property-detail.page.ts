@@ -9,6 +9,8 @@ import {
   AlertController,
   LoadingController,
 } from '@ionic/angular';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 
 @Component({
   selector: 'app-property-detail',
@@ -23,6 +25,7 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
   private readonly toastController = inject(ToastController);
   private readonly alertController = inject(AlertController);
   private readonly loadingController = inject(LoadingController);
+  private readonly authorizationService = inject(AuthorizationService);
 
   property: Property | null = null;
   isLoading = false;
@@ -36,6 +39,10 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
     'ALQUILER',
   ];
   private destroy$ = new Subject<void>();
+
+  get canManageProperties(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.PROPERTIES_MANAGE);
+  }
 
   ngOnInit(): void {
     this.loadProperty();
@@ -74,7 +81,7 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
   }
 
   async updateStatus(): Promise<void> {
-    if (!this.property || !this.selectedStatus) {
+    if (!this.canManageProperties || !this.property || !this.selectedStatus) {
       return;
     }
 
@@ -98,7 +105,7 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
   }
 
   private async performStatusUpdate(): Promise<void> {
-    if (!this.property || !this.selectedStatus) {
+    if (!this.canManageProperties || !this.property || !this.selectedStatus) {
       return;
     }
 

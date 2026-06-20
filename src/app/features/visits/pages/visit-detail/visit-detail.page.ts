@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { Visit, VisitStatus } from '../../models/visit.models';
 import { VisitsApiService } from '../../services/visits-api.service';
@@ -17,10 +19,15 @@ export class VisitDetailPage {
   private readonly visitsApiService = inject(VisitsApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
 
   visit: Visit | null = null;
   loading = false;
   mutating = false;
+
+  get canUpdateVisits(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.VISITS_UPDATE);
+  }
 
   ionViewWillEnter(): void {
     this.loadVisit();
@@ -48,7 +55,7 @@ export class VisitDetailPage {
   }
 
   updateStatus(status: VisitStatus): void {
-    if (!this.visit || this.mutating) {
+    if (!this.canUpdateVisits || !this.visit || this.mutating) {
       return;
     }
 

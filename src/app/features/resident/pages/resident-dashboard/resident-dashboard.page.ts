@@ -35,8 +35,17 @@ export class ResidentDashboardPage {
   packages: PackageItem[] = [];
 
   get upcomingBookings(): Booking[] {
+    const today = new Date().toISOString().slice(0, 10);
     return this.bookings
-      .filter((booking) => !['CANCELADA', 'COMPLETADA'].includes(booking.status))
+      .filter((booking) =>
+        !['CANCELADA', 'COMPLETADA'].includes(booking.status)
+        && booking.bookingDate >= today,
+      )
+      .sort((left, right) =>
+        `${left.bookingDate}T${left.startTime}`.localeCompare(
+          `${right.bookingDate}T${right.startTime}`,
+        ),
+      )
       .slice(0, 3);
   }
 

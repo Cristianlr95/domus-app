@@ -6,8 +6,9 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { finalize, Observable, shareReplay, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { AuthResponse } from '../auth/auth.models';
 import { AuthService } from '../auth/auth.service';
 import { SessionStorageService } from '../storage/session-storage.service';
 
@@ -15,6 +16,7 @@ import { SessionStorageService } from '../storage/session-storage.service';
 export class ApiErrorInterceptor implements HttpInterceptor {
   private readonly injector = inject(Injector);
   private readonly sessionStorage = inject(SessionStorageService);
+  private refreshInFlight$?: Observable<AuthResponse>;
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
@@ -24,16 +26,12 @@ export class ApiErrorInterceptor implements HttpInterceptor {
           || req.url.includes('/auth/logout');
 
         if (error.status === 401 && !isAuthEndpoint && this.sessionStorage.getRefreshToken()) {
-          return this.injector.get(AuthService).refreshSession().pipe(
+          return this.refreshSessionOnce().pipe(
             switchMap(() => {
               const token = this.sessionStorage.getAccessToken();
               return next.handle(token
                 ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
                 : req);
-            }),
-            catchError((refreshError) => {
-              this.injector.get(AuthService).logout();
-              return throwError(() => refreshError);
             }),
           );
         }
@@ -45,5 +43,23 @@ export class ApiErrorInterceptor implements HttpInterceptor {
         return throwError(() => error);
       }),
     );
+  }
+
+  private refreshSessionOnce(): Observable<AuthResponse> {
+    if (!this.refreshInFlight$) {
+      const authService = this.injector.get(AuthService);
+      this.refreshInFlight$ = authService.refreshSession().pipe(
+        catchError((error) => {
+          authService.logout();
+          return throwError(() => error);
+        }),
+        finalize(() => {
+          this.refreshInFlight$ = undefined;
+        }),
+        shareReplay({ bufferSize: 1, refCount: false }),
+      );
+    }
+
+    return this.refreshInFlight$;
   }
 }

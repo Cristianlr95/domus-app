@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { Unit } from '../../../units/models/unit.models';
 import { UnitsApiService } from '../../../units/services/units-api.service';
@@ -19,6 +21,7 @@ export class StoragesListPage {
   private readonly unitsApiService = inject(UnitsApiService);
   private readonly feedbackService = inject(FeedbackService);
   readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
 
   storages: StorageItem[] = [];
@@ -28,6 +31,10 @@ export class StoragesListPage {
   selectedOccupancyStatus: StorageOccupancyStatus | '' = '';
   selectedUnitId = '';
   search = '';
+
+  get canManageStorages(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.STORAGES_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadUnits();
@@ -55,6 +62,10 @@ export class StoragesListPage {
   }
 
   createStorage(): void {
+    if (!this.canManageStorages) {
+      return;
+    }
+
     void this.router.navigate(['/storages/new']);
   }
 

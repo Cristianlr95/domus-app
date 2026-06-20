@@ -84,7 +84,7 @@
       </ion-item>
     </ion-list>
 
-    <div class="actions" *ngIf="availableNextStatuses(currentVisit.status).length > 0">
+    <div class="actions" *ngIf="canUpdateVisits && availableNextStatuses(currentVisit.status).length > 0">
       <ion-button
         expand="block"
         *ngFor="let nextStatus of availableNextStatuses(currentVisit.status)"

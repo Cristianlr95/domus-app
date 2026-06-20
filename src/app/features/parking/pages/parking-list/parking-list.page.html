@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Estacionamientos</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="canManageParking">
       <ion-button (click)="createParking()">Nuevo estacionamiento</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -63,7 +63,7 @@
   <div class="state-wrap" *ngIf="!loading && parkingSpots.length === 0">
     <h2>No hay estacionamientos registrados</h2>
     <p>Comienza creando el primer espacio del edificio.</p>
-    <ion-button (click)="createParking()">Registrar estacionamiento</ion-button>
+    <ion-button *ngIf="canManageParking" (click)="createParking()">Registrar estacionamiento</ion-button>
   </div>
 
   <ion-list inset="true" *ngIf="!loading && parkingSpots.length > 0">

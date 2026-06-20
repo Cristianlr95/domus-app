@@ -9,6 +9,9 @@ import {
   BookingStatus,
 } from '../../models/booking.models';
 import { ToastController, AlertController } from '@ionic/angular';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-bookings-list',
@@ -21,6 +24,8 @@ export class BookingsListPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly toastController = inject(ToastController);
   private readonly alertController = inject(AlertController);
+  private readonly authorizationService = inject(AuthorizationService);
+  private readonly authService = inject(AuthService);
 
   bookings: Booking[] = [];
   filteredBookings: Booking[] = [];
@@ -29,13 +34,19 @@ export class BookingsListPage implements OnInit, OnDestroy {
   searchTerm = '';
   private destroy$ = new Subject<void>();
 
-  bookingStatuses: BookingStatus[] = [
-    'DISPONIBLE',
-    'RESERVADA',
-    'CONFIRMADA',
-    'CANCELADA',
-    'COMPLETADA',
-  ];
+  bookingStatuses: BookingStatus[] = ['RESERVADA', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA'];
+
+  get canCreate(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.BOOKINGS_CREATE);
+  }
+
+  canCancel(booking: Booking): boolean {
+    const allowed = this.authorizationService.hasAnyPermission([
+      PERMISSIONS.BOOKINGS_CREATE,
+      PERMISSIONS.BOOKINGS_UPDATE,
+    ]);
+    return allowed && ['RESERVADA', 'CONFIRMADA'].includes(booking.status);
+  }
 
   ngOnInit(): void {
     this.loadBookings();
@@ -63,9 +74,8 @@ export class BookingsListPage implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading bookings:', error);
           this.isLoading = false;
-          this.showErrorToast('Error al cargar reservas');
+          this.showErrorToast(this.authService.getErrorMessage(error));
         },
       });
   }
@@ -108,8 +118,7 @@ export class BookingsListPage implements OnInit, OnDestroy {
                   this.loadBookings();
                 },
                 error: (error) => {
-                  console.error('Error canceling booking:', error);
-                  this.showErrorToast('Error al cancelar reserva');
+                  this.showErrorToast(this.authService.getErrorMessage(error));
                 },
               });
           },

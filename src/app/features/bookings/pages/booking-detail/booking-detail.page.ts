@@ -9,6 +9,9 @@ import {
   AlertController,
   LoadingController,
 } from '@ionic/angular';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-booking-detail',
@@ -23,19 +26,44 @@ export class BookingDetailPage implements OnInit, OnDestroy {
   private readonly toastController = inject(ToastController);
   private readonly alertController = inject(AlertController);
   private readonly loadingController = inject(LoadingController);
+  private readonly authorizationService = inject(AuthorizationService);
+  private readonly authService = inject(AuthService);
 
   booking: Booking | null = null;
   isLoading = false;
   isUpdating = false;
   selectedStatus: BookingStatus | null = null;
-  bookingStatuses: BookingStatus[] = [
-    'DISPONIBLE',
-    'RESERVADA',
-    'CONFIRMADA',
-    'CANCELADA',
-    'COMPLETADA',
-  ];
   private destroy$ = new Subject<void>();
+
+  get canUpdateStatus(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.BOOKINGS_UPDATE);
+  }
+
+  get canCancel(): boolean {
+    if (!this.booking || !['RESERVADA', 'CONFIRMADA'].includes(this.booking.status)) {
+      return false;
+    }
+
+    return this.authorizationService.hasAnyPermission([
+      PERMISSIONS.BOOKINGS_CREATE,
+      PERMISSIONS.BOOKINGS_UPDATE,
+    ]);
+  }
+
+  get availableStatuses(): BookingStatus[] {
+    if (!this.booking) {
+      return [];
+    }
+
+    switch (this.booking.status) {
+      case 'RESERVADA':
+        return ['CONFIRMADA', 'CANCELADA'];
+      case 'CONFIRMADA':
+        return ['COMPLETADA', 'CANCELADA'];
+      default:
+        return [];
+    }
+  }
 
   ngOnInit(): void {
     this.loadBooking();
@@ -61,13 +89,12 @@ export class BookingDetailPage implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.booking = data;
-          this.selectedStatus = data.status;
+          this.selectedStatus = null;
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading booking:', error);
           this.isLoading = false;
-          this.showErrorToast('Error al cargar reserva');
+          this.showErrorToast(this.authService.getErrorMessage(error));
           this.router.navigate(['/bookings']);
         },
       });
@@ -116,13 +143,13 @@ export class BookingDetailPage implements OnInit, OnDestroy {
           loading.dismiss();
           this.isUpdating = false;
           this.booking = updated;
+          this.selectedStatus = null;
           this.showSuccessToast('Estado actualizado');
         },
         error: (error) => {
           loading.dismiss();
           this.isUpdating = false;
-          console.error('Error updating status:', error);
-          this.showErrorToast('Error al actualizar estado');
+          this.showErrorToast(this.authService.getErrorMessage(error));
         },
       });
   }
@@ -172,8 +199,7 @@ export class BookingDetailPage implements OnInit, OnDestroy {
         error: (error) => {
           loading.dismiss();
           this.isUpdating = false;
-          console.error('Error canceling booking:', error);
-          this.showErrorToast('Error al cancelar reserva');
+          this.showErrorToast(this.authService.getErrorMessage(error));
         },
       });
   }

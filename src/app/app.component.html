@@ -26,6 +26,10 @@
                 {{ notificationsApiService.unreadCount() }}
               </ion-badge>
             </ion-item>
+            <ion-item button detail="false" class="logout-item" (click)="logout()">
+              <ion-icon name="log-out-outline" slot="start"></ion-icon>
+              <ion-label>Cerrar sesion</ion-label>
+            </ion-item>
           </ion-list>
         </ion-content>
 

@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { StorageItem, StorageOccupancyStatus, StorageType } from '../../models/storage.models';
 import { StoragesApiService } from '../../services/storages-api.service';
@@ -18,17 +20,22 @@ export class StorageDetailPage {
   private readonly storagesApiService = inject(StoragesApiService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
+  private readonly authorizationService = inject(AuthorizationService);
 
   storage: StorageItem | null = null;
   loading = false;
   mutating = false;
+
+  get canManageStorages(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.STORAGES_MANAGE);
+  }
 
   ionViewWillEnter(): void {
     this.loadStorage();
   }
 
   editStorage(): void {
-    if (!this.storage) {
+    if (!this.canManageStorages || !this.storage) {
       return;
     }
 
@@ -36,7 +43,7 @@ export class StorageDetailPage {
   }
 
   toggleActive(): void {
-    if (!this.storage || this.mutating) {
+    if (!this.canManageStorages || !this.storage || this.mutating) {
       return;
     }
 
@@ -46,7 +53,7 @@ export class StorageDetailPage {
   }
 
   toggleOccupancy(): void {
-    if (!this.storage || this.mutating || !this.storage.active) {
+    if (!this.canManageStorages || !this.storage || this.mutating || !this.storage.active) {
       return;
     }
 
@@ -92,7 +99,7 @@ export class StorageDetailPage {
   }
 
   private updateStatus(active: boolean, occupancyStatus: StorageOccupancyStatus): void {
-    if (!this.storage) {
+    if (!this.canManageStorages || !this.storage) {
       return;
     }
 

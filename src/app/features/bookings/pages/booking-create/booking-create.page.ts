@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BookingsApiService } from '../../services/bookings-api.service';
 import { CommonSpace, CreateBookingRequest } from '../../models/booking.models';
 import { ToastController, LoadingController } from '@ionic/angular';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-booking-create',
@@ -19,10 +20,12 @@ export class BookingCreatePage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly toastController = inject(ToastController);
   private readonly loadingController = inject(LoadingController);
+  private readonly authService = inject(AuthService);
 
   bookingForm!: FormGroup;
   spaces: CommonSpace[] = [];
   isLoading = false;
+  readonly minBookingDate = new Date().toISOString().split('T')[0];
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
@@ -36,14 +39,13 @@ export class BookingCreatePage implements OnInit, OnDestroy {
   }
 
   private initializeForm(): void {
-    const today = new Date().toISOString().split('T')[0];
     this.bookingForm = this.formBuilder.group({
       commonSpaceId: ['', Validators.required],
-      bookingDate: [today, Validators.required],
+      bookingDate: [this.minBookingDate, Validators.required],
       startTime: ['10:00', Validators.required],
       endTime: ['12:00', Validators.required],
-      guestCount: [null],
-      observations: [''],
+      guestCount: [null, [Validators.min(1), Validators.max(500)]],
+      observations: ['', Validators.maxLength(500)],
     });
   }
 
@@ -56,8 +58,7 @@ export class BookingCreatePage implements OnInit, OnDestroy {
           this.spaces = data;
         },
         error: (error) => {
-          console.error('Error loading spaces:', error);
-          this.showErrorToast('Error al cargar espacios');
+          this.showErrorToast(this.authService.getErrorMessage(error));
         },
       });
   }
@@ -89,8 +90,7 @@ export class BookingCreatePage implements OnInit, OnDestroy {
         error: (error) => {
           loading.dismiss();
           this.isLoading = false;
-          console.error('Error creating booking:', error);
-          this.showErrorToast('Error al crear reserva');
+          this.showErrorToast(this.authService.getErrorMessage(error));
         },
       });
   }

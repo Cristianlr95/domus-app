@@ -45,7 +45,7 @@
     </ion-card>
 
     <!-- Información del residente -->
-    <ion-card>
+    <ion-card *ngIf="canUpdateStatus && availableStatuses.length">
       <ion-card-header>
         <ion-card-title>Residente</ion-card-title>
       </ion-card-header>
@@ -121,7 +121,7 @@
           <ion-label position="floating">Nuevo Estado</ion-label>
           <ion-select [(ngModel)]="selectedStatus">
             <ion-select-option
-              *ngFor="let status of bookingStatuses"
+              *ngFor="let status of availableStatuses"
               [value]="status"
             >
               {{ getStatusLabel(status) }}
@@ -142,14 +142,14 @@
     </ion-card>
 
     <!-- Acciones -->
-    <ion-card>
+    <ion-card *ngIf="canCancel">
       <ion-card-content>
         <ion-button
           expand="block"
           color="danger"
           fill="outline"
           (click)="cancelBooking()"
-          [disabled]="isUpdating || booking.status === 'CANCELADA'"
+          [disabled]="isUpdating"
         >
           <ion-icon name="trash" slot="start"></ion-icon>
           Cancelar Reserva
