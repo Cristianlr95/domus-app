@@ -1,6 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PermissionCode, PERMISSIONS } from './core/auth/auth.models';
+import { MenuController } from '@ionic/angular';
+import {
+  PermissionCode,
+  PERMISSIONS,
+  UserRole,
+} from './core/auth/auth.models';
 import { AuthService } from './core/auth/auth.service';
 import { AuthorizationService } from './core/auth/authorization.service';
 import { NotificationsApiService } from './features/notifications/services/notifications-api.service';
@@ -11,6 +16,8 @@ interface ShellNavItem {
   route: string;
   icon: string;
   permissions?: PermissionCode[];
+  roles?: UserRole[];
+  excludeRoles?: UserRole[];
   mobile?: boolean;
 }
 
@@ -25,12 +32,21 @@ export class AppComponent implements OnInit {
   protected readonly authorizationService = inject(AuthorizationService);
   protected readonly notificationsApiService = inject(NotificationsApiService);
   private readonly router = inject(Router);
+  private readonly menuController = inject(MenuController);
 
   protected readonly navItems: ShellNavItem[] = [
     {
       label: 'Inicio',
       route: '/dashboard',
       icon: 'grid-outline',
+      excludeRoles: ['RESIDENTE'],
+      mobile: true,
+    },
+    {
+      label: 'Mi portal',
+      route: '/resident',
+      icon: 'home-outline',
+      roles: ['RESIDENTE'],
       mobile: true,
     },
     {
@@ -68,6 +84,7 @@ export class AppComponent implements OnInit {
       route: '/bookings',
       icon: 'calendar-outline',
       permissions: [PERMISSIONS.BOOKINGS_READ],
+      mobile: true,
     },
     {
       label: 'Residentes',
@@ -98,6 +115,7 @@ export class AppComponent implements OnInit {
       route: '/messaging',
       icon: 'chatbubbles-outline',
       permissions: [PERMISSIONS.MESSAGING_READ],
+      mobile: true,
     },
     {
       label: 'Notificaciones',
@@ -138,10 +156,27 @@ export class AppComponent implements OnInit {
   }
 
   protected get visibleMobileNavItems(): ShellNavItem[] {
-    return this.visibleNavItems.filter((item) => item.mobile);
+    return this.visibleNavItems.filter((item) => item.mobile).slice(0, 4);
+  }
+
+  protected get hasMoreNavigation(): boolean {
+    return this.visibleNavItems.some(
+      (item) => !this.visibleMobileNavItems.includes(item),
+    );
   }
 
   protected canShow(item: ShellNavItem): boolean {
+    if (item.roles?.length && !this.authorizationService.hasAnyRole(item.roles)) {
+      return false;
+    }
+
+    if (
+      item.excludeRoles?.length &&
+      this.authorizationService.hasAnyRole(item.excludeRoles)
+    ) {
+      return false;
+    }
+
     if (!item.permissions?.length) {
       return true;
     }
@@ -151,6 +186,10 @@ export class AppComponent implements OnInit {
 
   protected logout(): void {
     this.authService.logout();
+  }
+
+  protected openMenu(): void {
+    void this.menuController.open();
   }
 
   protected isActive(route: string): boolean {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -14,18 +14,16 @@ import { ToastController, LoadingController } from '@ionic/angular';
   standalone: false,
 })
 export class BookingCreatePage implements OnInit, OnDestroy {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly bookingsApiService = inject(BookingsApiService);
+  private readonly router = inject(Router);
+  private readonly toastController = inject(ToastController);
+  private readonly loadingController = inject(LoadingController);
+
   bookingForm!: FormGroup;
   spaces: CommonSpace[] = [];
   isLoading = false;
   private destroy$ = new Subject<void>();
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private bookingsApiService: BookingsApiService,
-    private router: Router,
-    private toastController: ToastController,
-    private loadingController: LoadingController,
-  ) {}
 
   ngOnInit(): void {
     this.initializeForm();

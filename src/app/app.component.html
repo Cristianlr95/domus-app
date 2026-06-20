@@ -47,6 +47,15 @@
               {{ notificationsApiService.unreadCount() }}
             </ion-badge>
           </a>
+          <button
+            *ngIf="hasMoreNavigation"
+            type="button"
+            class="more-button"
+            aria-label="Abrir menu completo"
+            (click)="openMenu()">
+            <ion-icon name="menu-outline"></ion-icon>
+            <span>Mas</span>
+          </button>
         </nav>
       </main>
     </ion-split-pane>

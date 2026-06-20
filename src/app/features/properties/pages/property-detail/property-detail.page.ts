@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -17,6 +17,13 @@ import {
   standalone: false,
 })
 export class PropertyDetailPage implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly propertiesApiService = inject(PropertiesApiService);
+  private readonly toastController = inject(ToastController);
+  private readonly alertController = inject(AlertController);
+  private readonly loadingController = inject(LoadingController);
+
   property: Property | null = null;
   isLoading = false;
   isUpdating = false;
@@ -29,15 +36,6 @@ export class PropertyDetailPage implements OnInit, OnDestroy {
     'ALQUILER',
   ];
   private destroy$ = new Subject<void>();
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private propertiesApiService: PropertiesApiService,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private loadingController: LoadingController,
-  ) {}
 
   ngOnInit(): void {
     this.loadProperty();

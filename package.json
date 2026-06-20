@@ -15,8 +15,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "playwright test",
-    "e2e:headed": "playwright test --headed"
+    "e2e": "node scripts/run-e2e.mjs",
+    "e2e:headed": "node scripts/run-e2e.mjs --headed"
   },
   "private": true,
   "dependencies": {

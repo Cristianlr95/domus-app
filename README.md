@@ -59,8 +59,8 @@ domus-app/
       bookings/      # reservas de espacios comunes
       properties/    # propiedades/comunidades
       users/         # administracion de usuarios
+    resident/        # portal privado del residente
     shared/
-    home/            # legado de plantilla Ionic
   docs/
   scripts/
 ```
@@ -105,9 +105,9 @@ npm run e2e
 ```
 
 ## Estado del proyecto
-Proyecto en estado funcional. Los modulos operativos principales cuentan con rutas, servicios API y pantallas implementadas. El repositorio deja visibles tanto la capa de producto como decisiones de arquitectura para autenticacion, permisos, modularizacion y despliegue SPA.
+Proyecto funcional para el alcance MVP definido. Los modulos administrativos, operativos y de residente cuentan con rutas, servicios API, pantallas protegidas y validacion automatizada.
 
-Avance funcional estimado: `82%`.
+Avance funcional del alcance MVP: `100%`.
 
 ## Funcionalidades implementadas
 - Login y restauracion de sesion.
@@ -116,20 +116,17 @@ Avance funcional estimado: `82%`.
 - Gestion de visitas, encomiendas, residentes, unidades, estacionamientos y bodegas.
 - Mensajeria, notificaciones y auditoria.
 - Reservas, propiedades y usuarios conectados al routing principal.
+- Portal privado para residentes con sus reservas, visitas, encomiendas, mensajes y notificaciones.
+- Preferencias configurables de notificaciones.
 - Shell autenticado con navegacion persistente desktop/mobile y accesos filtrados por permisos.
+- Navegacion movil compacta con menu de opciones adicionales.
 - Configuracion por `.env` para builds reproducibles.
-
-## Funcionalidades en desarrollo o parciales
-- Portal dedicado para residentes.
-- Componentes compartidos reales para listados, formularios y empty states.
-- E2E completo: Playwright esta configurado, pero la cobertura debe ampliarse.
-- Integracion de mapas o push notifications: dependencias instaladas, sin uso visible en runtime.
+- Flujos E2E de autenticacion, portal residente y preferencias de notificacion.
 
 ## Proximas mejoras
-- Extraer componentes reutilizables para CRUD, filtros, loaders y estados vacios.
-- Agregar paginacion y persistencia de filtros.
-- Normalizar textos y codificacion UTF-8 en toda la interfaz.
-- Ampliar pruebas E2E de login, dashboard y modulos criticos.
+- Extraer componentes reutilizables adicionales para reducir duplicacion.
+- Ampliar cobertura E2E hacia operaciones CRUD secundarias.
+- Integrar mapas y notificaciones push nativas en una fase posterior.
 - Evaluar almacenamiento de token fuera de `localStorage` si el backend lo permite.
 
 ## Valor profesional del proyecto

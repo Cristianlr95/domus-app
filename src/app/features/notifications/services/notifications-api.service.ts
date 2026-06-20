@@ -3,7 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../../core/api/api.models';
-import { NotificationItem, NotificationUnreadCount } from '../models/notification.models';
+import {
+  NotificationItem,
+  NotificationPreference,
+  NotificationUnreadCount,
+  UpdateNotificationPreferencesRequest,
+} from '../models/notification.models';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +33,20 @@ export class NotificationsApiService {
   markAsRead(id: string): Observable<NotificationItem> {
     return this.http
       .patch<ApiResponse<NotificationItem>>(`${this.baseUrl}/${id}/read`, {})
+      .pipe(map((response) => response.data));
+  }
+
+  getPreferences(): Observable<NotificationPreference[]> {
+    return this.http
+      .get<ApiResponse<NotificationPreference[]>>(`${this.baseUrl}/preferences`)
+      .pipe(map((response) => response.data));
+  }
+
+  updatePreferences(
+    payload: UpdateNotificationPreferencesRequest,
+  ): Observable<NotificationPreference[]> {
+    return this.http
+      .put<ApiResponse<NotificationPreference[]>>(`${this.baseUrl}/preferences`, payload)
       .pipe(map((response) => response.data));
   }
 

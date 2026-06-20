@@ -20,8 +20,9 @@
 - `users`
 - `properties`
 - `bookings`
+- `resident`
 
-## Features pendientes
+El alcance MVP no mantiene features funcionales pendientes.
 
 ## Convencion recomendada
 ```text

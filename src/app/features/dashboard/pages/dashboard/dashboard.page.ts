@@ -1,13 +1,20 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { AuthUser, PermissionCode, PERMISSIONS } from '../../../../core/auth/auth.models';
+import {
+  AuthUser,
+  PermissionCode,
+  PERMISSIONS,
+  UserRole,
+} from '../../../../core/auth/auth.models';
 import { NotificationsApiService } from '../../../notifications/services/notifications-api.service';
 
 interface QuickAction {
   title: string;
   description: string;
   permissions: PermissionCode[];
+  roles?: UserRole[];
   route?: string;
 }
 
@@ -21,6 +28,7 @@ export class DashboardPage {
   readonly authService = inject(AuthService);
   readonly authorizationService = inject(AuthorizationService);
   readonly notificationsApiService = inject(NotificationsApiService);
+  private readonly router = inject(Router);
 
   readonly quickActions: QuickAction[] = [
     {
@@ -49,9 +57,10 @@ export class DashboardPage {
     },
     {
       title: 'Portal residente',
-      description: 'Prepara la base para solicitudes, avisos y aprobaciones futuras.',
+      description: 'Consulta tus reservas, mensajes, avisos, visitas y encomiendas desde un solo lugar.',
       permissions: [PERMISSIONS.NOTIFICATIONS_READ],
-      route: '/notifications',
+      roles: ['RESIDENTE'],
+      route: '/resident',
     },
     {
       title: 'Reservas',
@@ -113,7 +122,20 @@ export class DashboardPage {
     return this.authService.currentUser();
   }
 
+  canShowAction(action: QuickAction): boolean {
+    return (
+      this.authorizationService.hasAnyPermission(action.permissions) &&
+      (!action.roles?.length ||
+        this.authorizationService.hasAnyRole(action.roles))
+    );
+  }
+
   ionViewWillEnter(): void {
+    if (this.authorizationService.hasRole('RESIDENTE')) {
+      void this.router.navigate(['/resident'], { replaceUrl: true });
+      return;
+    }
+
     this.notificationsApiService.loadUnreadCount().subscribe();
   }
 
