@@ -11,6 +11,7 @@ import { AuthorizationService } from './core/auth/authorization.service';
 import { NotificationsApiService } from './features/notifications/services/notifications-api.service';
 
 interface ShellNavItem {
+  group: 'principal' | 'operacion' | 'gestion';
   label: string;
   mobileLabel?: string;
   route: string;
@@ -34,8 +35,15 @@ export class AppComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly menuController = inject(MenuController);
 
+  protected readonly navGroups = [
+    { key: 'principal' as const, label: 'Principal' },
+    { key: 'operacion' as const, label: 'Operación diaria' },
+    { key: 'gestion' as const, label: 'Administración' },
+  ];
+
   protected readonly navItems: ShellNavItem[] = [
     {
+      group: 'principal',
       label: 'Inicio',
       route: '/dashboard',
       icon: 'grid-outline',
@@ -43,6 +51,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'principal',
       label: 'Mi portal',
       route: '/resident',
       icon: 'home-outline',
@@ -50,6 +59,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'principal',
       label: 'Conserjeria',
       mobileLabel: 'Conserj.',
       route: '/concierge',
@@ -58,6 +68,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'principal',
       label: 'Admin',
       route: '/admin',
       icon: 'analytics-outline',
@@ -65,6 +76,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'operacion',
       label: 'Visitas',
       route: '/visits',
       icon: 'walk-outline',
@@ -72,6 +84,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'operacion',
       label: 'Encomiendas',
       mobileLabel: 'Encom.',
       route: '/packages',
@@ -80,6 +93,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'operacion',
       label: 'Reservas',
       route: '/bookings',
       icon: 'calendar-outline',
@@ -87,30 +101,51 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'gestion',
       label: 'Residentes',
       route: '/residents',
       icon: 'people-outline',
       permissions: [PERMISSIONS.RESIDENTS_READ],
     },
     {
+      group: 'gestion',
       label: 'Unidades',
       route: '/units',
       icon: 'business-outline',
       permissions: [PERMISSIONS.UNITS_READ],
     },
     {
+      group: 'gestion',
+      label: 'Estacionamientos',
+      mobileLabel: 'Parking',
+      route: '/parking',
+      icon: 'car-outline',
+      permissions: [PERMISSIONS.PARKING_READ],
+      mobile: true,
+    },
+    {
+      group: 'gestion',
+      label: 'Bodegas',
+      route: '/storages',
+      icon: 'file-tray-stacked-outline',
+      permissions: [PERMISSIONS.STORAGES_READ],
+    },
+    {
+      group: 'gestion',
       label: 'Propiedades',
       route: '/properties',
       icon: 'home-outline',
       permissions: [PERMISSIONS.PROPERTIES_READ],
     },
     {
+      group: 'gestion',
       label: 'Usuarios',
       route: '/users',
       icon: 'person-circle-outline',
       permissions: [PERMISSIONS.USERS_READ],
     },
     {
+      group: 'operacion',
       label: 'Mensajeria',
       route: '/messaging',
       icon: 'chatbubbles-outline',
@@ -118,6 +153,7 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'principal',
       label: 'Notificaciones',
       mobileLabel: 'Avisos',
       route: '/notifications',
@@ -126,6 +162,23 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'operacion',
+      label: 'Centro operativo',
+      mobileLabel: 'Servicios',
+      route: '/operations',
+      icon: 'apps-outline',
+      permissions: [
+        PERMISSIONS.OPERATIONS_READ,
+        PERMISSIONS.ACCESS_REQUEST,
+        PERMISSIONS.PARKING_SESSIONS_REQUEST,
+        PERMISSIONS.LAUNDRY_REQUEST,
+        PERMISSIONS.RESIDENTS_MEMBERSHIP_REQUEST,
+        PERMISSIONS.PACKAGES_PICKUP_REQUEST,
+      ],
+      mobile: true,
+    },
+    {
+      group: 'gestion',
       label: 'Auditoria',
       route: '/audit',
       icon: 'receipt-outline',
@@ -163,6 +216,19 @@ export class AppComponent implements OnInit {
     return this.visibleNavItems.some(
       (item) => !this.visibleMobileNavItems.includes(item),
     );
+  }
+
+  protected visibleItemsForGroup(group: ShellNavItem['group']): ShellNavItem[] {
+    return this.visibleNavItems.filter((item) => item.group === group);
+  }
+
+  protected roleLabel(roles: UserRole[]): string {
+    const labels: Record<UserRole, string> = {
+      ADMIN: 'Administración',
+      CONSERJERIA: 'Conserjería',
+      RESIDENTE: 'Residente',
+    };
+    return roles.map((role) => labels[role]).join(' · ');
   }
 
   protected canShow(item: ShellNavItem): boolean {

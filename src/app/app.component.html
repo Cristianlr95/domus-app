@@ -4,28 +4,37 @@
       <ion-menu contentId="domus-main" type="overlay" class="domus-menu">
         <ion-content>
           <section class="brand">
-            <span>Domus</span>
-            <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>
-            <small>{{ currentUser.roles.join(', ') }}</small>
+            <div class="brand-lockup" aria-label="Domus">
+              <img src="assets/brand/domus-logo-primary.png" alt="Domus">
+            </div>
+            <div class="profile-copy">
+              <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>
+              <small>{{ roleLabel(currentUser.roles) }}</small>
+            </div>
           </section>
 
           <ion-list lines="none" class="nav-list">
-            <ion-item
-              button
-              detail="false"
-              *ngFor="let item of visibleNavItems"
-              [routerLink]="item.route"
-              routerDirection="root"
-              [class.active]="isActive(item.route)">
-              <ion-icon [name]="item.icon" slot="start"></ion-icon>
-              <ion-label>{{ item.label }}</ion-label>
-              <ion-badge
-                *ngIf="item.route === '/notifications' && notificationsApiService.unreadCount() > 0"
-                color="danger"
-                slot="end">
-                {{ notificationsApiService.unreadCount() }}
-              </ion-badge>
-            </ion-item>
+            <ng-container *ngFor="let group of navGroups">
+              <ng-container *ngIf="visibleItemsForGroup(group.key) as groupItems">
+                <p class="nav-heading" *ngIf="groupItems.length">{{ group.label }}</p>
+                <ion-item
+                  button
+                  detail="false"
+                  *ngFor="let item of groupItems"
+                  [routerLink]="item.route"
+                  routerDirection="root"
+                  [class.active]="isActive(item.route)">
+                  <ion-icon [name]="item.icon" slot="start"></ion-icon>
+                  <ion-label>{{ item.label }}</ion-label>
+                  <ion-badge
+                    *ngIf="item.route === '/notifications' && notificationsApiService.unreadCount() > 0"
+                    color="danger"
+                    slot="end">
+                    {{ notificationsApiService.unreadCount() }}
+                  </ion-badge>
+                </ion-item>
+              </ng-container>
+            </ng-container>
             <ion-item button detail="false" class="logout-item" (click)="logout()">
               <ion-icon name="log-out-outline" slot="start"></ion-icon>
               <ion-label>Cerrar sesion</ion-label>

@@ -46,14 +46,21 @@ body {
   color: var(--domus-text);
 }
 
+body {
+  min-width: 320px;
+}
+
 ion-content {
+  --background: var(--domus-background);
   --color: var(--domus-text);
 }
 
 ion-toolbar {
-  --background: rgba(255, 250, 242, 0.96);
+  --background: rgba(248, 245, 239, 0.96);
   --border-color: var(--domus-border);
   --color: var(--domus-text);
+  --min-height: 60px;
+  backdrop-filter: blur(14px);
 }
 
 ion-card,
@@ -66,12 +73,41 @@ ion-card {
   box-shadow: var(--domus-shadow);
 }
 
+ion-item {
+  --background: var(--domus-surface);
+  --color: var(--domus-text);
+  --inner-border-width: 0;
+}
+
+ion-input,
+ion-select,
+ion-textarea,
+ion-searchbar {
+  --highlight-color-focused: var(--domus-accent);
+}
+
 ion-button {
   --border-radius: var(--domus-radius);
   min-height: 44px;
   font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
+}
+
+ion-button[fill="outline"] {
+  --border-color: var(--domus-accent);
+  --color: var(--domus-accent-strong);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(122, 92, 54, 0.35);
+  outline-offset: 2px;
+}
+
+.domus-page-wrap {
+  width: min(var(--domus-content-width), calc(100% - 2rem));
+  margin-inline: auto;
+  padding-block: 1.5rem 6rem;
 }
 
 button,
@@ -116,5 +152,10 @@ ion-list {
   ion-card-header,
   ion-card-content {
     padding-inline: 1rem;
+  }
+
+  .domus-page-wrap {
+    width: min(100% - 1rem, var(--domus-content-width));
+    padding-top: 1rem;
   }
 }

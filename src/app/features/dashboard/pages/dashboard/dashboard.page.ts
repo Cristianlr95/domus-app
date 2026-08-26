@@ -56,6 +56,19 @@ export class DashboardPage {
       route: '/packages',
     },
     {
+      title: 'Servicios de la comunidad',
+      description: 'Gestiona visitas QR, estacionamientos, lavandería, mantenimiento y solicitudes según tu perfil.',
+      permissions: [
+        PERMISSIONS.OPERATIONS_READ,
+        PERMISSIONS.ACCESS_REQUEST,
+        PERMISSIONS.PARKING_SESSIONS_REQUEST,
+        PERMISSIONS.LAUNDRY_REQUEST,
+        PERMISSIONS.RESIDENTS_MEMBERSHIP_REQUEST,
+        PERMISSIONS.PACKAGES_PICKUP_REQUEST,
+      ],
+      route: '/operations',
+    },
+    {
       title: 'Portal residente',
       description: 'Consulta tus reservas, mensajes, avisos, visitas y encomiendas desde un solo lugar.',
       permissions: [PERMISSIONS.NOTIFICATIONS_READ],
@@ -94,7 +107,7 @@ export class DashboardPage {
     },
     {
       title: 'Estacionamientos',
-      description: 'Administra espacios, ocupacion y futuras asociaciones con patentes y visitas.',
+      description: 'Administra espacios, ocupación, patentes y solicitudes de visitas.',
       permissions: [PERMISSIONS.PARKING_READ],
       route: '/parking',
     },

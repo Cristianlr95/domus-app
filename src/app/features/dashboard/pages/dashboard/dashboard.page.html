@@ -15,10 +15,10 @@
 
 <ion-content [fullscreen]="true" class="dashboard-page">
   <section class="hero" *ngIf="user as currentUser">
-    <p class="eyebrow">Sesion activa</p>
+    <p class="eyebrow">Panel personal</p>
     <h1>Hola, {{ currentUser.firstName }} {{ currentUser.lastName }}</h1>
     <p class="copy">
-      Esta base ya reconoce el usuario autenticado, sus roles y la proteccion de rutas para seguir creciendo con modulos como visitas y encomiendas.
+      Accede sólo a las herramientas habilitadas para tu perfil y comunidad.
     </p>
 
     <div class="role-row">
@@ -43,7 +43,7 @@
               size="small"
               class="action-link"
               [routerLink]="action.route">
-              Abrir modulo
+              Abrir
             </ion-button>
           </ion-card-content>
         </ion-card>

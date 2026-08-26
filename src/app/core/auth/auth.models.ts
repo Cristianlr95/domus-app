@@ -28,7 +28,22 @@ export type PermissionCode =
   | 'roles.read'
   | 'permissions.read'
   | 'admin.dashboard.read'
-  | 'audit.read';
+  | 'audit.read'
+  | 'setup.manage'
+  | 'access.manage'
+  | 'parking.sessions.manage'
+  | 'packages.custody.manage'
+  | 'packages.pickup.request'
+  | 'governance.manage'
+  | 'sanctions.manage'
+  | 'finance.manage'
+  | 'maintenance.manage'
+  | 'laundry.manage'
+  | 'operations.read'
+  | 'access.request'
+  | 'parking.sessions.request'
+  | 'laundry.request'
+  | 'residents.membership.request';
 
 export const PERMISSIONS = {
   VISITS_READ: 'visits.read',
@@ -60,6 +75,21 @@ export const PERMISSIONS = {
   PERMISSIONS_READ: 'permissions.read',
   ADMIN_DASHBOARD_READ: 'admin.dashboard.read',
   AUDIT_READ: 'audit.read',
+  SETUP_MANAGE: 'setup.manage',
+  ACCESS_MANAGE: 'access.manage',
+  PARKING_SESSIONS_MANAGE: 'parking.sessions.manage',
+  PACKAGES_CUSTODY_MANAGE: 'packages.custody.manage',
+  PACKAGES_PICKUP_REQUEST: 'packages.pickup.request',
+  GOVERNANCE_MANAGE: 'governance.manage',
+  SANCTIONS_MANAGE: 'sanctions.manage',
+  FINANCE_MANAGE: 'finance.manage',
+  MAINTENANCE_MANAGE: 'maintenance.manage',
+  LAUNDRY_MANAGE: 'laundry.manage',
+  OPERATIONS_READ: 'operations.read',
+  ACCESS_REQUEST: 'access.request',
+  PARKING_SESSIONS_REQUEST: 'parking.sessions.request',
+  LAUNDRY_REQUEST: 'laundry.request',
+  RESIDENTS_MEMBERSHIP_REQUEST: 'residents.membership.request',
 } as const;
 
 export interface AuthUser {

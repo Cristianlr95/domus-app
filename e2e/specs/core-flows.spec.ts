@@ -15,6 +15,7 @@ const adminUser = {
     'bookings.update',
     'messaging.read',
     'messaging.create',
+    'operations.read',
   ],
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
@@ -136,6 +137,21 @@ async function mockApi(page: Page, currentUser = adminUser): Promise<void> {
       return;
     }
 
+    if (path.endsWith('/operations/summary') && request.method() === 'GET') {
+      await route.fulfill({ json: { data: { pendingMemberships: 1, activeInvitations: 2 } } });
+      return;
+    }
+
+    if (path.includes('/operations/') && request.method() === 'GET') {
+      await route.fulfill({ json: { data: [] } });
+      return;
+    }
+
+    if (path.includes('/operations/') && ['POST', 'PATCH'].includes(request.method())) {
+      await route.fulfill({ json: { data: { id: 'operation-1', status: 'CREATED' } } });
+      return;
+    }
+
     await route.fulfill({
       status: 404,
       json: { code: 'UNMOCKED_ENDPOINT', message: `${request.method()} ${path}` },
@@ -203,4 +219,21 @@ test('notification preferences are loaded and can be saved', async ({ page }) =>
     ],
   });
   await expect(page.getByText('Preferencias actualizadas.')).toBeVisible();
+});
+
+test('admin can inspect and execute an extended module operation', async ({ page }) => {
+  await mockApi(page);
+  await seedSession(page);
+  await page.goto('/operations');
+
+  await expect(page.getByRole('heading', { name: 'Centro operativo' })).toBeVisible();
+  await expect(page.getByText('pendingMemberships')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Estacionamientos/ })).toBeVisible();
+
+  const operationRequest = page.waitForRequest((request) =>
+    request.url().endsWith('/operations/memberships') && request.method() === 'POST',
+  );
+  await page.getByRole('button', { name: 'Guardar operación' }).click();
+  await operationRequest;
+  await expect(page.getByText('Operación guardada correctamente.')).toBeVisible();
 });

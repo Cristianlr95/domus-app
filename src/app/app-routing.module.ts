@@ -165,6 +165,24 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'operations',
+    canActivate: [PermissionGuard],
+    data: {
+      permissions: [
+        PERMISSIONS.OPERATIONS_READ,
+        PERMISSIONS.ACCESS_REQUEST,
+        PERMISSIONS.PARKING_SESSIONS_REQUEST,
+        PERMISSIONS.LAUNDRY_REQUEST,
+        PERMISSIONS.RESIDENTS_MEMBERSHIP_REQUEST,
+        PERMISSIONS.PACKAGES_PICKUP_REQUEST,
+      ],
+    },
+    loadChildren: () =>
+      import('./features/operations/operations.module').then(
+        (m) => m.OperationsModule,
+      ),
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full',

@@ -5,15 +5,26 @@
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-shade: #654927;
   --ion-color-primary-tint: #967149;
-  --ion-background-color: #f7f2e8;
+  --ion-background-color: #f8f5ef;
   --ion-text-color: #2b2218;
 
-  --domus-background: #f7f2e8;
+  --domus-background: #f8f5ef;
+  --domus-background-strong: #efe6d8;
   --domus-surface: #ffffff;
+  --domus-surface-muted: #f3eee6;
   --domus-text: #2b2218;
-  --domus-muted: #5a4d3f;
+  --domus-muted: #66594b;
   --domus-accent: #7a5c36;
-  --domus-border: rgba(122, 92, 54, 0.18);
-  --domus-radius: 12px;
-  --domus-shadow: 0 18px 40px rgba(42, 36, 28, 0.08);
+  --domus-accent-strong: #5f4327;
+  --domus-accent-soft: #ede2d2;
+  --domus-success: #356859;
+  --domus-warning: #9a661f;
+  --domus-danger: #a5413d;
+  --domus-border: rgba(92, 68, 42, 0.2);
+  --domus-radius-sm: 10px;
+  --domus-radius: 16px;
+  --domus-radius-lg: 24px;
+  --domus-shadow-sm: 0 6px 18px rgba(42, 36, 28, 0.07);
+  --domus-shadow: 0 18px 42px rgba(42, 36, 28, 0.09);
+  --domus-content-width: 72rem;
 }

@@ -1,5 +1,5 @@
 .login-page {
-  --background: linear-gradient(180deg, #f7f2e8 0%, #efe7d9 100%);
+  --background: linear-gradient(180deg, #f8f2ea 0%, #efe7d9 100%);
 }
 
 .login-shell {
@@ -14,6 +14,24 @@
 
 .brand-copy {
   max-width: 34rem;
+}
+
+.login-logo {
+  position: relative;
+  width: min(25rem, 92vw);
+  height: 7.2rem;
+  margin: 0 0 0.4rem -1.5rem;
+  overflow: hidden;
+}
+
+.login-logo img {
+  position: absolute;
+  width: 27rem;
+  max-width: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: multiply;
 }
 
 .eyebrow {
@@ -39,8 +57,8 @@ h1 {
 }
 
 .login-card {
-  border-radius: 24px;
-  box-shadow: 0 20px 45px rgba(42, 36, 28, 0.08);
+  border-radius: var(--domus-radius-lg);
+  box-shadow: var(--domus-shadow);
 }
 
 ion-list {
@@ -78,5 +96,15 @@ ion-note {
 
   .login-card {
     border-radius: 16px;
+  }
+
+  .login-logo {
+    width: 18rem;
+    height: 5.4rem;
+    margin-left: -1rem;
+  }
+
+  .login-logo img {
+    width: 20rem;
   }
 }

@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { catchError, forkJoin, of } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PERMISSIONS } from '../../../../core/auth/auth.models';
+import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { Booking } from '../../../bookings/models/booking.models';
 import { BookingsApiService } from '../../../bookings/services/bookings-api.service';
 import { Conversation } from '../../../messaging/models/messaging.models';
@@ -21,6 +23,7 @@ import { VisitsApiService } from '../../../visits/services/visits-api.service';
 export class ResidentDashboardPage {
   readonly authService = inject(AuthService);
   readonly notificationsApiService = inject(NotificationsApiService);
+  private readonly authorization = inject(AuthorizationService);
   private readonly bookingsApiService = inject(BookingsApiService);
   private readonly messagingApiService = inject(MessagingApiService);
   private readonly packagesApiService = inject(PackagesApiService);
@@ -33,6 +36,16 @@ export class ResidentDashboardPage {
   notifications: NotificationItem[] = [];
   visits: Visit[] = [];
   packages: PackageItem[] = [];
+
+  get canUseCommunityServices(): boolean {
+    return this.authorization.hasAnyPermission([
+      PERMISSIONS.ACCESS_REQUEST,
+      PERMISSIONS.PARKING_SESSIONS_REQUEST,
+      PERMISSIONS.LAUNDRY_REQUEST,
+      PERMISSIONS.RESIDENTS_MEMBERSHIP_REQUEST,
+      PERMISSIONS.PACKAGES_PICKUP_REQUEST,
+    ]);
+  }
 
   get upcomingBookings(): Booking[] {
     const today = new Date().toISOString().slice(0, 10);

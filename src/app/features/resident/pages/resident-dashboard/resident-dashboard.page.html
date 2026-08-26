@@ -142,6 +142,10 @@
       </div>
 
       <section class="quick-links" aria-label="Acciones frecuentes">
+        <a routerLink="/operations" *ngIf="canUseCommunityServices">
+          <ion-icon name="qr-code-outline"></ion-icon>
+          <span>Visitas QR y servicios</span>
+        </a>
         <a routerLink="/bookings/new">
           <ion-icon name="add-circle-outline"></ion-icon>
           <span>Reservar espacio</span>

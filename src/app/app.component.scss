@@ -12,22 +12,40 @@
 
 .brand {
   display: grid;
-  gap: 0.2rem;
-  padding: 0.95rem 0.8rem 0.45rem;
+  gap: 0.65rem;
+  padding: 0.7rem 0.8rem 0.65rem;
+  border-bottom: 1px solid var(--domus-border);
+  background: #f8f2ea;
 }
 
-.brand span {
-  color: var(--domus-accent);
-  font-size: 1.15rem;
-  font-weight: 800;
+.brand-lockup {
+  position: relative;
+  width: 9.25rem;
+  height: 2.5rem;
+  overflow: hidden;
 }
 
-.brand strong {
+.brand-lockup img {
+  position: absolute;
+  width: 11.5rem;
+  max-width: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: multiply;
+}
+
+.profile-copy {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.profile-copy strong {
   color: var(--domus-text);
   font-size: 0.9rem;
 }
 
-.brand small {
+.profile-copy small {
   color: var(--domus-muted);
   font-size: 0.78rem;
   line-height: 1.35;
@@ -37,6 +55,15 @@
   display: grid;
   gap: 0.05rem;
   padding: 0.35rem;
+}
+
+.nav-heading {
+  margin: 0.8rem 0.65rem 0.3rem;
+  color: var(--domus-muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 .nav-list ion-item {
@@ -51,7 +78,7 @@
 }
 
 .nav-list ion-item.active {
-  --background: rgba(122, 92, 54, 0.12);
+  --background: var(--domus-accent-soft);
   --color: var(--domus-text);
 }
 
@@ -84,7 +111,7 @@
   overflow: hidden;
   padding: 0.28rem 0.32rem max(0.28rem, env(safe-area-inset-bottom));
   border-top: 1px solid var(--domus-border);
-  background: rgba(255, 250, 242, 0.98);
+  background: rgba(248, 245, 239, 0.98);
   box-shadow: 0 -10px 28px rgba(42, 36, 28, 0.09);
 }
 
@@ -121,7 +148,7 @@
 }
 
 .mobile-nav a.active {
-  background: rgba(122, 92, 54, 0.12);
+  background: var(--domus-accent-soft);
   color: var(--domus-text);
 }
 

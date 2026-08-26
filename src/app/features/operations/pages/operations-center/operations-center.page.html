@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-back-button defaultHref="/dashboard"></ion-back-button></ion-buttons>
+    <ion-title>Centro operativo</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="refresh()"><ion-icon name="refresh-outline" slot="start"></ion-icon>Actualizar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="operations-page">
+  <section class="hero">
+    <p class="eyebrow">Servicios de la comunidad</p>
+    <h1>Centro operativo</h1>
+    <p>Accede a visitas con QR, estacionamientos, lavandería, mantenimiento y otros servicios según tu perfil.</p>
+  </section>
+
+  <div class="loading" *ngIf="loading"><ion-spinner></ion-spinner><span>Cargando operación...</span></div>
+
+  <section class="summary-grid" *ngIf="!loading && canBrowseResources">
+    <ion-card *ngFor="let item of summaryEntries">
+      <ion-card-header><ion-card-subtitle>{{ item.key }}</ion-card-subtitle><ion-card-title>{{ item.value }}</ion-card-title></ion-card-header>
+    </ion-card>
+  </section>
+
+  <section class="module-grid" *ngIf="canBrowseResources">
+    <button type="button" *ngFor="let resource of resources" [class.active]="resource.key === selectedResource.key" (click)="selectResource(resource)">
+      <ion-icon [name]="resource.icon"></ion-icon>
+      <span><strong>{{ resource.label }}</strong><small>{{ resource.description }}</small></span>
+    </button>
+  </section>
+
+  <section class="workspace-grid" [class.action-only]="!canBrowseResources">
+    <ion-card *ngIf="canBrowseResources">
+      <ion-card-header>
+        <ion-card-subtitle>{{ selectedResource.description }}</ion-card-subtitle>
+        <ion-card-title>{{ selectedResource.label }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="empty" *ngIf="!loading && rows.length === 0">Aún no hay registros para este módulo.</div>
+        <ion-list lines="full" *ngIf="rows.length > 0">
+          <ion-item *ngFor="let row of rows">
+            <ion-label class="ion-text-wrap"><h2>{{ rowTitle(row) }}</h2><p>{{ rowSubtitle(row) }}</p></ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Acciones disponibles para tu perfil</ion-card-subtitle>
+        <ion-card-title>Nueva solicitud u operación</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-select label="Acción" labelPlacement="stacked" [(ngModel)]="selectedAction" (ionChange)="selectAction()" interface="popover">
+          <ion-select-option *ngFor="let action of visibleActions" [value]="action">{{ action.label }}</ion-select-option>
+        </ion-select>
+        <ion-input *ngIf="selectedAction.requiresId" label="ID del registro" labelPlacement="stacked" [(ngModel)]="entityId"></ion-input>
+        <div class="friendly-fields" *ngIf="actionFields.length">
+          <ion-input
+            *ngFor="let field of actionFields"
+            [label]="field.label + (field.required ? ' *' : '')"
+            labelPlacement="stacked"
+            [type]="$any(field.type)"
+            [(ngModel)]="draftValues[field.key]">
+          </ion-input>
+        </div>
+        <details class="advanced-payload">
+          <summary>Opciones avanzadas</summary>
+          <ion-note class="technical-note">
+            Usa esta vista para arreglos o datos anidados. Los campos visibles arriba tienen prioridad al guardar.
+          </ion-note>
+          <ion-textarea label="Datos de la operación" labelPlacement="stacked" [autoGrow]="true" [rows]="12" [(ngModel)]="payloadText"></ion-textarea>
+        </details>
+        <ion-button expand="block" class="submit" [disabled]="executing" (click)="execute()">
+          <ion-spinner *ngIf="executing" name="crescent"></ion-spinner>
+          <span *ngIf="!executing">Guardar operación</span>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </section>
+</ion-content>

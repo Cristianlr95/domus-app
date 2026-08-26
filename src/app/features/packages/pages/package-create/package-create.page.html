@@ -8,94 +8,87 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="package-create-page">
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <ion-list inset="true">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="package-form">
+    <header class="form-intro">
+      <p class="eyebrow">Recepción rápida</p>
+      <h1>Registrar encomienda</h1>
+      <p>Completa residente, unidad y una breve descripción. El resto es opcional.</p>
+    </header>
+
+    <section class="form-card" aria-label="Datos principales">
+      <div class="field-grid recipient-grid">
+        <ion-item>
+          <ion-input
+            label="Residente *"
+            labelPlacement="stacked"
+            formControlName="residentName"
+            maxlength="150"
+            placeholder="Nombre del residente">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            label="Departamento o unidad"
+            labelPlacement="stacked"
+            formControlName="unitLabel"
+            maxlength="80"
+            placeholder="Ej: 804">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            label="Torre o bloque"
+            labelPlacement="stacked"
+            formControlName="blockLabel"
+            maxlength="80"
+            placeholder="Ej: Torre A">
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <div class="package-type">
+        <span>Tipo de entrega</span>
+        <ion-segment formControlName="packageType" [scrollable]="true">
+          <ion-segment-button *ngFor="let type of packageTypes" [value]="type.value">
+            <ion-label>{{ type.label }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
       <ion-item>
         <ion-input
-          label="Descripcion"
+          label="Descripción *"
           labelPlacement="stacked"
           formControlName="description"
           maxlength="180"
-          placeholder="Ej: Paquete de Mercado Libre">
+          placeholder="Ej: caja mediana de Mercado Libre">
         </ion-input>
       </ion-item>
+    </section>
 
-      <ion-item>
-        <ion-input
-          label="Remitente"
-          labelPlacement="stacked"
-          formControlName="senderName"
-          maxlength="150"
-          placeholder="Ej: Chilexpress">
-        </ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-select
-          label="Tipo"
-          labelPlacement="stacked"
-          formControlName="packageType">
-          <ion-select-option *ngFor="let type of packageTypes" [value]="type.value">
-            {{ type.label }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <ion-item>
-        <ion-input
-          label="Residente"
-          labelPlacement="stacked"
-          formControlName="residentName"
-          maxlength="150"
-          placeholder="Nombre del residente">
-        </ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-input
-          label="Unidad o departamento"
-          labelPlacement="stacked"
-          formControlName="unitLabel"
-          maxlength="80"
-          placeholder="Ej: Depto 804">
-        </ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-input
-          label="Bloque o torre"
-          labelPlacement="stacked"
-          formControlName="blockLabel"
-          maxlength="80"
-          placeholder="Ej: Torre A">
-        </ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-input
-          label="Recibido por"
-          labelPlacement="stacked"
-          formControlName="receivedByName"
-          maxlength="150"
-          placeholder="Nombre de quien recibe en conserjeria">
-        </ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-textarea
-          label="Observaciones"
-          labelPlacement="stacked"
-          formControlName="observations"
-          maxlength="500"
-          autoGrow="true"
-          placeholder="Notas internas o detalle del paquete">
-        </ion-textarea>
-      </ion-item>
-    </ion-list>
+    <details class="optional-fields">
+      <summary>Agregar transportista u observaciones</summary>
+      <div class="optional-grid">
+        <ion-item>
+          <ion-input label="Transportista o remitente" labelPlacement="stacked" formControlName="senderName" maxlength="150" placeholder="Ej: Chilexpress"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Recibido por" labelPlacement="stacked" formControlName="receivedByName" maxlength="150" placeholder="Nombre de conserje"></ion-input>
+        </ion-item>
+        <ion-item class="observations">
+          <ion-textarea label="Observaciones" labelPlacement="stacked" formControlName="observations" maxlength="500" autoGrow="true" placeholder="Notas internas o estado del paquete"></ion-textarea>
+        </ion-item>
+      </div>
+    </details>
 
     <div class="actions">
+      <ion-button fill="clear" type="button" routerLink="/packages">Cancelar</ion-button>
       <ion-button expand="block" type="submit" [disabled]="submitting">
-        {{ submitting ? 'Guardando...' : 'Registrar encomienda' }}
+        <ion-icon name="cube-outline" slot="start" *ngIf="!submitting"></ion-icon>
+        <ion-spinner name="crescent" slot="start" *ngIf="submitting"></ion-spinner>
+        {{ submitting ? 'Guardando...' : 'Registrar y notificar' }}
       </ion-button>
     </div>
   </form>

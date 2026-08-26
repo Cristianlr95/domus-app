@@ -39,9 +39,15 @@ export class ConciergeDashboardPage {
     },
     {
       title: 'Encomiendas',
-      description: 'Registrar recepciones y marcar entregas del dia.',
+      description: 'Registrar recepciones y marcar entregas del día.',
       route: '/packages',
       permission: PERMISSIONS.PACKAGES_READ,
+    },
+    {
+      title: 'Visitas QR y servicios',
+      description: 'Validar accesos QR, gestionar estacionamientos y revisar lavandería.',
+      route: '/operations',
+      permission: PERMISSIONS.OPERATIONS_READ,
     },
     {
       title: 'Residentes',
