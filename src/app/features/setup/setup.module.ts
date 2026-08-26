@@ -1,0 +1,2 @@
+import { CommonModule } from '@angular/common'; import { NgModule } from '@angular/core'; import { FormsModule, ReactiveFormsModule } from '@angular/forms'; import { IonicModule } from '@ionic/angular'; import { SetupBuilderPage } from './pages/setup-builder/setup-builder.page'; import { SetupRoutingModule } from './setup-routing.module';
+@NgModule({ declarations: [SetupBuilderPage], imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, SetupRoutingModule] }) export class SetupModule {}

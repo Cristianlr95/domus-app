@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { PERMISSIONS } from '../../../../core/auth/auth.models';
@@ -22,6 +23,7 @@ export class UnitDetailPage {
   private readonly feedbackService = inject(FeedbackService);
   private readonly authService = inject(AuthService);
   private readonly authorizationService = inject(AuthorizationService);
+  private readonly alertController = inject(AlertController);
 
   unit: Unit | null = null;
   loading = false;
@@ -43,7 +45,32 @@ export class UnitDetailPage {
     void this.router.navigate(['/units', this.unit.id, 'edit']);
   }
 
-  toggleStatus(): void {
+  async requestStatusChange(): Promise<void> {
+    if (!this.canManageUnits || !this.unit || this.mutating) {
+      return;
+    }
+
+    if (!this.unit.active) {
+      this.toggleStatus();
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Marcar unidad como inactiva',
+      message: 'La unidad dejará de estar disponible para la operación habitual. Podrás reactivarla posteriormente.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Marcar inactiva', role: 'destructive' },
+      ],
+    });
+    await alert.present();
+    const result = await alert.onDidDismiss();
+    if (result.role === 'destructive') {
+      this.toggleStatus();
+    }
+  }
+
+  private toggleStatus(): void {
     if (!this.canManageUnits || !this.unit || this.mutating) {
       return;
     }

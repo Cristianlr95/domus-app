@@ -5,7 +5,7 @@
 .package-form {
   width: min(48rem, calc(100% - 2rem));
   margin-inline: auto;
-  padding: 1.5rem 0 6rem;
+  padding: 1.25rem 0 2rem;
 }
 
 .form-intro {
@@ -53,9 +53,78 @@
   gap: 0.75rem;
 }
 
-.recipient-grid ion-item:first-child,
 .observations {
   grid-column: 1 / -1;
+}
+
+.recipient-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--domus-muted);
+  font-size: 0.85rem;
+}
+
+.recipient-state ion-spinner {
+  width: 1rem;
+  height: 1rem;
+}
+
+.recipient-grid ion-searchbar {
+  padding: 0;
+}
+
+.recipient-hint {
+  margin: -0.1rem 0 0;
+  color: var(--domus-muted);
+  font-size: 0.82rem;
+}
+
+.recipient-results {
+  margin: 0.25rem 0 0;
+  border: 1px solid var(--domus-border);
+  border-radius: calc(var(--domus-radius) - 0.25rem);
+  box-shadow: var(--domus-shadow-sm);
+}
+
+.recipient-results h3,
+.recipient-selected h3 {
+  color: var(--domus-text);
+  font-weight: 700;
+}
+
+.recipient-results p,
+.recipient-selected p {
+  white-space: normal;
+}
+
+.recipient-selected {
+  --background: #f3eee4;
+  --padding-start: 1rem;
+  --inner-padding-end: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--domus-accent) 38%, var(--domus-border));
+  border-radius: var(--domus-radius);
+  box-shadow: inset 0 0 0 1px rgba(136, 99, 54, 0.05);
+}
+
+.recipient-selected ion-icon {
+  color: var(--domus-accent-strong);
+  font-size: 1.5rem;
+}
+
+.recipient-selected ion-label > p:first-child {
+  margin-bottom: 0.25rem;
+  color: var(--domus-accent-strong);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.recipient-selected ion-button {
+  --border-color: var(--domus-accent);
+  --color: var(--domus-accent-strong);
+  font-weight: 700;
 }
 
 .package-type > span {
@@ -109,7 +178,6 @@
     grid-template-columns: 1fr;
   }
 
-  .recipient-grid ion-item:first-child,
   .observations {
     grid-column: auto;
   }

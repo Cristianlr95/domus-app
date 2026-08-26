@@ -183,6 +183,12 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'setup',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.SETUP_MANAGE] },
+    loadChildren: () => import('./features/setup/setup.module').then((m) => m.SetupModule),
+  },
+  {
     path: 'home',
     redirectTo: 'dashboard',
     pathMatch: 'full',

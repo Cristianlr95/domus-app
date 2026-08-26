@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/units"></ion-back-button>
     </ion-buttons>
-    <ion-title>Detalle de unidad</ion-title>
+    <ion-title>{{ unit ? unit.blockLabel + ' · ' + unit.unitCode : 'Detalle de unidad' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="editUnit()" *ngIf="unit && canManageUnits">Editar</ion-button>
     </ion-buttons>
@@ -17,66 +17,34 @@
   </div>
 
   <ng-container *ngIf="!loading && unit as currentUnit">
-    <ion-list inset="true">
-      <ion-item>
-        <ion-label>
-          <h2>Unidad</h2>
-          <p>{{ currentUnit.blockLabel }} · {{ currentUnit.unitCode }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item *ngIf="currentUnit.floorNumber !== null">
-        <ion-label>
-          <h2>Piso</h2>
-          <p>{{ currentUnit.floorNumber }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>Estado</h2>
-          <p>{{ currentUnit.active ? 'Activa' : 'Inactiva' }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item *ngIf="currentUnit.observations">
-        <ion-label>
-          <h2>Observaciones</h2>
-          <p>{{ currentUnit.observations }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
+    <main class="unit-sheet">
+      <p class="breadcrumb">Unidades <span>/</span> {{ currentUnit.blockLabel }} <span>/</span> {{ currentUnit.unitCode }}</p>
+      <section class="unit-overview">
+        <div><p class="eyebrow">Departamento</p><h1>{{ currentUnit.unitCode }}</h1><p>{{ currentUnit.blockLabel }}<ng-container *ngIf="currentUnit.floorNumber !== null"> · Piso {{ currentUnit.floorNumber }}</ng-container></p></div>
+        <ion-chip [color]="currentUnit.active ? 'success' : 'medium'"><ion-label>{{ currentUnit.active ? 'Activa' : 'Inactiva' }}</ion-label></ion-chip>
+      </section>
 
-    <ion-list inset="true">
-      <ion-list-header>
-        <ion-label>Residentes asociados</ion-label>
-      </ion-list-header>
+      <section class="detail-section">
+        <div class="section-heading"><div><p class="eyebrow">Ocupación</p><h2>Residentes asociados</h2></div><span>{{ currentUnit.residents.length }}</span></div>
+        <p class="empty-state" *ngIf="currentUnit.residents.length === 0">Aún no hay residentes asociados a este departamento.</p>
+        <ion-list lines="none" *ngIf="currentUnit.residents.length">
+          <ion-item *ngFor="let resident of currentUnit.residents"><ion-label><h3>{{ resident.firstName }} {{ resident.lastName }}</h3><p>{{ resident.documentNumber }} · {{ residentTypeLabel(resident.residentType) }}</p></ion-label><ion-chip [color]="resident.active ? 'success' : 'medium'"><ion-label>{{ resident.active ? 'Activo' : 'Inactivo' }}</ion-label></ion-chip></ion-item>
+        </ion-list>
+      </section>
 
-      <ion-item *ngIf="currentUnit.residents.length === 0">
-        <ion-label>
-          <p>No hay residentes asociados a esta unidad.</p>
-        </ion-label>
-      </ion-item>
+      <section class="detail-section" *ngIf="currentUnit.observations"><p class="eyebrow">Observaciones</p><p>{{ currentUnit.observations }}</p></section>
 
-      <ion-item *ngFor="let resident of currentUnit.residents">
-        <ion-label>
-          <h2>{{ resident.firstName }} {{ resident.lastName }}</h2>
-          <p>{{ resident.documentNumber }} · {{ residentTypeLabel(resident.residentType) }}</p>
-        </ion-label>
-        <ion-chip [color]="resident.active ? 'success' : 'medium'">
-          <ion-label>{{ resident.active ? 'Activo' : 'Inactivo' }}</ion-label>
-        </ion-chip>
-      </ion-item>
-    </ion-list>
-
-    <div class="actions" *ngIf="canManageUnits">
-      <ion-button expand="block" fill="outline" (click)="editUnit()">
-        Editar unidad
-      </ion-button>
+      <div class="actions" *ngIf="canManageUnits">
+        <ion-button expand="block" (click)="editUnit()">Editar información</ion-button>
       <ion-button
         expand="block"
+        fill="outline"
         [color]="currentUnit.active ? 'medium' : 'success'"
         [disabled]="mutating"
-        (click)="toggleStatus()">
+        (click)="requestStatusChange()">
         {{ mutating ? 'Actualizando...' : (currentUnit.active ? 'Marcar como inactiva' : 'Reactivar unidad') }}
       </ion-button>
-    </div>
+      </div>
+    </main>
   </ng-container>
 </ion-content>

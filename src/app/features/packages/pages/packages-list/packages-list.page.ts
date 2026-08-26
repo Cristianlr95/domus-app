@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -7,6 +8,7 @@ import { AuthorizationService } from '../../../../core/auth/authorization.servic
 import { FeedbackService } from '../../../../core/services/feedback.service';
 import { PackageItem, PackageStatus } from '../../models/package.models';
 import { PackagesApiService } from '../../services/packages-api.service';
+import { PackageCreatePage } from '../package-create/package-create.page';
 
 @Component({
   selector: 'app-packages-list-page',
@@ -20,6 +22,7 @@ export class PackagesListPage {
   readonly authService = inject(AuthService);
   private readonly authorizationService = inject(AuthorizationService);
   private readonly router = inject(Router);
+  private readonly modalController = inject(ModalController);
 
   packages: PackageItem[] = [];
   loading = false;
@@ -54,12 +57,23 @@ export class PackagesListPage {
     this.loadPackages();
   }
 
-  createPackage(): void {
+  async createPackage(): Promise<void> {
     if (!this.canCreatePackages) {
       return;
     }
 
-    void this.router.navigate(['/packages/new']);
+    const modal = await this.modalController.create({
+      component: PackageCreatePage,
+      componentProps: { modalMode: true },
+      cssClass: 'package-create-modal',
+      backdropDismiss: false,
+    });
+
+    await modal.present();
+    const result = await modal.onDidDismiss();
+    if (result.role === 'created') {
+      this.loadPackages();
+    }
   }
 
   openDetail(packageId: string): void {

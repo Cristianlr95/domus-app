@@ -25,6 +25,8 @@ export class UnitsListPage {
   loading = false;
   selectedActive: boolean | '' = '';
   search = '';
+  selectedUnit: Unit | null = null;
+  private pendingDetailUnitId = '';
 
   get canManageUnits(): boolean {
     return this.authorizationService.hasPermission(PERMISSIONS.UNITS_MANAGE);
@@ -60,6 +62,48 @@ export class UnitsListPage {
     }
 
     void this.router.navigate(['/units/new']);
+  }
+
+  get towerGroups(): { label: string; units: Unit[] }[] {
+    const byTower = new Map<string, Unit[]>();
+    for (const unit of this.units) {
+      const tower = unit.blockLabel?.trim() || 'Sin estructura';
+      byTower.set(tower, [...(byTower.get(tower) ?? []), unit]);
+    }
+
+    return [...byTower.entries()]
+      .sort(([left], [right]) => left.localeCompare(right, 'es'))
+      .map(([label, units]) => ({
+        label,
+        units: [...units].sort((left, right) =>
+          (left.floorNumber ?? Number.MAX_SAFE_INTEGER) - (right.floorNumber ?? Number.MAX_SAFE_INTEGER)
+          || left.unitCode.localeCompare(right.unitCode, 'es', { numeric: true }),
+        ),
+      }));
+  }
+
+  showUnit(unit: Unit): void {
+    this.selectedUnit = unit;
+  }
+
+  closeUnitModal(): void {
+    this.selectedUnit = null;
+  }
+
+  onUnitModalDismiss(): void {
+    this.selectedUnit = null;
+    if (!this.pendingDetailUnitId) {
+      return;
+    }
+
+    const unitId = this.pendingDetailUnitId;
+    this.pendingDetailUnitId = '';
+    void this.router.navigate(['/units', unitId]);
+  }
+
+  manageUnitFromModal(unitId: string): void {
+    this.pendingDetailUnitId = unitId;
+    this.closeUnitModal();
   }
 
   openDetail(unitId: string): void {

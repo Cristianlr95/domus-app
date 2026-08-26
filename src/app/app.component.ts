@@ -145,6 +145,13 @@ export class AppComponent implements OnInit {
       permissions: [PERMISSIONS.USERS_READ],
     },
     {
+      group: 'gestion',
+      label: 'Configuración',
+      route: '/setup',
+      icon: 'construct-outline',
+      permissions: [PERMISSIONS.SETUP_MANAGE],
+    },
+    {
       group: 'operacion',
       label: 'Mensajeria',
       route: '/messaging',

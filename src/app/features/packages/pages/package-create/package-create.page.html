@@ -1,7 +1,10 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/packages"></ion-back-button>
+      <ion-button *ngIf="modalMode" (click)="cancel()" aria-label="Cerrar ventana">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-back-button *ngIf="!modalMode" defaultHref="/packages"></ion-back-button>
     </ion-buttons>
     <ion-title>Nueva encomienda</ion-title>
   </ion-toolbar>
@@ -12,41 +15,52 @@
     <header class="form-intro">
       <p class="eyebrow">Recepción rápida</p>
       <h1>Registrar encomienda</h1>
-      <p>Completa residente, unidad y una breve descripción. El resto es opcional.</p>
+      <p>Busca un residente o departamento. Al elegirlo se completan automáticamente su edificio, torre y unidad.</p>
     </header>
 
     <section class="form-card" aria-label="Datos principales">
       <div class="field-grid recipient-grid">
-        <ion-item>
-          <ion-input
-            label="Residente *"
-            labelPlacement="stacked"
-            formControlName="residentName"
-            maxlength="150"
-            placeholder="Nombre del residente">
-          </ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-input
-            label="Departamento o unidad"
-            labelPlacement="stacked"
-            formControlName="unitLabel"
-            maxlength="80"
-            placeholder="Ej: 804">
-          </ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-input
-            label="Torre o bloque"
-            labelPlacement="stacked"
-            formControlName="blockLabel"
-            maxlength="80"
-            placeholder="Ej: Torre A">
-          </ion-input>
-        </ion-item>
+        <ion-searchbar
+          *ngIf="!selectedResident"
+          [(ngModel)]="recipientSearch"
+          [ngModelOptions]="{ standalone: true }"
+          [disabled]="loadingRecipients"
+          placeholder="Buscar residente o departamento: Juan Lara, 101..."
+          aria-label="Buscar residente o departamento">
+        </ion-searchbar>
       </div>
+
+      <p class="recipient-hint" *ngIf="!selectedResident && !loadingRecipients">
+        Busca por nombre, departamento o torre para elegir al destinatario.
+      </p>
+
+      <div class="recipient-state" *ngIf="loadingRecipients">
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>Cargando residentes y departamentos...</span>
+      </div>
+      <ion-list class="recipient-results" inset="true" *ngIf="filteredResidents.length > 0" aria-label="Resultados de residentes">
+        <ion-item button detail="false" *ngFor="let resident of filteredResidents" (click)="selectResident(resident)">
+          <ion-label>
+            <h3>{{ resident.firstName }} {{ resident.lastName }}</h3>
+            <p>{{ recipientBuildingLabel }} · {{ resident.unit?.blockLabel }} · Depto. {{ resident.unit?.unitCode }}</p>
+          </ion-label>
+          <ion-note slot="end">{{ resident.residentType | titlecase }}</ion-note>
+        </ion-item>
+      </ion-list>
+
+      <ion-note color="medium" *ngIf="!loadingRecipients && recipientSearch.trim() && filteredResidents.length === 0">
+        No encontramos residentes ni departamentos asociados con esa búsqueda.
+      </ion-note>
+
+      <ion-item class="recipient-selected" *ngIf="selectedResident">
+        <ion-icon name="checkmark-circle" slot="start" aria-hidden="true"></ion-icon>
+        <ion-label>
+          <p>Destinatario de esta encomienda</p>
+          <h3>{{ selectedResident.firstName }} {{ selectedResident.lastName }}</h3>
+          <p>{{ recipientBuildingLabel }} · {{ selectedUnitLabel }}</p>
+        </ion-label>
+        <ion-button fill="outline" size="small" slot="end" type="button" (click)="clearRecipient()">Cambiar</ion-button>
+      </ion-item>
 
       <div class="package-type">
         <span>Tipo de entrega</span>
@@ -84,7 +98,7 @@
     </details>
 
     <div class="actions">
-      <ion-button fill="clear" type="button" routerLink="/packages">Cancelar</ion-button>
+      <ion-button fill="clear" type="button" (click)="cancel()">Cancelar</ion-button>
       <ion-button expand="block" type="submit" [disabled]="submitting">
         <ion-icon name="cube-outline" slot="start" *ngIf="!submitting"></ion-icon>
         <ion-spinner name="crescent" slot="start" *ngIf="submitting"></ion-spinner>

@@ -159,3 +159,35 @@ ion-list {
     padding-top: 1rem;
   }
 }
+ion-modal.package-create-modal {
+  --width: min(48rem, calc(100vw - 2rem));
+  --height: min(46rem, calc(100vh - 2rem));
+  --border-radius: var(--domus-radius-lg, 1.5rem);
+  --box-shadow: 0 1.5rem 4rem rgba(42, 31, 22, 0.2);
+}
+
+ion-modal.unit-details-modal {
+  --width: min(29rem, calc(100vw - 2rem));
+  --height: min(27rem, calc(100vh - 4rem));
+  --border-radius: var(--domus-radius-lg, 1.5rem);
+  --box-shadow: 0 1.5rem 4rem rgba(42, 31, 22, 0.26);
+  --backdrop-opacity: 0.16;
+}
+
+ion-modal.unit-details-modal::part(content) {
+  overflow: hidden;
+}
+
+@media (max-width: 620px) {
+  ion-modal.package-create-modal {
+    --width: 100%;
+    --height: 100%;
+    --border-radius: 0;
+  }
+
+  ion-modal.unit-details-modal {
+    --width: calc(100vw - 1rem);
+    --height: min(27rem, calc(100vh - 2rem));
+    --border-radius: 1rem;
+  }
+}

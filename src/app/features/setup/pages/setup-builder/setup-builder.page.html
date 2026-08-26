@@ -1,0 +1,65 @@
+<ion-header [translucent]="true"><ion-toolbar><ion-buttons slot="start"><ion-back-button defaultHref="/dashboard"></ion-back-button></ion-buttons><ion-title>DOMUS Setup</ion-title></ion-toolbar></ion-header>
+
+<ion-content [fullscreen]="true" class="setup-page">
+  <section class="hero"><p class="eyebrow">Configuración inicial</p><h1>Structure Builder</h1><p>Modela el condominio antes de operar: crea la estructura, revisa el preview y confirma sólo cuando esté correcta.</p></section>
+
+  <div class="setup-layout">
+    <section class="step-card">
+      <div class="step-heading"><span>1</span><div><h2>Condominio</h2><p>Selecciona uno existente o crea una nueva comunidad en estado Setup.</p></div></div>
+      <ion-select label="Condominio activo" labelPlacement="stacked" [(ngModel)]="selectedCondominiumId" [disabled]="loading" interface="popover">
+        <ion-select-option *ngFor="let condominium of condominiums" [value]="condominium.id">{{ condominium.name }} · {{ condominium.status }}</ion-select-option>
+      </ion-select>
+      <form [formGroup]="condominiumForm" (ngSubmit)="createCondominium()" class="compact-form">
+        <ion-input label="Nombre del nuevo condominio" labelPlacement="stacked" formControlName="name"></ion-input>
+        <ion-input label="Dirección" labelPlacement="stacked" formControlName="address"></ion-input>
+        <ion-button type="submit" fill="outline" [disabled]="saving">Crear condominio</ion-button>
+      </form>
+    </section>
+
+    <section class="step-card" [class.disabled]="!selectedCondominiumId">
+      <div class="step-heading"><span>2</span><div><h2>Torre, sector o bloque</h2><p>DOMUS no asume torres: elige la estructura que corresponde a tu comunidad.</p></div></div>
+      <form [formGroup]="sectionForm" (ngSubmit)="createSection()" class="fields-3">
+        <ion-input label="Código" labelPlacement="stacked" formControlName="code" placeholder="A"></ion-input>
+        <ion-input label="Nombre visible" labelPlacement="stacked" formControlName="name" placeholder="Torre A"></ion-input>
+        <ion-select label="Tipo" labelPlacement="stacked" formControlName="type" interface="popover"><ion-select-option value="TOWER">Torre</ion-select-option><ion-select-option value="BLOCK">Bloque</ion-select-option><ion-select-option value="SECTOR">Sector</ion-select-option><ion-select-option value="HOUSE_GROUP">Conjunto de casas</ion-select-option><ion-select-option value="OTHER">Otro</ion-select-option></ion-select>
+        <ion-button type="submit" [disabled]="!selectedCondominiumId || saving">Agregar estructura</ion-button>
+      </form>
+      <div class="section-list" *ngIf="selectedSections.length > 0" aria-label="Estructuras creadas">
+        <span *ngFor="let section of selectedSections"><ion-icon name="business-outline"></ion-icon>{{ section.name }} <small>{{ section.type | titlecase }}</small></span>
+      </div>
+    </section>
+
+    <section class="step-card" [class.disabled]="!selectedCondominiumId">
+      <div class="step-heading"><span>3</span><div><h2>Generar departamentos</h2><p>Genera un borrador; podrás quitar excepciones antes de confirmar.</p></div></div>
+      <form [formGroup]="generatorForm" (ngSubmit)="generatePreview()" class="fields-3">
+        <ion-input label="Desde piso" type="number" labelPlacement="stacked" formControlName="floorStart"></ion-input>
+        <ion-input label="Hasta piso" type="number" labelPlacement="stacked" formControlName="floorEnd"></ion-input>
+        <ion-input label="Departamentos por piso" type="number" labelPlacement="stacked" formControlName="unitsPerFloor"></ion-input>
+        <ion-select class="wide" label="Torres, sectores o bloques a generar *" labelPlacement="stacked" formControlName="sectionCodes" interface="popover" multiple="true">
+          <ion-select-option *ngFor="let section of selectedSections" [value]="section.code">{{ section.name }}</ion-select-option>
+        </ion-select>
+        <ion-note class="selection-warning wide" color="warning" *ngIf="generatorForm.controls.sectionCodes.touched && !generatorForm.controls.sectionCodes.value.length">
+          Debes seleccionar al menos una torre, sector o bloque para generar los departamentos.
+        </ion-note>
+        <ion-button type="submit" [disabled]="!selectedCondominiumId">Generar preview</ion-button>
+      </form>
+      <div class="exception-builder">
+        <div><h3>Excepciones por piso</h3><p>Modifica la cantidad de departamentos de un piso para todas las torres seleccionadas. Si indicas un piso fuera del rango, DOMUS ampliará el rango automáticamente.</p></div>
+        <form [formGroup]="exceptionForm" (ngSubmit)="addFloorException()" class="exception-form">
+          <ion-input label="Piso" type="number" labelPlacement="stacked" formControlName="floorNumber"></ion-input>
+          <ion-input label="Departamentos en ese piso" type="number" labelPlacement="stacked" formControlName="unitsPerFloor"></ion-input>
+          <ion-button type="submit" fill="outline">Aplicar excepción</ion-button>
+        </form>
+        <div class="exception-list" *ngIf="floorExceptions.length"><button type="button" *ngFor="let exception of floorExceptions" (click)="removeFloorException(exception.floorNumber)">Piso {{ exception.floorNumber }}: {{ exception.unitsPerFloor }} deptos <ion-icon name="close-circle"></ion-icon></button></div>
+        <ion-note color="warning" *ngIf="previewUnits.length === 0 && floorExceptions.length">El preview se reinició por cambios estructurales. Pulsa “Generar preview” para revisar el nuevo resultado.</ion-note>
+      </div>
+    </section>
+
+    <section class="step-card preview-card" *ngIf="previewUnits.length > 0">
+      <div class="step-heading"><span>4</span><div><h2>Preview obligatorio</h2><p>Se crearán <strong>{{ previewUnits.length }} unidades</strong> en {{ selectedCondominium?.name }} para {{ selectedGeneratorSections.length }} estructura(s). Revisa las excepciones antes de confirmar.</p></div></div>
+      <div class="unit-preview"><button type="button" *ngFor="let unit of previewUnits; let index = index" (click)="removePreviewUnit(index)" title="Quitar del preview">{{ unit.blockLabel }} · {{ unit.unitCode }} <ion-icon name="close-circle"></ion-icon></button></div>
+      <ion-note>Haz clic en una unidad para excluirla de este lote. Ningún dato se crea hasta pulsar “Confirmar estructura”.</ion-note>
+      <div class="preview-actions"><ion-button fill="outline" (click)="savePreview()" [disabled]="saving || !!batchId">Guardar preview</ion-button><ion-button (click)="confirmStructure()" [disabled]="saving || !batchId">Confirmar estructura</ion-button></div>
+    </section>
+  </div>
+</ion-content>

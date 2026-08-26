@@ -8,6 +8,5 @@
   }
 }
 
-.actions {
-  padding: 0 1rem 1rem;
-}
+.unit-form { width: min(760px, calc(100% - 2rem)); margin: 0 auto; padding: 1.25rem 0 2rem; }.form-intro { margin-bottom: .75rem; }.form-intro h1 { margin: .2rem 0; font-size: 1.55rem; color: var(--domus-text); }.form-intro p:not(.eyebrow) { margin: 0; color: var(--domus-muted); }.eyebrow { margin: 0; color: var(--domus-accent); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }.structure-fields { opacity: .92; }.structure-notice h3 { margin: 0; font-size: .9rem; }.structure-notice p { margin: .15rem 0 0; color: var(--domus-muted); }.structure-notice ion-button { font-size: .78rem; }
+.actions { position: sticky; bottom: 0; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; padding: .75rem 0 .25rem; background: linear-gradient(to top, var(--domus-background) 70%, transparent); } @media (max-width: 560px) { .unit-form { width: min(100% - 1rem, 760px); }.actions { grid-template-columns: 1fr; } }

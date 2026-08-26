@@ -13,8 +13,9 @@
     <p>Cargando unidad...</p>
   </div>
 
-  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()">
-    <ion-list inset="true">
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()" class="unit-form">
+    <section class="form-intro" *ngIf="isEditMode && unit"><p class="eyebrow">Editar departamento</p><h1>{{ unit.blockLabel }} · {{ unit.unitCode }}</h1><p>Actualiza residentes u observaciones. El estado se administra desde la ficha de la unidad.</p></section>
+    <ion-list inset="true" class="structure-fields">
       <ion-item>
         <ion-input label="Codigo o numero" labelPlacement="stacked" formControlName="unitCode" maxlength="50"></ion-input>
       </ion-item>
@@ -27,6 +28,10 @@
         <ion-input label="Piso" labelPlacement="stacked" formControlName="floorNumber" inputmode="numeric"></ion-input>
       </ion-item>
 
+      <ion-item *ngIf="isEditMode" class="structure-notice"><ion-label><h3>Datos estructurales protegidos</h3><p>La torre, el piso y el código vienen de la configuración inicial.</p></ion-label><ion-button fill="clear" slot="end" (click)="unlockStructure()">Modificar estructura</ion-button></ion-item>
+    </ion-list>
+
+    <ion-list inset="true">
       <ion-item>
         <ion-textarea
           label="Observaciones"
@@ -47,8 +52,9 @@
     </ion-list>
 
     <div class="actions">
+      <ion-button type="button" fill="outline" (click)="cancel()">Cancelar</ion-button>
       <ion-button expand="block" type="submit" [disabled]="submitting">
-        {{ submitting ? 'Guardando...' : (isEditMode ? 'Actualizar unidad' : 'Registrar unidad') }}
+        {{ submitting ? 'Guardando...' : (isEditMode ? 'Guardar cambios' : 'Registrar unidad') }}
       </ion-button>
     </div>
   </form>

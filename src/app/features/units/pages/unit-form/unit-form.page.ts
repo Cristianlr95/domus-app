@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
@@ -23,6 +24,7 @@ export class UnitFormPage {
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly alertController = inject(AlertController);
 
   readonly form = this.formBuilder.nonNullable.group({
     unitCode: ['', [Validators.required, Validators.maxLength(50)]],
@@ -36,6 +38,7 @@ export class UnitFormPage {
   residents: Resident[] = [];
   loading = false;
   submitting = false;
+  structureUnlocked = false;
 
   get isEditMode(): boolean {
     return !!this.route.snapshot.paramMap.get('id');
@@ -83,6 +86,52 @@ export class UnitFormPage {
       });
   }
 
+  async unlockStructure(): Promise<void> {
+    if (!this.isEditMode || this.structureUnlocked) {
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Modificar estructura',
+      message: 'Cambiar torre, piso o código puede afectar la ubicación de esta unidad. Úsalo sólo para corregir un error de configuración.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Habilitar cambios', role: 'confirm' },
+      ],
+    });
+    await alert.present();
+    const result = await alert.onDidDismiss();
+    if (result.role !== 'confirm') {
+      return;
+    }
+
+    this.structureUnlocked = true;
+    this.form.controls.unitCode.enable();
+    this.form.controls.blockLabel.enable();
+    this.form.controls.floorNumber.enable();
+  }
+
+  async cancel(): Promise<void> {
+    if (!this.form.dirty) {
+      await this.router.navigate(this.unit ? ['/units', this.unit.id] : ['/units']);
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Descartar cambios',
+      message: 'Tienes cambios sin guardar. ¿Quieres salir de todas formas?',
+      buttons: [
+        { text: 'Seguir editando', role: 'cancel' },
+        { text: 'Descartar', role: 'destructive' },
+      ],
+    });
+    await alert.present();
+    const result = await alert.onDidDismiss();
+    if (result.role === 'destructive') {
+      await this.router.navigate(this.unit ? ['/units', this.unit.id] : ['/units']);
+    }
+  }
+
   private loadResidents(): void {
     this.residentsApiService.list('', '')
       .subscribe({
@@ -111,6 +160,12 @@ export class UnitFormPage {
             observations: unit.observations ?? '',
             residentIds: unit.residents.map((resident) => resident.id),
           });
+          if (this.isEditMode) {
+            this.form.controls.unitCode.disable();
+            this.form.controls.blockLabel.disable();
+            this.form.controls.floorNumber.disable();
+          }
+          this.form.markAsPristine();
         },
         error: async (error) => {
           await this.feedbackService.error(this.authService.getErrorMessage(error));

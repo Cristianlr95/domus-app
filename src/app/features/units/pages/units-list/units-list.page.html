@@ -40,16 +40,25 @@
     <ion-button *ngIf="canManageUnits" (click)="createUnit()">Registrar unidad</ion-button>
   </div>
 
-  <ion-list inset="true" *ngIf="!loading && units.length > 0">
-    <ion-item button detail="true" *ngFor="let unit of units; trackBy: trackByUnit" (click)="openDetail(unit.id)">
-      <ion-label>
-        <h2>{{ unit.blockLabel }} · {{ unit.unitCode }}</h2>
-        <p *ngIf="unit.floorNumber !== null">Piso {{ unit.floorNumber }}</p>
-        <p>{{ unit.residents.length }} residente(s) asociado(s)</p>
-      </ion-label>
-      <ion-chip [color]="unit.active ? 'success' : 'medium'">
-        <ion-label>{{ unit.active ? 'Activa' : 'Inactiva' }}</ion-label>
-      </ion-chip>
-    </ion-item>
-  </ion-list>
+  <section class="tower-grid" *ngIf="!loading && units.length > 0">
+    <article class="tower-card" *ngFor="let tower of towerGroups">
+      <header><div><p class="eyebrow">Estructura</p><h2>{{ tower.label }}</h2></div><ion-chip color="primary"><ion-label>{{ tower.units.length }} deptos.</ion-label></ion-chip></header>
+      <p class="tower-help">Selecciona un departamento para ver su información.</p>
+      <div class="unit-grid">
+        <button class="unit-tile" type="button" *ngFor="let unit of tower.units; trackBy: trackByUnit" (click)="showUnit(unit)">
+          <span class="unit-code">{{ unit.unitCode }}</span><span *ngIf="unit.floorNumber !== null">Piso {{ unit.floorNumber }}</span><span class="unit-status" [class.inactive]="!unit.active">{{ unit.active ? 'Activa' : 'Inactiva' }}</span>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <ion-modal cssClass="unit-details-modal" [isOpen]="!!selectedUnit" [backdropDismiss]="true" (didDismiss)="onUnitModalDismiss()"><ng-template>
+    <ion-header><ion-toolbar><ion-title>{{ selectedUnit?.blockLabel }} · {{ selectedUnit?.unitCode }}</ion-title><ion-buttons slot="end"><ion-button (click)="closeUnitModal()">Cerrar</ion-button></ion-buttons></ion-toolbar></ion-header>
+    <ion-content class="unit-modal-content"><section class="unit-detail-summary" *ngIf="selectedUnit as unit">
+      <div class="unit-identity"><div><p class="eyebrow">Departamento</p><h2>{{ unit.unitCode }}</h2><p>{{ unit.blockLabel }}<ng-container *ngIf="unit.floorNumber !== null"> · Piso {{ unit.floorNumber }}</ng-container></p></div><ion-chip [color]="unit.active ? 'success' : 'medium'"><ion-label>{{ unit.active ? 'Activa' : 'Inactiva' }}</ion-label></ion-chip></div>
+      <div class="detail-block"><h3>Residentes asociados</h3><p class="empty-residents" *ngIf="!unit.residents.length">Aún no hay residentes asociados a este departamento.</p><ion-list lines="none" *ngIf="unit.residents.length"><ion-item *ngFor="let resident of unit.residents"><ion-label><h3>{{ resident.firstName }} {{ resident.lastName }}</h3><p>{{ resident.residentType }}</p></ion-label></ion-item></ion-list></div>
+      <div class="detail-block" *ngIf="unit.observations"><h3>Observaciones</h3><p>{{ unit.observations }}</p></div>
+      <ion-button expand="block" *ngIf="canManageUnits" (click)="manageUnitFromModal(unit.id)">Ver ficha completa</ion-button>
+    </section></ion-content>
+  </ng-template></ion-modal>
 </ion-content>
