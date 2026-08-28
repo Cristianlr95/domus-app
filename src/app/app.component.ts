@@ -129,6 +129,14 @@ export class AppComponent implements OnInit {
       mobile: true,
     },
     {
+      group: 'operacion',
+      label: 'Lavandería',
+      route: '/laundry',
+      icon: 'water-outline',
+      permissions: [PERMISSIONS.LAUNDRY_MANAGE, PERMISSIONS.LAUNDRY_REQUEST],
+      mobile: true,
+    },
+    {
       group: 'gestion',
       label: 'Bodegas',
       route: '/storages',

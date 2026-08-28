@@ -181,6 +181,12 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'laundry',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.LAUNDRY_MANAGE, PERMISSIONS.LAUNDRY_REQUEST] },
+    loadChildren: () => import('./features/laundry/laundry.module').then((m) => m.LaundryModule),
+  },
+  {
     path: 'access',
     canActivate: [PermissionGuard],
     data: { permissions: [PERMISSIONS.VISITS_READ, PERMISSIONS.VISITS_CREATE, PERMISSIONS.VISITS_UPDATE, PERMISSIONS.ACCESS_MANAGE, PERMISSIONS.ACCESS_REQUEST] },
