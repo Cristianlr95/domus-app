@@ -29,7 +29,7 @@ export class LaundryPage {
       .pipe(finalize(() => this.loading = false)).subscribe({ next: ({ machines, usages, metrics }) => { this.machines = machines; this.usages = usages; this.metrics = metrics; }, error: async (error) => this.feedback.error(this.auth.getErrorMessage(error)) });
   }
   async request(machine: LaundryMachine): Promise<void> {
-    if (machine.status !== 'AVAILABLE' || this.mutating) return;
+    if (!machine.enabled || machine.status !== 'AVAILABLE' || this.mutating) return;
     const alert = await this.alerts.create({ header: `Solicitar ${machine.asset_name}`, message: `Buffer: ${machine.buffer_before_minutes} min antes y ${machine.buffer_after_minutes} min después.`, inputs: [{ name: 'start', type: 'datetime-local', label: 'Inicio programado' }, { name: 'end', type: 'datetime-local', label: 'Término programado' }], buttons: [{ text: 'Cancelar', role: 'cancel' }, { text: 'Solicitar', handler: (value) => { if (!value.start || !value.end) { void this.feedback.error('Indica inicio y término.'); return false; } this.mutating = true; this.api.request(machine.id, new Date(value.start).toISOString(), new Date(value.end).toISOString()).pipe(finalize(() => this.mutating = false)).subscribe({ next: async () => { await this.feedback.success('Solicitud enviada a conserjería.'); this.load(); }, error: async (error) => this.feedback.error(this.auth.getErrorMessage(error)) }); return true; } }] });
     await alert.present();
   }
@@ -39,5 +39,8 @@ export class LaundryPage {
     await alert.present();
   }
   machineLabel(machine: LaundryMachine): string { return `${machine.machine_type === 'WASHER' ? 'Lavadora' : 'Secadora'} · ${machine.asset_name}`; }
+  machineStatusLabel(status: string): string { return ({ AVAILABLE: 'Disponible', RESERVED: 'Reservada', PRE_USE_BUFFER: 'Buffer previo', IN_USE: 'En uso', POST_USE_BUFFER: 'Buffer posterior', OUT_OF_SERVICE: 'Fuera de servicio', MAINTENANCE: 'En mantenimiento' } as Record<string, string>)[status] ?? status; }
+  usageStatusLabel(status: string): string { return ({ REQUESTED: 'Solicitada', AUTHORIZED: 'Autorizada', READY: 'Lista para iniciar', IN_USE: 'En uso', FINISHED: 'En buffer', RELEASED: 'Finalizada', REJECTED: 'Rechazada', CANCELLED: 'Cancelada', FAILED: 'Con falla' } as Record<string, string>)[status] ?? status; }
+  operationModeLabel(mode: LaundryMachine['operation_mode']): string { return ({ TOKEN: 'Requiere fichas', AUTHORIZATION: 'Solo autorización', MIXED: 'Fichas + autorización' } as Record<string, string>)[mode]; }
   nextAction(usage: LaundryUsage): { label: string; status: string } | null { const actions: Record<string, { label: string; status: string }> = { REQUESTED: { label: 'Autorizar', status: 'AUTHORIZED' }, AUTHORIZED: { label: 'Preparar', status: 'READY' }, READY: { label: 'Iniciar uso', status: 'IN_USE' }, IN_USE: { label: 'Finalizar', status: 'FINISHED' }, FINISHED: { label: 'Liberar', status: 'RELEASED' } }; return actions[usage.status] ?? null; }
 }

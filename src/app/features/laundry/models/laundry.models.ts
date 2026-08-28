@@ -8,6 +8,11 @@ export interface LaundryMachine {
   buffer_before_minutes: number;
   buffer_after_minutes: number;
   usage_limit_per_week: number | null;
+  usage_limit_per_day: number | null;
+  max_simultaneous_usages: number | null;
+  allow_parallel_washer_dryer: boolean;
+  enabled: boolean;
+  requires_token: boolean;
 }
 
 export interface LaundryUsage {
