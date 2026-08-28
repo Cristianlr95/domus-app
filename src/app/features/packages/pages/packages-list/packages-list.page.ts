@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { PERMISSIONS } from '../../../../core/auth/auth.models';
 import { AuthorizationService } from '../../../../core/auth/authorization.service';
 import { FeedbackService } from '../../../../core/services/feedback.service';
-import { PackageItem, PackageStatus } from '../../models/package.models';
+import { PackageItem, PackageMetrics, PackageStatus } from '../../models/package.models';
 import { PackagesApiService } from '../../services/packages-api.service';
 import { PackageCreatePage } from '../package-create/package-create.page';
 
@@ -28,9 +28,14 @@ export class PackagesListPage {
   loading = false;
   selectedStatus: PackageStatus | '' = '';
   search = '';
+  metrics: PackageMetrics | null = null;
 
   get canCreatePackages(): boolean {
     return this.authorizationService.hasPermission(PERMISSIONS.PACKAGES_CREATE);
+  }
+
+  get canManageCustody(): boolean {
+    return this.authorizationService.hasPermission(PERMISSIONS.PACKAGES_CUSTODY_MANAGE);
   }
 
   ionViewWillEnter(): void {
@@ -39,13 +44,17 @@ export class PackagesListPage {
 
   loadPackages(): void {
     this.loading = true;
-    this.packagesApiService.list(this.selectedStatus, this.search)
+    forkJoin({
+      packages: this.packagesApiService.list(this.selectedStatus, this.search),
+      metrics: this.canManageCustody ? this.packagesApiService.getMetrics().pipe(catchError(() => of(null))) : of(null),
+    })
       .pipe(finalize(() => {
         this.loading = false;
       }))
       .subscribe({
-        next: (packages) => {
+        next: ({ packages, metrics }) => {
           this.packages = packages;
+          this.metrics = metrics;
         },
         error: async (error) => {
           await this.feedbackService.error(this.authService.getErrorMessage(error));

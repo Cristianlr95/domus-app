@@ -8,6 +8,13 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="packages-page">
+  <section class="metrics-grid" *ngIf="metrics as currentMetrics">
+    <article><strong>{{ currentMetrics.pending }}</strong><span>Por entregar</span></article>
+    <article><strong>{{ currentMetrics.receivedToday }}</strong><span>Recibidas hoy</span></article>
+    <article><strong>{{ currentMetrics.deliveredToday }}</strong><span>Entregadas hoy</span></article>
+    <article [class.alert]="currentMetrics.overdue > 0"><strong>{{ currentMetrics.overdue }}</strong><span>Más de 3 días</span></article>
+    <article [class.alert]="currentMetrics.openIncidents > 0"><strong>{{ currentMetrics.openIncidents }}</strong><span>Incidentes abiertos</span></article>
+  </section>
   <section class="filters">
     <ion-searchbar
       [(ngModel)]="search"

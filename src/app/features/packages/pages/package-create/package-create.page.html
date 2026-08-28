@@ -62,6 +62,32 @@
         <ion-button fill="outline" size="small" slot="end" type="button" (click)="clearRecipient()">Cambiar</ion-button>
       </ion-item>
 
+      <section class="batch-recipients" *ngIf="canManageCustody && selectedResident">
+        <div class="batch-heading">
+          <div>
+            <p>Recepción masiva</p>
+            <strong>{{ totalReceptionPackages }} encomienda{{ totalReceptionPackages === 1 ? '' : 's' }} en esta recepción</strong>
+          </div>
+          <ion-button size="small" fill="clear" type="button" (click)="additionalRecipientSearch = additionalRecipientSearch ? '' : ' '" [disabled]="totalReceptionPackages >= 20">Agregar departamento</ion-button>
+        </div>
+        <ion-searchbar
+          *ngIf="additionalRecipientSearch !== ''"
+          [(ngModel)]="additionalRecipientSearch"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Buscar otro residente o departamento">
+        </ion-searchbar>
+        <ion-list class="recipient-results" inset="true" *ngIf="filteredAdditionalRecipients.length">
+          <ion-item button detail="false" *ngFor="let resident of filteredAdditionalRecipients" (click)="addAdditionalRecipient(resident)">
+            <ion-label><h3>{{ resident.firstName }} {{ resident.lastName }}</h3><p>{{ resident.unit?.blockLabel }} · Depto. {{ resident.unit?.unitCode }}</p></ion-label>
+          </ion-item>
+        </ion-list>
+        <div class="batch-recipient" *ngFor="let item of additionalRecipients">
+          <div><strong>{{ item.resident.firstName }} {{ item.resident.lastName }}</strong><span>{{ item.resident.unit?.blockLabel }} · Depto. {{ item.resident.unit?.unitCode }}</span></div>
+          <ion-input type="number" min="1" max="20" [(ngModel)]="item.quantity" [ngModelOptions]="{ standalone: true }" aria-label="Cantidad de encomiendas"></ion-input>
+          <ion-button fill="clear" color="medium" type="button" (click)="removeAdditionalRecipient(item.resident.id)">Quitar</ion-button>
+        </div>
+      </section>
+
       <div class="package-type">
         <span>Tipo de entrega</span>
         <ion-segment formControlName="packageType" [scrollable]="true">
@@ -80,6 +106,16 @@
           placeholder="Ej: caja mediana de Mercado Libre">
         </ion-input>
       </ion-item>
+      <ion-item>
+        <ion-input
+          label="Cantidad recibida"
+          labelPlacement="stacked"
+          type="number"
+          min="1"
+          max="20"
+          formControlName="quantity">
+        </ion-input>
+      </ion-item>
     </section>
 
     <details class="optional-fields">
@@ -87,6 +123,9 @@
       <div class="optional-grid">
         <ion-item>
           <ion-input label="Transportista o remitente" labelPlacement="stacked" formControlName="senderName" maxlength="150" placeholder="Ej: Chilexpress"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Tracking (opcional)" labelPlacement="stacked" formControlName="trackingNumber" maxlength="120" placeholder="Ej: 123456789"></ion-input>
         </ion-item>
         <ion-item>
           <ion-input label="Recibido por" labelPlacement="stacked" formControlName="receivedByName" maxlength="150" placeholder="Nombre de conserje"></ion-input>

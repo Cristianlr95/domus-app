@@ -128,6 +128,9 @@
               <div>
                 <strong>{{ packageItem.description }}</strong>
                 <span>{{ packageItem.receivedAt | date:'short' }}</span>
+                <ion-button *ngIf="canRequestPackagePickup" size="small" fill="clear" (click)="requestPickupCode(packageItem)">
+                  Generar código de retiro
+                </ion-button>
               </div>
               <ion-badge color="warning">{{ packageItem.status }}</ion-badge>
             </div>
@@ -140,6 +143,25 @@
           </ng-template>
         </section>
       </div>
+
+      <section class="section-block" *ngIf="canRequestPackagePickup && activePickupAuthorizations.length">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Retiros autorizados</p>
+            <h2>Autorizaciones activas</h2>
+          </div>
+        </div>
+        <div class="item-list compact">
+          <div *ngFor="let authorization of activePickupAuthorizations">
+            <ion-icon name="key-outline"></ion-icon>
+            <div>
+              <strong>{{ authorization.authorized_person_name }}</strong>
+              <span>{{ authorization.authorization_type === 'SINGLE' ? 'Retiro puntual' : authorization.authorization_type }} · hasta {{ authorization.valid_until | date:'short' }}</span>
+            </div>
+            <ion-button *ngIf="!authorization.revoked_at" size="small" fill="outline" color="medium" (click)="revokePickupAuthorization(authorization)">Revocar</ion-button>
+          </div>
+        </div>
+      </section>
 
       <section class="quick-links" aria-label="Acciones frecuentes">
         <a routerLink="/operations" *ngIf="canUseCommunityServices">

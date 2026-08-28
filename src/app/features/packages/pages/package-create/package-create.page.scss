@@ -127,6 +127,22 @@
   font-weight: 700;
 }
 
+.batch-recipients {
+  display: grid;
+  gap: .6rem;
+  padding: .85rem;
+  border: 1px dashed color-mix(in srgb, var(--domus-accent) 40%, var(--domus-border));
+  border-radius: var(--domus-radius);
+  background: var(--domus-surface-muted);
+}
+
+.batch-heading, .batch-recipient { display: flex; align-items: center; justify-content: space-between; gap: .7rem; }
+.batch-heading p, .batch-heading strong { display: block; margin: 0; }
+.batch-heading p { color: var(--domus-muted); font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+.batch-recipient { padding-top: .6rem; border-top: 1px solid var(--domus-border); }
+.batch-recipient span { display: block; color: var(--domus-muted); font-size: .82rem; }
+.batch-recipient ion-input { max-width: 3.5rem; border: 1px solid var(--domus-border); border-radius: .45rem; --padding-start: .5rem; }
+
 .package-type > span {
   display: block;
   margin: 0 0 0.45rem 0.75rem;

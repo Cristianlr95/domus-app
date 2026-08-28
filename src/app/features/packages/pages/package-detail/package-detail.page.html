@@ -27,6 +27,12 @@
           <p>{{ currentPackage.senderName }}</p>
         </ion-label>
       </ion-item>
+      <ion-item *ngIf="currentPackage.trackingNumber">
+        <ion-label>
+          <h2>Tracking</h2>
+          <p>{{ currentPackage.trackingNumber }}</p>
+        </ion-label>
+      </ion-item>
       <ion-item>
         <ion-label>
           <h2>Tipo</h2>
@@ -90,26 +96,64 @@
       </ion-item>
     </ion-list>
 
+    <section class="custody-timeline" *ngIf="canManageCustody && custodyEvents.length">
+      <p class="section-kicker">Cadena de custodia</p>
+      <h2>Historial operativo</h2>
+      <div class="event" *ngFor="let event of custodyEvents">
+        <div class="event-dot"></div>
+        <div>
+          <strong>{{ custodyEventLabel(event.event_type) }}</strong>
+          <p>{{ event.occurred_at }} · {{ custodyActor(event) }}</p>
+          <p *ngIf="event.receiver_name">Retira: {{ event.receiver_name }}</p>
+          <p *ngIf="event.book_number">Libro {{ event.book_number }}, página {{ event.book_page }}</p>
+          <p *ngIf="event.notes">{{ event.notes }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="incidents" *ngIf="canManageCustody">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Excepciones</p>
+          <h2>Incidentes</h2>
+        </div>
+        <ion-button size="small" fill="outline" [disabled]="mutating" (click)="reportIncident()">Registrar</ion-button>
+      </div>
+      <p class="empty-incidents" *ngIf="!incidents.length">No hay incidentes registrados.</p>
+      <article *ngFor="let incident of incidents" [class.resolved]="incident.status === 'RESOLVED'">
+        <div>
+          <strong>{{ incident.category }}</strong>
+          <ion-badge [color]="incident.status === 'OPEN' ? 'danger' : 'success'">{{ incident.status === 'OPEN' ? 'Abierto' : 'Resuelto' }}</ion-badge>
+        </div>
+        <p>{{ incident.description }}</p>
+        <p *ngIf="incident.resolution"><strong>Resolución:</strong> {{ incident.resolution }}</p>
+        <ion-button *ngIf="incident.status === 'OPEN'" size="small" fill="clear" [disabled]="mutating" (click)="resolveIncident(incident)">Resolver</ion-button>
+      </article>
+    </section>
+
     <div
       class="actions"
-      *ngIf="canUpdatePackages && currentPackage.status !== 'ENTREGADA' && currentPackage.status !== 'CANCELADA'">
+      *ngIf="(canManageCustody || canUpdatePackages) && currentPackage.status !== 'ENTREGADA' && currentPackage.status !== 'CANCELADA'">
       <ion-button
         expand="block"
         color="success"
+        *ngIf="canManageCustody"
         [disabled]="mutating"
         (click)="deliver()">
         {{ mutating ? 'Actualizando...' : 'Marcar como entregada' }}
       </ion-button>
 
-      <ion-button
-        expand="block"
-        fill="outline"
-        *ngFor="let nextStatus of availableNextStatuses(currentPackage.status)"
-        [color]="nextStatus === 'CANCELADA' ? 'medium' : 'primary'"
-        [disabled]="mutating"
-        (click)="updateStatus(nextStatus)">
-        {{ mutating ? 'Actualizando...' : 'Marcar como ' + statusLabel(nextStatus).toLowerCase() }}
-      </ion-button>
+      <ng-container *ngIf="canUpdatePackages">
+        <ion-button
+          expand="block"
+          fill="outline"
+          *ngFor="let nextStatus of availableNextStatuses(currentPackage.status)"
+          [color]="nextStatus === 'CANCELADA' ? 'medium' : 'primary'"
+          [disabled]="mutating"
+          (click)="updateStatus(nextStatus)">
+          {{ mutating ? 'Actualizando...' : 'Marcar como ' + statusLabel(nextStatus).toLowerCase() }}
+        </ion-button>
+      </ng-container>
     </div>
   </ng-container>
 </ion-content>
