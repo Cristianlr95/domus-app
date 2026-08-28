@@ -21,7 +21,7 @@ export class LaundryPage {
   loading = false;
   mutating = false;
   get canManage(): boolean { return this.authorization.hasPermission(PERMISSIONS.LAUNDRY_MANAGE); }
-  get upcoming(): LaundryUsage[] { return this.usages.filter((usage) => !['RELEASED', 'CANCELLED', 'REJECTED'].includes(usage.status)).slice(0, 12); }
+  get upcoming(): LaundryUsage[] { return this.usages.filter((usage) => !['RELEASED', 'CANCELLED', 'REJECTED', 'NO_SHOW'].includes(usage.status)).slice(0, 12); }
   ionViewWillEnter(): void { this.load(); }
   load(): void {
     this.loading = true;
@@ -41,7 +41,7 @@ export class LaundryPage {
   }
   machineLabel(machine: LaundryMachine): string { return `${machine.machine_type === 'WASHER' ? 'Lavadora' : 'Secadora'} · ${machine.asset_name}`; }
   machineStatusLabel(status: string): string { return ({ AVAILABLE: 'Disponible', RESERVED: 'Reservada', PRE_USE_BUFFER: 'Buffer previo', IN_USE: 'En uso', POST_USE_BUFFER: 'Buffer posterior', OUT_OF_SERVICE: 'Fuera de servicio', MAINTENANCE: 'En mantenimiento' } as Record<string, string>)[status] ?? status; }
-  usageStatusLabel(status: string): string { return ({ REQUESTED: 'Solicitada', AUTHORIZED: 'Autorizada', READY: 'Lista para iniciar', IN_USE: 'En uso', FINISHED: 'En buffer', RELEASED: 'Finalizada', REJECTED: 'Rechazada', CANCELLED: 'Cancelada', FAILED: 'Con falla' } as Record<string, string>)[status] ?? status; }
+  usageStatusLabel(status: string): string { return ({ REQUESTED: 'Solicitada', AUTHORIZED: 'Autorizada', READY: 'Lista para iniciar', IN_USE: 'En uso', FINISHED: 'En buffer', RELEASED: 'Finalizada', REJECTED: 'Rechazada', CANCELLED: 'Cancelada', NO_SHOW: 'No se presentó', FAILED: 'Con falla' } as Record<string, string>)[status] ?? status; }
   operationModeLabel(mode: LaundryMachine['operation_mode']): string { return ({ TOKEN: 'Requiere fichas', AUTHORIZATION: 'Solo autorización', MIXED: 'Fichas + autorización' } as Record<string, string>)[mode]; }
   nextAction(usage: LaundryUsage): { label: string; status: string } | null { const actions: Record<string, { label: string; status: string }> = { REQUESTED: { label: 'Autorizar', status: 'AUTHORIZED' }, AUTHORIZED: { label: 'Preparar', status: 'READY' }, READY: { label: 'Iniciar uso', status: 'IN_USE' }, IN_USE: { label: 'Finalizar', status: 'FINISHED' }, FINISHED: { label: 'Liberar', status: 'RELEASED' } }; return actions[usage.status] ?? null; }
 }
