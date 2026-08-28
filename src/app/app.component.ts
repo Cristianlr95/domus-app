@@ -77,10 +77,11 @@ export class AppComponent implements OnInit {
     },
     {
       group: 'operacion',
-      label: 'Visitas',
-      route: '/visits',
-      icon: 'walk-outline',
-      permissions: [PERMISSIONS.VISITS_READ],
+      label: 'Visitas y accesos',
+      mobileLabel: 'Visitas',
+      route: '/access',
+      icon: 'shield-checkmark-outline',
+      permissions: [PERMISSIONS.VISITS_READ, PERMISSIONS.VISITS_CREATE, PERMISSIONS.VISITS_UPDATE, PERMISSIONS.ACCESS_MANAGE, PERMISSIONS.ACCESS_REQUEST],
       mobile: true,
     },
     {
@@ -120,7 +121,11 @@ export class AppComponent implements OnInit {
       mobileLabel: 'Parking',
       route: '/parking',
       icon: 'car-outline',
-      permissions: [PERMISSIONS.PARKING_READ],
+      permissions: [
+        PERMISSIONS.PARKING_READ,
+        PERMISSIONS.PARKING_SESSIONS_MANAGE,
+        PERMISSIONS.PARKING_SESSIONS_REQUEST,
+      ],
       mobile: true,
     },
     {

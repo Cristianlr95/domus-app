@@ -1,88 +1,18 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Estacionamientos</ion-title>
-    <ion-buttons slot="end" *ngIf="canManageParking">
-      <ion-button (click)="createParking()">Nuevo estacionamiento</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-header><ion-toolbar><ion-title>DOMUS Parking</ion-title><ion-buttons slot="end"><ion-button (click)="load()">Actualizar</ion-button></ion-buttons></ion-toolbar></ion-header>
+<ion-content class="parking-page"><main>
+  <section class="hero"><div><p class="eyebrow">Estacionamientos de visita</p><h1>{{ canOperate ? 'Control operativo' : 'Reserva transparente' }}</h1><p>La reserva bloquea el espacio e inicia el cobro. Conserjería verifica llegada y liberación.</p></div><div class="availability"><strong>{{ availableSpaces.length }}</strong><span>disponibles</span></div></section>
 
-<ion-content [fullscreen]="true" class="parking-page">
-  <section class="filters">
-    <ion-searchbar
-      [(ngModel)]="search"
-      placeholder="Buscar por codigo, patente, residente o unidad"
-      (ionClear)="onFilterChange()"
-      (ionBlur)="onFilterChange()">
-    </ion-searchbar>
+  <section class="summary-grid" *ngIf="canOperate"><article><strong>{{ availableSpaces.length }}</strong><span>Disponibles</span></article><article><strong>{{ sessionsByStatus('REQUESTED') }}</strong><span>Solicitados</span></article><article><strong>{{ sessionsByStatus('RESERVED') + sessionsByStatus('OCCUPIED') }}</strong><span>Bloqueados / en uso</span></article><article><strong>{{ sessionsByStatus('END_REQUESTED') }}</strong><span>Por verificar</span></article></section>
 
-    <ion-item>
-      <ion-select
-        label="Estado activo"
-        labelPlacement="stacked"
-        [(ngModel)]="selectedActive"
-        (ionChange)="onFilterChange()">
-        <ion-select-option [value]="''">Todos</ion-select-option>
-        <ion-select-option [value]="true">Activos</ion-select-option>
-        <ion-select-option [value]="false">Inactivos</ion-select-option>
-      </ion-select>
-    </ion-item>
+  <section class="summary-grid admin-metrics" *ngIf="metrics"><article><strong>{{ metrics.visitorSpaces }}</strong><span>Espacios de visita</span></article><article><strong>{{ metrics.outOfServiceSpaces }}</strong><span>Fuera de servicio</span></article><article><strong>{{ metrics.averageMinutes }} min</strong><span>Duración promedio</span></article><article><strong>{{ metrics.settledRevenue | currency:'CLP':'symbol-narrow':'1.0-0' }}</strong><span>Ingresos liquidados</span></article></section>
 
-    <ion-item>
-      <ion-select
-        label="Ocupacion"
-        labelPlacement="stacked"
-        [(ngModel)]="selectedOccupancyStatus"
-        (ionChange)="onFilterChange()">
-        <ion-select-option [value]="''">Todas</ion-select-option>
-        <ion-select-option *ngFor="let option of occupancyOptions" [value]="option.value">
-          {{ option.label }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+  <section class="parking-card"><h2>{{ canOperate ? 'Crear asignación o solicitud' : 'Solicitar estacionamiento' }}</h2><p>La patente es opcional. Puedes dejar el espacio sin seleccionar para que conserjería lo asigne manualmente.</p><form [formGroup]="requestForm" (ngSubmit)="request()" class="form-grid"><ion-select label="Unidad" labelPlacement="stacked" formControlName="unitId"><ion-select-option *ngFor="let unit of units" [value]="unit.id">{{ unit.block_label }} · {{ unit.unit_code }}</ion-select-option></ion-select><ion-select label="Estacionamiento preferido (opcional)" labelPlacement="stacked" formControlName="parkingSpotId"><ion-select-option value="">Asignación por conserjería</ion-select-option><ion-select-option *ngFor="let space of availableSpaces" [value]="space.id">{{ space.spot_code }}</ion-select-option></ion-select><ion-input label="Visita (opcional)" labelPlacement="stacked" formControlName="visitorName"></ion-input><ion-input label="Patente (opcional)" labelPlacement="stacked" formControlName="vehiclePlate"></ion-input><ion-textarea label="Observaciones" labelPlacement="stacked" formControlName="notes"></ion-textarea><ion-button type="submit" [disabled]="submitting">Enviar solicitud</ion-button></form></section>
 
-    <ion-item>
-      <ion-select
-        label="Tipo"
-        labelPlacement="stacked"
-        [(ngModel)]="selectedParkingType"
-        (ionChange)="onFilterChange()">
-        <ion-select-option [value]="''">Todos</ion-select-option>
-        <ion-select-option *ngFor="let option of typeOptions" [value]="option.value">
-          {{ option.label }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-  </section>
+  <section class="parking-card rate-card" *ngIf="activeRate"><div><p class="eyebrow">Tarifa vigente</p><h2>{{ activeRate.amount_per_hour | currency:activeRate.currency:'symbol-narrow':'1.0-0' }} / hora</h2><p>Desde la confirmación de reserva · gracia {{ activeRate.grace_minutes }} min · redondeo {{ activeRate.rounding_minutes }} min.</p></div></section>
 
-  <div class="state-wrap" *ngIf="loading">
-    <ion-spinner></ion-spinner>
-    <p>Cargando estacionamientos...</p>
-  </div>
+  <section class="parking-card" *ngIf="canConfigure"><div class="section-title"><div><p class="eyebrow">Administración</p><h2>Tarifas y espacios</h2></div><ion-button *ngIf="canManageSpaces" fill="outline" (click)="openSpaceAdministration()">Nuevo espacio</ion-button></div><form [formGroup]="rateForm" (ngSubmit)="saveRate()" class="rate-form"><ion-input label="Nombre" labelPlacement="stacked" formControlName="name"></ion-input><ion-input label="Precio por hora" labelPlacement="stacked" type="number" formControlName="amountPerHour"></ion-input><ion-input label="Minutos de gracia" labelPlacement="stacked" type="number" formControlName="graceMinutes"></ion-input><ion-input label="Bloque de redondeo" labelPlacement="stacked" type="number" formControlName="roundingMinutes"></ion-input><ion-input label="Vigente desde" labelPlacement="stacked" type="datetime-local" formControlName="effectiveFrom"></ion-input><ion-button type="submit" fill="outline">Crear tarifa</ion-button></form><small>Usa redondeo de 1 minuto para cobro proporcional. La nueva tarifa no modifica sesiones ya reservadas.</small></section>
 
-  <div class="state-wrap" *ngIf="!loading && parkingSpots.length === 0">
-    <h2>No hay estacionamientos registrados</h2>
-    <p>Comienza creando el primer espacio del edificio.</p>
-    <ion-button *ngIf="canManageParking" (click)="createParking()">Registrar estacionamiento</ion-button>
-  </div>
+  <section class="parking-card"><div class="section-title"><div><p class="eyebrow">Estado operativo</p><h2>{{ canOperate ? 'Solicitudes y sesiones' : 'Tus reservas' }}</h2></div></div><p *ngIf="loading">Cargando estacionamientos…</p><div class="session-list" *ngIf="!loading"><article *ngFor="let session of activeSessions" [class.end-requested]="session.status === 'END_REQUESTED'"><div class="session-head"><div><h3>{{ session.spot_code || 'Por asignar' }} · {{ session.visitor_name || 'Visita sin nombre' }}</h3><p>{{ session.block_label }} · {{ session.unit_code }} · patente {{ session.vehicle_plate || 'no informada' }}</p></div><ion-chip [color]="session.status === 'END_REQUESTED' ? 'danger' : session.status === 'REQUESTED' ? 'warning' : 'success'"><ion-label>{{ statusLabel(session.status) }}</ion-label></ion-chip></div><div class="billing"><span><small>Reserva desde</small><strong>{{ session.billable_from ? (session.billable_from | date:'shortTime') : 'Aún no confirmada' }}</strong></span><span><small>Tiempo cobrado</small><strong>{{ duration(elapsedMinutes(session)) }}</strong></span><span><small>Tarifa congelada</small><strong>{{ session.rate_amount_snapshot ? (session.rate_amount_snapshot | currency:'CLP':'symbol-narrow':'1.0-0') + '/h' : 'Pendiente' }}</strong></span><span><small>Costo acumulado</small><strong>{{ currentAmount(session) | currency:'CLP':'symbol-narrow':'1.0-0' }}</strong></span></div><div class="actions" *ngIf="canOperate && session.status === 'REQUESTED'"><ion-select interface="popover" placeholder="Asignar espacio" [(ngModel)]="session.assignmentSpotId" [ngModelOptions]="{standalone: true}"><ion-select-option *ngFor="let space of availableSpaces" [value]="space.id">{{ space.spot_code }}</ion-select-option></ion-select><ion-button size="small" (click)="transition(session, 'RESERVED')">Confirmar reserva</ion-button><ion-button size="small" fill="outline" color="danger" (click)="transition(session, 'REJECTED')">Rechazar</ion-button></div><div class="actions" *ngIf="canOperate && session.status === 'RESERVED'"><ion-input label="Patente al llegar" labelPlacement="stacked" [(ngModel)]="session.plateInput" [ngModelOptions]="{standalone: true}"></ion-input><ion-button size="small" (click)="transition(session, 'OCCUPIED')">Confirmar llegada</ion-button><ion-button size="small" fill="outline" color="danger" (click)="transition(session, 'CANCELLED')">Cancelar y liquidar</ion-button></div><div class="actions" *ngIf="canOperate && (session.status === 'OCCUPIED' || session.status === 'END_REQUESTED')"><ion-button size="small" (click)="transition(session, 'COMPLETED')">Verificar salida y liberar</ion-button><ion-button *ngIf="session.status === 'END_REQUESTED' && !session.arrived_at" size="small" fill="outline" (click)="transition(session, 'CANCELLED')">Cancelar y liquidar</ion-button></div><div class="actions" *ngIf="!canOperate && session.status === 'REQUESTED'"><ion-button size="small" fill="outline" color="danger" (click)="transition(session, 'CANCELLED')">Cancelar solicitud</ion-button></div><div class="actions" *ngIf="!canOperate && (session.status === 'RESERVED' || session.status === 'OCCUPIED')"><ion-button size="small" fill="outline" (click)="transition(session, 'END_REQUESTED')">Mi visita ya se retiró</ion-button></div></article><p *ngIf="!activeSessions.length">No hay sesiones activas.</p></div></section>
 
-  <ion-list inset="true" *ngIf="!loading && parkingSpots.length > 0">
-    <ion-item button detail="true" *ngFor="let parking of parkingSpots; trackBy: trackByParking" (click)="openDetail(parking.id)">
-      <ion-label>
-        <h2>{{ parking.spotCode }}</h2>
-        <p>{{ typeLabel(parking.parkingType) }}{{ parking.unit ? ' - ' + parking.unit.blockLabel + ' / ' + parking.unit.unitCode : '' }}</p>
-        <p *ngIf="parking.resident">{{ parking.resident.firstName }} {{ parking.resident.lastName }}</p>
-        <p *ngIf="parking.vehiclePlate">Patente: {{ parking.vehiclePlate }}</p>
-      </ion-label>
-
-      <div class="chips">
-        <ion-chip [color]="occupancyColor(parking.occupancyStatus)">
-          <ion-label>{{ parking.occupancyStatus }}</ion-label>
-        </ion-chip>
-        <ion-chip [color]="parking.active ? 'success' : 'medium'">
-          <ion-label>{{ parking.active ? 'Activo' : 'Inactivo' }}</ion-label>
-        </ion-chip>
-      </div>
-    </ion-item>
-  </ion-list>
-</ion-content>
+  <section class="parking-card" *ngIf="history.length"><h2>Historial reciente</h2><div class="history-list"><article *ngFor="let session of history"><div><strong>{{ session.spot_code || 'Sin asignación' }} · {{ session.visitor_name || 'Visita' }}</strong><p>{{ session.block_label }} · {{ session.unit_code }} · {{ statusLabel(session.status) }}</p></div><span>{{ session.total_amount || 0 | currency:'CLP':'symbol-narrow':'1.0-0' }}</span></article></div></section>
+</main></ion-content>

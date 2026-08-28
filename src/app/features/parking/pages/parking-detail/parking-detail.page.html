@@ -81,9 +81,9 @@
       <ion-button
         expand="block"
         color="warning"
-        [disabled]="mutating || !currentParking.active"
-        (click)="toggleOccupancy()">
-        {{ mutating ? 'Actualizando...' : (currentParking.occupancyStatus === 'DISPONIBLE' ? 'Marcar como ocupado' : 'Marcar como disponible') }}
+        [disabled]="mutating || !currentParking.active || currentParking.occupancyStatus === 'RESERVADO' || currentParking.occupancyStatus === 'OCUPADO'"
+        (click)="toggleServiceStatus()">
+        {{ mutating ? 'Actualizando...' : (currentParking.occupancyStatus === 'FUERA_DE_SERVICIO' ? 'Devolver a servicio' : 'Marcar fuera de servicio') }}
       </ion-button>
 
       <ion-button

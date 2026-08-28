@@ -6,8 +6,13 @@ import { ApiResponse } from '../../../core/api/api.models';
 import {
   CreateParkingRequest,
   ParkingOccupancyStatus,
+  ParkingOperationalSpace,
+  ParkingMetrics,
+  ParkingRate,
+  ParkingSession,
   ParkingSpot,
   ParkingType,
+  ParkingUnitOption,
   UpdateParkingRequest,
   UpdateParkingStatusRequest,
 } from '../models/parking.models';
@@ -18,6 +23,47 @@ import {
 export class ParkingApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/parking`;
+  private readonly operationsUrl = `${environment.apiBaseUrl}/operations/parking`;
+
+  operationalSpaces(): Observable<ParkingOperationalSpace[]> {
+    return this.http.get<ApiResponse<ParkingOperationalSpace[]>>(`${this.operationsUrl}/spaces`)
+      .pipe(map((response) => response.data));
+  }
+
+  operationalUnits(): Observable<ParkingUnitOption[]> {
+    return this.http.get<ApiResponse<ParkingUnitOption[]>>(`${this.operationsUrl}/units`)
+      .pipe(map((response) => response.data));
+  }
+
+  sessions(): Observable<ParkingSession[]> {
+    return this.http.get<ApiResponse<ParkingSession[]>>(`${this.operationsUrl}/sessions`)
+      .pipe(map((response) => response.data));
+  }
+
+  activeRate(): Observable<ParkingRate> {
+    return this.http.get<ApiResponse<ParkingRate>>(`${this.operationsUrl}/rates/active`)
+      .pipe(map((response) => response.data));
+  }
+
+  metrics(): Observable<ParkingMetrics> {
+    return this.http.get<ApiResponse<ParkingMetrics>>(`${this.operationsUrl}/metrics`)
+      .pipe(map((response) => response.data));
+  }
+
+  createSession(payload: Record<string, unknown>): Observable<Record<string, unknown>> {
+    return this.http.post<ApiResponse<Record<string, unknown>>>(`${this.operationsUrl}/sessions`, payload)
+      .pipe(map((response) => response.data));
+  }
+
+  transitionSession(id: string, payload: Record<string, unknown>): Observable<Record<string, unknown>> {
+    return this.http.patch<ApiResponse<Record<string, unknown>>>(`${this.operationsUrl}/sessions/${id}/status`, payload)
+      .pipe(map((response) => response.data));
+  }
+
+  createRate(payload: Record<string, unknown>): Observable<Record<string, unknown>> {
+    return this.http.post<ApiResponse<Record<string, unknown>>>(`${this.operationsUrl}/rates`, payload)
+      .pipe(map((response) => response.data));
+  }
 
   list(
     active?: boolean | '',

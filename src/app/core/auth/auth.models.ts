@@ -17,6 +17,7 @@ export type PermissionCode =
   | 'units.manage'
   | 'parking.read'
   | 'parking.manage'
+  | 'parking.spaces.manage'
   | 'storages.read'
   | 'storages.manage'
   | 'messaging.read'
@@ -63,6 +64,7 @@ export const PERMISSIONS = {
   UNITS_MANAGE: 'units.manage',
   PARKING_READ: 'parking.read',
   PARKING_MANAGE: 'parking.manage',
+  PARKING_SPACES_MANAGE: 'parking.spaces.manage',
   STORAGES_READ: 'storages.read',
   STORAGES_MANAGE: 'storages.manage',
   MESSAGING_READ: 'messaging.read',

@@ -41,7 +41,7 @@ export class ParkingFormPage {
 
   readonly occupancyStatuses: { value: ParkingOccupancyStatus; label: string }[] = [
     { value: 'DISPONIBLE', label: 'Disponible' },
-    { value: 'OCUPADO', label: 'Ocupado' },
+    { value: 'FUERA_DE_SERVICIO', label: 'Fuera de servicio' },
   ];
 
   readonly form = this.formBuilder.nonNullable.group({

@@ -10,19 +10,25 @@ const routes: Routes = [
   {
     path: '',
     canActivate: [PermissionGuard],
-    data: { permissions: [PERMISSIONS.PARKING_READ] },
+    data: {
+      permissions: [
+        PERMISSIONS.PARKING_READ,
+        PERMISSIONS.PARKING_SESSIONS_MANAGE,
+        PERMISSIONS.PARKING_SESSIONS_REQUEST,
+      ],
+    },
     component: ParkingListPage,
   },
   {
     path: 'new',
     canActivate: [PermissionGuard],
-    data: { permissions: [PERMISSIONS.PARKING_MANAGE] },
+    data: { permissions: [PERMISSIONS.PARKING_SPACES_MANAGE] },
     component: ParkingFormPage,
   },
   {
     path: ':id/edit',
     canActivate: [PermissionGuard],
-    data: { permissions: [PERMISSIONS.PARKING_MANAGE] },
+    data: { permissions: [PERMISSIONS.PARKING_SPACES_MANAGE] },
     component: ParkingFormPage,
   },
   {

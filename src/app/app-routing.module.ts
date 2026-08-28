@@ -32,16 +32,8 @@ const routes: Routes = [
   },
   {
     path: 'visits',
-    canActivate: [PermissionGuard],
-    data: {
-      permissions: [
-        PERMISSIONS.VISITS_READ,
-        PERMISSIONS.VISITS_CREATE,
-        PERMISSIONS.VISITS_UPDATE,
-      ],
-    },
-    loadChildren: () =>
-      import('./features/visits/visits.module').then((m) => m.VisitsModule),
+    redirectTo: 'access',
+    pathMatch: 'full',
   },
   {
     path: 'concierge',
@@ -96,7 +88,13 @@ const routes: Routes = [
     path: 'parking',
     canActivate: [PermissionGuard],
     data: {
-      permissions: [PERMISSIONS.PARKING_READ, PERMISSIONS.PARKING_MANAGE],
+      permissions: [
+        PERMISSIONS.PARKING_READ,
+        PERMISSIONS.PARKING_MANAGE,
+        PERMISSIONS.PARKING_SPACES_MANAGE,
+        PERMISSIONS.PARKING_SESSIONS_MANAGE,
+        PERMISSIONS.PARKING_SESSIONS_REQUEST,
+      ],
     },
     loadChildren: () =>
       import('./features/parking/parking.module').then((m) => m.ParkingModule),
@@ -181,6 +179,12 @@ const routes: Routes = [
       import('./features/operations/operations.module').then(
         (m) => m.OperationsModule,
       ),
+  },
+  {
+    path: 'access',
+    canActivate: [PermissionGuard],
+    data: { permissions: [PERMISSIONS.VISITS_READ, PERMISSIONS.VISITS_CREATE, PERMISSIONS.VISITS_UPDATE, PERMISSIONS.ACCESS_MANAGE, PERMISSIONS.ACCESS_REQUEST] },
+    loadChildren: () => import('./features/access/access.module').then((m) => m.AccessModule),
   },
   {
     path: 'setup',

@@ -27,7 +27,7 @@ export class ParkingDetailPage {
   mutating = false;
 
   get canManageParking(): boolean {
-    return this.authorizationService.hasPermission(PERMISSIONS.PARKING_MANAGE);
+    return this.authorizationService.hasPermission(PERMISSIONS.PARKING_SPACES_MANAGE);
   }
 
   ionViewWillEnter(): void {
@@ -50,12 +50,13 @@ export class ParkingDetailPage {
     this.updateStatus(!this.parking.active, this.parking.occupancyStatus);
   }
 
-  toggleOccupancy(): void {
+  toggleServiceStatus(): void {
     if (!this.canManageParking || !this.parking || this.mutating) {
       return;
     }
 
-    const nextStatus: ParkingOccupancyStatus = this.parking.occupancyStatus === 'DISPONIBLE' ? 'OCUPADO' : 'DISPONIBLE';
+    const nextStatus: ParkingOccupancyStatus = this.parking.occupancyStatus === 'FUERA_DE_SERVICIO'
+      ? 'DISPONIBLE' : 'FUERA_DE_SERVICIO';
     this.updateStatus(this.parking.active, nextStatus);
   }
 
